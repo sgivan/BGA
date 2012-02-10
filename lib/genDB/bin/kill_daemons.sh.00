@@ -1,0 +1,16 @@
+#!/bin/sh
+i=`/local/cluster/genDB/bin/joblist.sql | wc -l`
+#. /mnt/local/cluster/sge/cgrb/common/settings.sh
+. /local/cluster/sge/cgrb/common/settings.sh
+echo; echo;
+echo '+++++++++++++++++++++++++++++++++'
+date
+if [ $i -gt 1 ]
+then
+	echo "Leave GENDB daemons running"
+else
+	echo "killing GENDB daemons"
+#	qdel -u genDB
+#	qdel -u givans
+fi
+echo

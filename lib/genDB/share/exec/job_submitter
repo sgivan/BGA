@@ -1,0 +1,121 @@
+#!/usr/bin/env perl
+# $Id: job_submitter,v 1.1.1.1 2005/02/22 18:05:36 givans Exp $
+
+use lib "/local/cluster/genDB/share/perl";
+
+use Projects;
+
+use Getopt::Std;
+use Job;
+
+use strict;
+use vars qw($opt_n $opt_r $opt_v $opt_l $opt_t $opt_p $opt_d);
+
+sub usage {
+    
+    print<<EOU;
+GENDB Job Submitter
+
+usage: job_submitter.pl [-v] [-t] (-n | -r) -p <project_name>
+
+where  -n                : generate new job
+                           should be used when new orfs or new tools
+                           are to be run
+       -r                : restart failed jobs
+                           collects information about failed jobs
+                           (e.g. due to insufficient disk space)
+                           and puts them into the job queue again
+                           you should check the queue before !
+       -t                : test only mode
+       -p <project_name> : Name des Projektes
+
+EOU
+    exit;
+}
+
+                   
+if ($#ARGV < 1) {
+    usage ();
+}
+
+getopts("vnrtdl:p:");
+
+my $verbose = $opt_v;
+my $test_only = $opt_t;
+my $debug = $opt_d;
+my $project_name = $opt_p;
+
+if (!$project_name) {
+    print STDERR "You have to supply a project name !\n";
+    usage();
+}
+
+Projects::init_project($project_name);
+
+require GENDB::orf;
+require GENDB::tool;
+require GENDB::orfstate;
+
+if ($opt_n) {
+
+
+    #########################################
+    # for each orf from the Database
+    my @orfs=@{GENDB::orf->fetchall};
+    
+    my $tools=GENDB::tool->fetch_ordered_tools;
+    
+    # query tools to get highest tool number
+    # this should stop the annoying "no next tool"
+    # messages
+    my $MIN_TOOL_LEVEL=GENDB::tool->highest_tool_number;
+    
+    #$debug=1;
+    my $counter=0;
+    foreach my $orf (@orfs) {
+	next if ($orf->frame == 0);
+	if ( $counter++ > 100 && $debug) {
+	    last;
+	    print "leaving after 100 orfs\n";
+	}
+	
+	print "ORF: ".$orf->name."\n" if $verbose;
+	
+	if ($orf->toollevel <=$MIN_TOOL_LEVEL) {
+	    
+	    for (my $level=$orf->toollevel; $level<=$MIN_TOOL_LEVEL; $level++) {
+		
+		my $job_id=$orf->order_next_job();
+		print "jobid: $job_id\n" if $debug;
+		
+		if ($job_id != -1) {
+		    # put job into GENDB's scheduler
+		    my $new_job=Job->create($project_name, $job_id) if (!$test_only);
+		}
+	    }
+	}
+	#   else {
+        #  	;
+        #  	# if we have enough information we do nothing
+        #  	# we need some ai here
+        #  	next;
+        #      }
+    }
+}
+elsif ($opt_r) {
+    my $failed_jobs = GENDB::orfstate->fetch_failed_jobs();
+    
+    foreach my $job (@$failed_jobs) {
+        # put job into GENDB's scheduler
+	print STDERR "restarting job ".$job->id."\n" if ($debug);
+	$job->unlock();
+	my $new_job=Job->create($project_name, $job->id) if (!$test_only);
+    }
+}
+else {
+    print "oops...don't know what to do....";
+    usage();
+}
+
+
+

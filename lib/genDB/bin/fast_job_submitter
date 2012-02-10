@@ -1,0 +1,128 @@
+#!/usr/bin/env perl
+# $Id: fast_job_submitter,v 1.2 2005/05/30 23:54:41 givans Exp $
+
+# $Log: fast_job_submitter,v $
+# Revision 1.2  2005/05/30 23:54:41  givans
+# Added -T option to specify which tool to submit jobs for
+# Added -c option to specify which contig's ORFs to submit jobs for
+#
+# Revision 1.1.1.1  2005/02/22 18:05:36  givans
+#
+#
+
+use lib "/local/cluster/genDB/share/perl";
+
+use Projects;
+
+use Getopt::Std;
+use Job;
+
+use strict;
+use vars qw/ $opt_n $opt_r $opt_v $opt_l $opt_t $opt_p $opt_d $opt_T $opt_c /;
+
+sub usage {
+    
+    print<<EOU;
+GENDB Job Submitter
+
+usage: job_submitter.pl [-v] [-t] (-n | -r) -p <project_name>
+
+where  -n                : generate new job
+                           should be used when new orfs or new tools
+                           are to be run
+       -r                : restart failed jobs
+                           collects information about failed jobs
+                           (e.g. due to insufficient disk space)
+                           and puts them into the job queue again
+                           you should check the queue before !
+       -v                : be verbose (at least a kind of....)
+       -T <int>		Run jobs for tool #
+	-c <int>	Run jobs for ORFs on contig id #
+       -t                : test only mode
+       -p <project_name> : Name des Projektes
+
+EOU
+    exit;
+}
+
+                   
+if ($#ARGV < 1) {
+    usage ();
+}
+
+getopts("vnrtdl:p:T:c:");
+
+my $verbose = $opt_v;
+my $test_only = $opt_t;
+my $debug = $opt_d;
+my $logfile = $opt_l;
+my $project_name = $opt_p;
+my $tool_id = $opt_T;
+my $contig_id =  $opt_c;
+
+if (!$project_name) {
+    print STDERR "You have to supply a project name !\n";
+    usage();
+}
+
+Projects::init_project($project_name);
+
+require GENDB::orf;
+require GENDB::tool;
+require GENDB::orfstate;
+
+if ($opt_n) {    
+# check for all orf which 
+	my (@tools,@orfs);
+	if ($tool_id) {
+		push(@tools, GENDB::tool->init_id($tool_id));
+	} else {
+		my $tools = GENDB::tool->fetchall();
+		push(@tools,@$tools);
+	}
+
+	if ($contig_id) {
+		push(@orfs, @{GENDB::orf->fetchbySQL("contig_id = $contig_id")});
+	} else {
+		my $orfs = GENDB::orf->fetchall();
+		push(@orfs,@$orfs);
+	}
+
+
+#    my $orfs=GENDB::orf->fetchall;
+#    my $tools=GENDB::tool->fetchall;
+#    my $no_jobs = scalar (@$orfs) * scalar (@$tools);
+#    my $no_jobs = scalar (@$orfs) * scalar (@tools);
+    my $no_jobs = scalar (@orfs) * scalar (@tools);
+    my $job_counter=0;
+#    foreach my $tool (@$tools) {
+    foreach my $tool (@tools) {
+	my $existing_states = GENDB::orfstate->fetchby_tool($tool);
+#	foreach my $orf (@$orfs) {
+	foreach my $orf (@orfs) {
+	    $job_counter++;
+	    next if ($orf->frame == 0);
+	    printf ("\r%d of %d jobs", $job_counter, $no_jobs) if ($verbose && (($job_counter % 1000) == 0));
+	    next if (defined ($existing_states->{$orf->id}));;
+	    if (!$test_only) {
+		my $new_orfstate = GENDB::orfstate->create($orf->id, $tool->id);
+		Job->create($project_name, $new_orfstate->id);
+	    } else {
+		print "create job for orf: ", $orf->id(), "; tool: ", $tool->id(), "\n";
+	    }
+	}
+    }
+}
+elsif ($opt_r) {
+    my $failed_jobs = GENDB::orfstate->fetch_failed_jobs();
+    foreach my $job (@$failed_jobs) {
+        # put job into GENDB's scheduler
+	print STDERR "restarting job ".$job->id."\n" if ($verbose);
+	$job->unlock();
+	Job->create($project_name, $job->id) if (!$test_only);
+    }
+}
+else {
+    print "oops...don't know what to do....";
+    usage();
+}

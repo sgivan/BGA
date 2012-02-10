@@ -1,0 +1,28 @@
+#!/bin/sh
+
+### configuration area
+
+# root dir of gendb installation
+GENDB_INSTALL_DIR=/local/cluster/genDB
+
+### end of config area
+
+if test $# = 0; then
+    if test $GENDB_DEFAULT_DB; then
+	db=$GENDB_DEFAULT_DB
+    else 
+	echo ---- GenDB 1.1.1 ----
+	echo 
+        echo usage:  `basename $0` \'project name\'
+	echo
+	exit
+    fi
+else
+    db=$1
+fi
+
+exec perl -I $GENDB_INSTALL_DIR/lib/$db -I $GENDB_INSTALL_DIR/share/perl $GENDB_INSTALL_DIR/bin/gendb.pl
+
+
+
+

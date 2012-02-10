@@ -1,0 +1,59 @@
+#!/usr/bin/perl
+
+# $Id: runtool,v 1.2 2006/11/15 23:31:22 genDB Exp $
+#########################
+
+# this used to be a little program to run blast jobs
+# and analyse their output
+# due to the new tool model in GENDB, this program
+# is only used on a batchable platform to start certain tools
+
+# by blinke@genetik.uni-bielefeld.de
+
+# $Log: runtool,v $
+# Revision 1.2  2006/11/15 23:31:22  genDB
+# *** empty log message ***
+#
+# Revision 1.1.1.1  2005/02/22 18:05:36  givans
+#
+#
+use lib '/local/cluster/genDB/share/perl';
+use GENDB::orfstate;
+exit();
+use GENDB::tool;
+use POSIX;
+
+# check commanline
+if ($#ARGV < 0) {
+    die "Usage $0 <orfstate_id>\n";
+}
+
+$orfstate_id=$ARGV[0];
+
+# get orfstate and associated tool
+$orfstate=GENDB::orfstate->init_id($orfstate_id);
+if ($orfstate < 0) {
+    die "$0 : Error can't find orfstate $orfstate_id\n";
+}
+
+$toolid= $orfstate->tool_id;
+$tool=GENDB::tool->init_id($toolid);
+if ($tool < 0) {
+    die "$0 : Error can't find tool $toolid\n";
+}
+
+# run the job
+eval {
+    $tool->run_job ($orfstate); # really, thats all folks.... :-)))
+};
+
+# something went wrong
+if ($@) {
+    # print message into log...
+    print STDERR "error while executing job:\n";
+    print STDERR $@."\n";
+
+    # and unlock orfstate
+    $orfstate->unlock;
+}
+

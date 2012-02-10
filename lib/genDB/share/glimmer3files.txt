@@ -1,0 +1,5 @@
+./exec/glimmer-3.02:# path to glimmer3.02 binaries
+./exec/glimmer-3.02:# set PATH to glimmer3.02 tools
+./exec/glimmer-3.02:$cmd = "glimmer3" . ($circular ? " -l": "") . " $file $model_file $out_file " . " 2> /dev/null";
+./perl/GENDB/Tools/Glimmer3.pm:package GENDB::Tools::Glimmer3;
+./perl/GENDB/Tools/Glimmer3.pm:    print "setting Glimmer3 to verbose\n" if ($val);

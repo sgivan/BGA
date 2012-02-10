@@ -1,0 +1,279 @@
+<PRE>
+</PRE>
+
+<html>
+<!---
+ENTRY       map00061
+DEFINITION  Fatty acid biosynthesis (path 1) - Reference pathway
+--->
+<head>
+<title>
+Fatty acid biosynthesis (path 1) - Reference pathway
+</title>
+<script language="JavaScript">
+<!---
+var stat = "";
+var intid = -1;
+var frame = 0;
+var nid = 4;
+function note(mes) {
+	stat = mes;
+	intid = setTimeout( 'intr()', 2000 );
+	frame = 0;
+	pushstat();
+}
+function intr() {
+	pushstat();
+	intid = setTimeout( 'intr()', 2000 );
+}
+function clr() {
+	clearTimeout( intid );
+	window.status = "";
+}
+function pushstat() {
+	var pos, f, pfr, suf;
+	var len = stat.length;
+
+	pfr = frame;
+	f = frame * nid;
+	for( var i = 0; i < len && f > 0; i++ ) {
+		if (stat.charAt(i) == " ") { f--; }
+	}
+	if (i < len) { pos = i; }
+	else { pos = 0; frame = 0; pfr = 0; }
+	f = nid;
+	if (pfr == 0) { f++; }
+	for( var i = pos; i < len && f > 0; i++ ) {
+		if (stat.charAt(i) == " ") { f--; }
+	}
+	suf = (pfr == 0) ? "" : " //";
+	if (i < len) { suf = "..."; }
+	window.status = stat.substring( pos, i ) + suf;
+	frame++;
+}
+//--->
+</script>
+</head>
+
+<body>
+<form method="GET" action="/dbget-bin/get_pathway">
+
+<b>Fatty acid biosynthesis (path 1) - Reference pathway</b>
+<br>
+Go to: [
+<a href="/dbget-bin/get_linkdb?pathway+map00061">LinkDB search</a>
+|
+<a href="/kegg/ortholog/tab00061.html">Ortholog Table</a>
+]
+<br>
+Go to:
+<select name="org_name">
+<option value="map" selected>Reference pathway
+<option value="eco">Escherichia coli
+<option value="hin">Haemophilus influenzae
+<option value="xfa">Xylella fastidiosa
+<option value="vch">Vibrio cholerae
+<option value="pae">Pseudomonas aeruginosa
+<option value="buc">Buchnera sp.
+<option value="nme">Neisseria meningitidis serogroup B
+<option value="nma">Neisseria meningitidis serogroup A
+<option value="hpy">Helicobacter pylori 26695
+<option value="hpj">Helicobacter pylori J99
+<option value="cje">Campylobacter jejuni
+<option value="rpr">Rickettsia prowazekii
+<option value="bsu">Bacillus subtilis
+<option value="bha">Bacillus halodurans
+<option value="mtu">Mycobacterium tuberculosis
+<option value="ctr">Chlamydia trachomatis
+<option value="cmu">Chlamydia muridarum
+<option value="cpn">Chlamydia pneumoniae
+<option value="cpa">Chlamydophila pneumoniae AR39
+<option value="cpj">Chlamydophila pneumoniae J138
+<option value="syn">Synechocystis sp.
+<option value="dra">Deinococcus radiodurans
+<option value="aae">Aquifex aeolicus
+<option value="tma">Thermotoga maritima
+<option value="tac">Thermoplasma acidophilum
+<option value="pho">Pyrococcus horikoshii
+<option value="pab">Pyrococcus abyssi
+<option value="ape">Aeropyrum pernix
+<option value="sce">Saccharomyces cerevisiae
+<option value="spo">Schizosaccharomyces pombe
+<option value="ath">Arabidopsis thaliana
+<option value="cel">Caenorhabditis elegans
+<option value="hsa">Homo sapiens
+<option value="mim">Genetic diseases in OMIM
+<option value="gb">Sequences in GenBank
+<option value="sp">Sequences in SWISS-PROT
+<option value="pir">Sequences in PIR
+<option value="pdb">3D structures in PDB
+<option value="ot">All organisms in KEGG
+</select>
+
+<input type="submit" value="Exec">
+<input type="hidden" name="mapno" value="00061">
+<br>
+<img src="/kegg/pathway/map/map00061.gif" usemap="#mapdata">
+<map name="mapdata">
+
+<area shape=rect	coords=631,616,759,642	href="/kegg/pathway/map/map00071.html"	onMouseOver="note('map00071.html');return true"	onMouseOut="clr()">
+<area shape=rect	coords=565,68,836,95	href="/dbget-bin/get_linkdb?pathway+map00061"	onMouseOver="note('pathway: map00061');return true"	onMouseOut="clr()">
+<area shape=rect	coords=352,141,471,167	href="/kegg/pathway/map/map00620.html"	onMouseOver="note('map00620.html');return true"	onMouseOut="clr()">
+<area shape=rect	coords=226,33,302,59	href="/kegg/pathway/map/map00020.html"	onMouseOver="note('map00020.html');return true"	onMouseOut="clr()">
+<area shape=rect	coords=848,577,893,594	href="/dbget-bin/www_bget?enzyme+3.1.2.14"	onMouseOver="note('enzyme: 3.1.2.14');return true"	onMouseOut="clr()">
+<area shape=rect	coords=798,577,844,594	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=848,517,893,534	href="/dbget-bin/www_bget?enzyme+1.3.1.9"	onMouseOver="note('enzyme: 1.3.1.9');return true"	onMouseOut="clr()">
+<area shape=rect	coords=848,498,893,515	href="/dbget-bin/www_bget?enzyme+1.3.1.10"	onMouseOver="note('enzyme: 1.3.1.10');return true"	onMouseOut="clr()">
+<area shape=rect	coords=799,517,844,534	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=799,498,844,515	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=848,414,893,431	href="/dbget-bin/www_bget?enzyme+4.2.1.61"	onMouseOver="note('enzyme: 4.2.1.61');return true"	onMouseOut="clr()">
+<area shape=rect	coords=798,424,844,441	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=798,405,844,422	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=848,320,894,337	href="/dbget-bin/www_bget?enzyme+1.1.1.100"	onMouseOver="note('enzyme: 1.1.1.100');return true"	onMouseOut="clr()">
+<area shape=rect	coords=799,330,844,347	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=799,311,844,328	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=848,245,893,262	href="/dbget-bin/www_bget?enzyme+2.3.1.41"	onMouseOver="note('enzyme: 2.3.1.41');return true"	onMouseOut="clr()">
+<area shape=rect	coords=799,254,844,271	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=799,235,844,252	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=719,517,764,534	href="/dbget-bin/www_bget?enzyme+1.3.1.9"	onMouseOver="note('enzyme: 1.3.1.9');return true"	onMouseOut="clr()">
+<area shape=rect	coords=719,498,764,515	href="/dbget-bin/www_bget?enzyme+1.3.1.10"	onMouseOver="note('enzyme: 1.3.1.10');return true"	onMouseOut="clr()">
+<area shape=rect	coords=670,517,715,534	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=670,498,715,515	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=719,414,764,431	href="/dbget-bin/www_bget?enzyme+4.2.1.61"	onMouseOver="note('enzyme: 4.2.1.61');return true"	onMouseOut="clr()">
+<area shape=rect	coords=669,424,715,441	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=669,405,715,422	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=719,320,765,337	href="/dbget-bin/www_bget?enzyme+1.1.1.100"	onMouseOver="note('enzyme: 1.1.1.100');return true"	onMouseOut="clr()">
+<area shape=rect	coords=670,330,715,347	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=670,311,715,328	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=719,245,765,262	href="/dbget-bin/www_bget?enzyme+2.3.1.41"	onMouseOver="note('enzyme: 2.3.1.41');return true"	onMouseOut="clr()">
+<area shape=rect	coords=670,254,715,271	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=670,235,715,252	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=590,517,635,534	href="/dbget-bin/www_bget?enzyme+1.3.1.9"	onMouseOver="note('enzyme: 1.3.1.9');return true"	onMouseOut="clr()">
+<area shape=rect	coords=590,498,635,515	href="/dbget-bin/www_bget?enzyme+1.3.1.10"	onMouseOver="note('enzyme: 1.3.1.10');return true"	onMouseOut="clr()">
+<area shape=rect	coords=541,517,586,534	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=541,498,586,515	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=590,433,635,450	href="/dbget-bin/www_bget?enzyme+4.2.1.60"	onMouseOver="note('enzyme: 4.2.1.60');return true"	onMouseOut="clr()">
+<area shape=rect	coords=590,414,635,431	href="/dbget-bin/www_bget?enzyme+4.2.1.61"	onMouseOver="note('enzyme: 4.2.1.61');return true"	onMouseOut="clr()">
+<area shape=rect	coords=590,395,635,412	href="/dbget-bin/www_bget?enzyme+4.2.1.58"	onMouseOver="note('enzyme: 4.2.1.58');return true"	onMouseOut="clr()">
+<area shape=rect	coords=540,424,586,441	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=540,405,586,422	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=590,320,636,337	href="/dbget-bin/www_bget?enzyme+1.1.1.100"	onMouseOver="note('enzyme: 1.1.1.100');return true"	onMouseOut="clr()">
+<area shape=rect	coords=541,330,586,347	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=541,311,586,328	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=590,245,636,262	href="/dbget-bin/www_bget?enzyme+2.3.1.41"	onMouseOver="note('enzyme: 2.3.1.41');return true"	onMouseOut="clr()">
+<area shape=rect	coords=541,254,586,271	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=541,235,586,252	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=472,517,517,534	href="/dbget-bin/www_bget?enzyme+1.3.1.9"	onMouseOver="note('enzyme: 1.3.1.9');return true"	onMouseOut="clr()">
+<area shape=rect	coords=472,498,517,515	href="/dbget-bin/www_bget?enzyme+1.3.1.10"	onMouseOver="note('enzyme: 1.3.1.10');return true"	onMouseOut="clr()">
+<area shape=rect	coords=423,517,468,534	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=423,498,468,515	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=472,433,517,450	href="/dbget-bin/www_bget?enzyme+4.2.1.60"	onMouseOver="note('enzyme: 4.2.1.60');return true"	onMouseOut="clr()">
+<area shape=rect	coords=472,414,517,431	href="/dbget-bin/www_bget?enzyme+4.2.1.58"	onMouseOver="note('enzyme: 4.2.1.58');return true"	onMouseOut="clr()">
+<area shape=rect	coords=472,395,517,412	href="/dbget-bin/www_bget?enzyme+4.2.1.61"	onMouseOver="note('enzyme: 4.2.1.61');return true"	onMouseOut="clr()">
+<area shape=rect	coords=422,424,468,441	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=422,405,468,422	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=472,320,518,337	href="/dbget-bin/www_bget?enzyme+1.1.1.100"	onMouseOver="note('enzyme: 1.1.1.100');return true"	onMouseOut="clr()">
+<area shape=rect	coords=423,330,468,347	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=423,311,468,328	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=472,245,518,262	href="/dbget-bin/www_bget?enzyme+2.3.1.41"	onMouseOver="note('enzyme: 2.3.1.41');return true"	onMouseOut="clr()">
+<area shape=rect	coords=423,254,468,271	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=423,235,468,252	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=356,517,401,534	href="/dbget-bin/www_bget?enzyme+1.3.1.9"	onMouseOver="note('enzyme: 1.3.1.9');return true"	onMouseOut="clr()">
+<area shape=rect	coords=356,498,401,515	href="/dbget-bin/www_bget?enzyme+1.3.1.10"	onMouseOver="note('enzyme: 1.3.1.10');return true"	onMouseOut="clr()">
+<area shape=rect	coords=307,517,352,534	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=307,498,352,515	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=356,424,401,441	href="/dbget-bin/www_bget?enzyme+4.2.1.61"	onMouseOver="note('enzyme: 4.2.1.61');return true"	onMouseOut="clr()">
+<area shape=rect	coords=356,405,401,422	href="/dbget-bin/www_bget?enzyme+4.2.1.58"	onMouseOver="note('enzyme: 4.2.1.58');return true"	onMouseOut="clr()">
+<area shape=rect	coords=306,424,352,441	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=306,405,352,422	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=356,320,402,337	href="/dbget-bin/www_bget?enzyme+1.1.1.100"	onMouseOver="note('enzyme: 1.1.1.100');return true"	onMouseOut="clr()">
+<area shape=rect	coords=307,330,352,347	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=307,311,352,328	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=356,245,402,262	href="/dbget-bin/www_bget?enzyme+2.3.1.41"	onMouseOver="note('enzyme: 2.3.1.41');return true"	onMouseOut="clr()">
+<area shape=rect	coords=307,254,352,271	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=307,235,352,252	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=234,517,279,534	href="/dbget-bin/www_bget?enzyme+1.3.1.9"	onMouseOver="note('enzyme: 1.3.1.9');return true"	onMouseOut="clr()">
+<area shape=rect	coords=234,498,279,515	href="/dbget-bin/www_bget?enzyme+1.3.1.10"	onMouseOver="note('enzyme: 1.3.1.10');return true"	onMouseOut="clr()">
+<area shape=rect	coords=185,517,230,534	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=185,498,230,515	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=234,414,279,431	href="/dbget-bin/www_bget?enzyme+4.2.1.58"	onMouseOver="note('enzyme: 4.2.1.58');return true"	onMouseOut="clr()">
+<area shape=rect	coords=185,424,230,441	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=185,405,230,422	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=234,320,280,337	href="/dbget-bin/www_bget?enzyme+1.1.1.100"	onMouseOver="note('enzyme: 1.1.1.100');return true"	onMouseOut="clr()">
+<area shape=rect	coords=185,330,230,347	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=185,311,230,328	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=234,245,280,262	href="/dbget-bin/www_bget?enzyme+2.3.1.41"	onMouseOver="note('enzyme: 2.3.1.41');return true"	onMouseOut="clr()">
+<area shape=rect	coords=185,235,230,252	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=185,254,230,271	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=109,517,155,534	href="/dbget-bin/www_bget?enzyme+1.3.1.9"	onMouseOver="note('enzyme: 1.3.1.9');return true"	onMouseOut="clr()">
+<area shape=rect	coords=109,498,155,515	href="/dbget-bin/www_bget?enzyme+1.3.1.10"	onMouseOver="note('enzyme: 1.3.1.10');return true"	onMouseOut="clr()">
+<area shape=rect	coords=60,517,105,534	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=60,498,105,515	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=109,414,155,431	href="/dbget-bin/www_bget?enzyme+4.2.1.58"	onMouseOver="note('enzyme: 4.2.1.58');return true"	onMouseOut="clr()">
+<area shape=rect	coords=60,424,105,441	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=60,405,105,422	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=109,320,155,337	href="/dbget-bin/www_bget?enzyme+1.1.1.100"	onMouseOver="note('enzyme: 1.1.1.100');return true"	onMouseOut="clr()">
+<area shape=rect	coords=60,330,105,347	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=60,311,105,328	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=109,245,155,262	href="/dbget-bin/www_bget?enzyme+2.3.1.41"	onMouseOver="note('enzyme: 2.3.1.41');return true"	onMouseOut="clr()">
+<area shape=rect	coords=60,254,105,271	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=60,235,105,252	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=182,162,227,179	href="/dbget-bin/www_bget?enzyme+2.3.1.39"	onMouseOver="note('enzyme: 2.3.1.39');return true"	onMouseOut="clr()">
+<area shape=rect	coords=132,172,178,189	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=132,153,178,170	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=109,128,154,145	href="/dbget-bin/www_bget?enzyme+2.3.1.41"	onMouseOver="note('enzyme: 2.3.1.41');return true"	onMouseOut="clr()">
+<area shape=rect	coords=109,109,155,126	href="/dbget-bin/www_bget?enzyme+2.3.1.38"	onMouseOver="note('enzyme: 2.3.1.38');return true"	onMouseOut="clr()">
+<area shape=rect	coords=59,128,105,145	href="/dbget-bin/www_bget?enzyme+2.3.1.86"	onMouseOver="note('enzyme: 2.3.1.86');return true"	onMouseOut="clr()">
+<area shape=rect	coords=59,109,105,126	href="/dbget-bin/www_bget?enzyme+2.3.1.85"	onMouseOver="note('enzyme: 2.3.1.85');return true"	onMouseOut="clr()">
+<area shape=rect	coords=294,82,339,99	href="/dbget-bin/www_bget?enzyme+6.3.4.14"	onMouseOver="note('enzyme: 6.3.4.14');return true"	onMouseOut="clr()">
+<area shape=rect	coords=157,84,202,101	href="/dbget-bin/www_bget?enzyme+6.4.1.2"	onMouseOver="note('enzyme: 6.4.1.2');return true"	onMouseOut="clr()">
+<area shape=rect	coords=352,170,483,196	href="/kegg/pathway/map/map00410.html"	onMouseOver="note('map00410.html');return true"	onMouseOut="clr()">
+<area shape=circle	coords=145,74,4	href="/dbget-bin/www_bget?compound+C00024"	onMouseOver="note('compound: C00024');return true"	onMouseOut="clr()">
+<area shape=circle	coords=246,74,4	href="/dbget-bin/www_bget?compound+C04057"	onMouseOver="note('compound: C04057');return true"	onMouseOut="clr()">
+<area shape=circle	coords=317,118,4	href="/dbget-bin/www_bget?compound+C04419"	onMouseOver="note('compound: C04419');return true"	onMouseOut="clr()">
+<area shape=circle	coords=180,133,4	href="/dbget-bin/www_bget?compound+C00083"	onMouseOver="note('compound: C00083');return true"	onMouseOut="clr()">
+<area shape=circle	coords=180,208,4	href="/dbget-bin/www_bget?compound+C01209"	onMouseOver="note('compound: C01209');return true"	onMouseOut="clr()">
+<area shape=circle	coords=107,175,4	href="/dbget-bin/www_bget?compound+C03939"	onMouseOver="note('compound: C03939');return true"	onMouseOut="clr()">
+<area shape=circle	coords=107,290,4	href="/dbget-bin/www_bget?compound+C05744"	onMouseOver="note('compound: C05744');return true"	onMouseOut="clr()">
+<area shape=circle	coords=107,371,4	href="/dbget-bin/www_bget?compound+C04618"	onMouseOver="note('compound: C04618');return true"	onMouseOut="clr()">
+<area shape=circle	coords=107,472,4	href="/dbget-bin/www_bget?compound+C04246"	onMouseOver="note('compound: C04246');return true"	onMouseOut="clr()">
+<area shape=circle	coords=107,556,4	href="/dbget-bin/www_bget?compound+C05745"	onMouseOver="note('compound: C05745');return true"	onMouseOut="clr()">
+<area shape=circle	coords=440,606,4	href="/dbget-bin/www_bget?compound+C00229"	onMouseOver="note('compound: C00229');return true"	onMouseOut="clr()">
+<area shape=circle	coords=232,290,4	href="/dbget-bin/www_bget?compound+C05746"	onMouseOver="note('compound: C05746');return true"	onMouseOut="clr()">
+<area shape=circle	coords=232,371,4	href="/dbget-bin/www_bget?compound+C05747"	onMouseOver="note('compound: C05747');return true"	onMouseOut="clr()">
+<area shape=circle	coords=232,472,4	href="/dbget-bin/www_bget?compound+C05748"	onMouseOver="note('compound: C05748');return true"	onMouseOut="clr()">
+<area shape=circle	coords=232,557,4	href="/dbget-bin/www_bget?compound+C05749"	onMouseOver="note('compound: C05749');return true"	onMouseOut="clr()">
+<area shape=circle	coords=354,557,4	href="/dbget-bin/www_bget?compound+C05752"	onMouseOver="note('compound: C05752');return true"	onMouseOut="clr()">
+<area shape=circle	coords=354,472,4	href="/dbget-bin/www_bget?compound+C05751"	onMouseOver="note('compound: C05751');return true"	onMouseOut="clr()">
+<area shape=circle	coords=354,371,4	href="/dbget-bin/www_bget?compound+C04620"	onMouseOver="note('compound: C04620');return true"	onMouseOut="clr()">
+<area shape=circle	coords=354,290,4	href="/dbget-bin/www_bget?compound+C05750"	onMouseOver="note('compound: C05750');return true"	onMouseOut="clr()">
+<area shape=circle	coords=470,290,4	href="/dbget-bin/www_bget?compound+C05753"	onMouseOver="note('compound: C05753');return true"	onMouseOut="clr()">
+<area shape=circle	coords=470,371,4	href="/dbget-bin/www_bget?compound+C04619"	onMouseOver="note('compound: C04619');return true"	onMouseOut="clr()">
+<area shape=circle	coords=470,472,4	href="/dbget-bin/www_bget?compound+C05754"	onMouseOver="note('compound: C05754');return true"	onMouseOut="clr()">
+<area shape=circle	coords=470,557,4	href="/dbget-bin/www_bget?compound+C05755"	onMouseOver="note('compound: C05755');return true"	onMouseOut="clr()">
+<area shape=circle	coords=588,557,4	href="/dbget-bin/www_bget?compound+C05223"	onMouseOver="note('compound: C05223');return true"	onMouseOut="clr()">
+<area shape=circle	coords=588,472,4	href="/dbget-bin/www_bget?compound+C05758"	onMouseOver="note('compound: C05758');return true"	onMouseOut="clr()">
+<area shape=circle	coords=588,371,4	href="/dbget-bin/www_bget?compound+C05757"	onMouseOver="note('compound: C05757');return true"	onMouseOut="clr()">
+<area shape=circle	coords=588,290,4	href="/dbget-bin/www_bget?compound+C05756"	onMouseOver="note('compound: C05756');return true"	onMouseOut="clr()">
+<area shape=circle	coords=717,290,4	href="/dbget-bin/www_bget?compound+C05759"	onMouseOver="note('compound: C05759');return true"	onMouseOut="clr()">
+<area shape=circle	coords=717,371,4	href="/dbget-bin/www_bget?compound+C04688"	onMouseOver="note('compound: C04688');return true"	onMouseOut="clr()">
+<area shape=circle	coords=717,472,4	href="/dbget-bin/www_bget?compound+C05760"	onMouseOver="note('compound: C05760');return true"	onMouseOut="clr()">
+<area shape=circle	coords=717,557,4	href="/dbget-bin/www_bget?compound+C05761"	onMouseOver="note('compound: C05761');return true"	onMouseOut="clr()">
+<area shape=circle	coords=846,628,4	href="/dbget-bin/www_bget?compound+C00249"	onMouseOver="note('compound: C00249');return true"	onMouseOut="clr()">
+<area shape=circle	coords=846,557,4	href="/dbget-bin/www_bget?compound+C05764"	onMouseOver="note('compound: C05764');return true"	onMouseOut="clr()">
+<area shape=circle	coords=846,472,4	href="/dbget-bin/www_bget?compound+C05763"	onMouseOver="note('compound: C05763');return true"	onMouseOut="clr()">
+<area shape=circle	coords=846,371,4	href="/dbget-bin/www_bget?compound+C04633"	onMouseOver="note('compound: C04633');return true"	onMouseOut="clr()">
+<area shape=circle	coords=846,290,4	href="/dbget-bin/www_bget?compound+C05762"	onMouseOver="note('compound: C05762');return true"	onMouseOut="clr()">
+
+</map>
+
+</form>
+</body>
+<!---
+///
+--->
+</html>
+<HR>
+<B>[ <A HREF="/kegg/kegg2.html">KEGG</A> | <A HREF="/dbget/dbget.links.html">DBGET</A> | <A HREF="/">GenomeNet</A> ]</B>
+</BODY>
+</HTML>

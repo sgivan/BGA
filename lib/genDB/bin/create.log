@@ -1,0 +1,547 @@
+no database host given, using default host 'localhost'
+checking for database..show tables;
+creating standard entries for project Francis
+creating tables....CREATE TABLE funcat (
+	icon text,
+	definition text,
+	name text,
+	parent_funcat int,
+	PRIMARY KEY (id),
+	id int NOT NULL
+	);
+CREATE TABLE orf_annotations (
+	orf_id int,
+	annotation_id int
+	);
+CREATE TABLE contig (
+	name char(50),
+	length int,
+	loverlap int,
+	lneighbor_id int,
+	sequence mediumtext,
+	roverlap int,
+	rneighbor_id int,
+	PRIMARY KEY (id),
+	id int NOT NULL
+	);
+CREATE UNIQUE INDEX contig_name_key ON contig (name);
+CREATE TABLE annotator (
+	name char(20),
+	description text,
+	PRIMARY KEY (id),
+	id int NOT NULL
+	);
+CREATE UNIQUE INDEX annotator_name_key ON annotator (name);
+CREATE TABLE orf (
+	molweight float,
+	contig_id int,
+	startcodon char(3),
+	name char(50),
+	alt_names text,
+	status int,
+	stop int,
+	ag int,
+	gc int,
+	frame int,
+	isoelp float,
+	PRIMARY KEY (id),
+	id int NOT NULL,
+	start int
+	);
+CREATE UNIQUE INDEX orf_name_key ON orf (name);
+CREATE TABLE orfstate (
+	tool_id int,
+	date_ordered int,
+	date_done int,
+	orf_id int,
+	PRIMARY KEY (id),
+	id int NOT NULL
+	);
+CREATE TABLE orf_names (
+	name char(50),
+	orf_id int,
+	PRIMARY KEY (id),
+	id int NOT NULL
+	);
+CREATE UNIQUE INDEX orf_names_name_key ON orf_names (name);
+CREATE TABLE annotation_facts (
+	fact_id int,
+	annotation_id int
+	);
+CREATE TABLE annotation (
+	product char(100),
+	name char(50),
+	annotator_id int,
+	comment text,
+	orf_id int,
+	description text,
+	offset int,
+	ec text,
+	feature_type int,
+	PRIMARY KEY (id),
+	id int NOT NULL,
+	category int,
+	date int
+	);
+CREATE TABLE feature (
+	contig_id int,
+	name text,
+	subfeature_id int,
+	type int,
+	orf_id int,
+	end int,
+	fact_id int,
+	next_feature int,
+	xml_data text,
+	PRIMARY KEY (id),
+	id int NOT NULL,
+	start int
+	);
+CREATE TABLE feature_type (
+	icon text,
+	definition text,
+	name text,
+	xml_dtd text,
+	PRIMARY KEY (id),
+	id int NOT NULL,
+	parent_feature_type int
+	);
+CREATE TABLE tool (
+	input_type int,
+	name char(20),
+	executable_name text,
+	description text,
+	dbname text,
+	dburl text,
+	cost int,
+	number int,
+	level1 text,
+	level2 text,
+	helper_package text,
+	level3 text,
+	user_value int,
+	level4 text,
+	level5 text,
+	PRIMARY KEY (id),
+	id int NOT NULL
+	);
+CREATE UNIQUE INDEX tool_name_key ON tool (name);
+CREATE TABLE fact (
+	dbto int,
+	tool_id int,
+	orfto int,
+	dbfrom int,
+	orffrom int,
+	dbref text,
+	orf_id int,
+	description text,
+	toolresult text,
+	PRIMARY KEY (id),
+	id int NOT NULL,
+	information int
+	);
+CREATE TABLE GENDB_counters (
+	object char(30),
+	val int);
+INSERT INTO GENDB_counters (object, val) VALUES ('funcat', 0);
+INSERT INTO GENDB_counters (object, val) VALUES ('contig', 0);
+INSERT INTO GENDB_counters (object, val) VALUES ('annotator', 0);
+INSERT INTO GENDB_counters (object, val) VALUES ('orf', 0);
+INSERT INTO GENDB_counters (object, val) VALUES ('orfstate', 0);
+INSERT INTO GENDB_counters (object, val) VALUES ('orf_names', 0);
+INSERT INTO GENDB_counters (object, val) VALUES ('annotation', 0);
+INSERT INTO GENDB_counters (object, val) VALUES ('feature', 0);
+INSERT INTO GENDB_counters (object, val) VALUES ('feature_type', 0);
+INSERT INTO GENDB_counters (object, val) VALUES ('tool', 0);
+INSERT INTO GENDB_counters (object, val) VALUES ('fact', 0);
+#
+# additional indices to GENDB
+#
+# these indices are not necessary, but speed up
+# the whole system
+#
+# $Id: additional_indices.sql,v 1.2 2002/03/26 14:28:12 blinke Exp $
+#
+# $Log: additional_indices.sql,v $
+# Revision 1.2  2002/03/26 14:28:12  blinke
+# added indices for orfstate, fact and orf
+#
+# Revision 1.1  2001/05/30 15:37:40  blinke
+# Initial revision
+#
+# Revision 1.1  2001/05/30 15:34:25  blinke
+# Initial revision
+#
+#
+
+# speed up annotation to orf selects
+CREATE INDEX annotation_orf_id_key ON annotation (orf_id);
+
+# speed up fact retrieval
+CREATE INDEX fact_orf_id ON fact (orf_id);
+CREATE INDEX fact_tool_id ON fact (tool_id);
+
+# speed up links between orfstate and tool/orf
+CREATE INDEX orfstate_tool_id ON orfstate (tool_id);
+CREATE INDEX orfstate_orf_id ON orfstate (orf_id);
+
+# speed up orf lookup
+CREATE INDEX orf_contig_id ON orf (contig_id);#
+# default annotator values
+#
+# initial version taken from cgdeg_gendb and modified
+#
+# $Id: annotator_defaults.sql,v 1.3 2001/12/13 16:01:59 fm Exp $
+#
+# $Log: annotator_defaults.sql,v $
+# Revision 1.3  2001/12/13 16:01:59  fm
+# added tRNAscan-SE
+#
+# Revision 1.2  2001/06/26 11:28:17  tk
+# fixed syntax error
+#
+# Revision 1.1  2001/05/30 15:45:10  blinke
+# Initial revision
+#
+#
+
+INSERT INTO annotator VALUES ('glimmer','Glimmer ORF finder',0);
+INSERT INTO annotator VALUES ('tRNAscan-SE','tRNA finder',1);
+
+# also the following line is unnessary,
+# it is added as a template for further entries...
+# remember to increas val according to the number of 
+# elements in annotator table.....
+update GENDB_counters set val=1 where object='annotator';
+# MySQL dump 8.10
+#
+# Host: dbhost    Database: gendb
+#--------------------------------------------------------
+# Server version	3.23.27-beta-log
+
+#
+# Dumping data for table 'feature_type'
+#
+
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'misc_feature ',NULL,1,0);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'misc_difference ',NULL,2,1);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'conflict ',NULL,3,2);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'unsure ',NULL,4,2);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'old_sequence ',NULL,5,2);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'variation ',NULL,6,2);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'modified_base ',NULL,7,2);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'gene ',NULL,8,1);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'misc_signal ',NULL,9,1);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'promoter ',NULL,10,9);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'CAAT_signal ',NULL,11,10);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'TATA_signal ',NULL,12,10);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'-35_signal ',NULL,13,10);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'-10_signal ',NULL,14,10);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'GC_signal ',NULL,15,10);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'RBS ',NULL,16,9);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'polyA_signal ',NULL,17,9);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'enhancer ',NULL,18,9);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'attenuator ',NULL,19,9);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'terminator ',NULL,20,9);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'rep_origin ',NULL,21,9);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'misc_RNA ',NULL,22,1);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'prim_transcript ',NULL,23,22);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'precursor_RNA ',NULL,24,23);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'mRNA ',NULL,25,24);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'5\'clip ',NULL,26,24);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'3\'clip ',NULL,27,24);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'5\'UTR ',NULL,28,24);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'3\'UTR ',NULL,29,24);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'exon ',NULL,30,24);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'CDS ',NULL,31,24);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'sig_peptide ',NULL,32,31);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'transit_peptide ',NULL,33,31);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'mat_peptide ',NULL,34,31);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'intron ',NULL,35,24);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'polyA_site ',NULL,36,24);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'rRNA ',NULL,37,24);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'tRNA ',NULL,38,24);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'scRNA ',NULL,39,24);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'snRNA ',NULL,40,24);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'immunoglobulin_related ',NULL,41,0);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'C_region ',NULL,42,41);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'D_segment ',NULL,43,41);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'J_segment ',NULL,44,41);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'N_region ',NULL,45,41);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'S_region ',NULL,46,41);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'V_region ',NULL,47,41);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'V_segment ',NULL,48,41);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'repeat_region ',NULL,49,0);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'repeat_unit ',NULL,50,49);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'LTR ',NULL,51,49);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'satellite ',NULL,52,49);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'misc_binding ',NULL,53,0);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'primer_bind ',NULL,54,53);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'protein_bind ',NULL,55,53);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'STS ',NULL,56,53);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'misc_recomb ',NULL,57,0);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'iDNA ',NULL,58,57);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'misc_structure ',NULL,59,0);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'stem_loop ',NULL,60,59);
+INSERT INTO feature_type (icon, definition, name, xml_dtd, id, parent_feature_type) VALUES (NULL,NULL,'D-loop ',NULL,61,59);
+
+# MySQL dump 8.10
+#
+# Host: dbhost    Database: gendb
+#--------------------------------------------------------
+# Server version	3.23.27-beta-log
+
+#
+# Dumping data for table 'funcat'
+#
+
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'METABOLISM ',0,1);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'amino-acid metabolism ',1,2);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'amino-acid biosynthesis ',2,3);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'assimilatory reduction of sulfur and biosynthesis of the serine family ',3,4);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'regulation of amino-acid metabolism ',2,5);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'amino-acid transport ',2,6);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'amino-acid degradation (catabolism) ',2,7);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other amino-acid metabolism activities ',2,8);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'nitrogen and sulphur metabolism ',1,9);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'nitrogen and sulphur utilization ',9,10);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'regulation of nitrogen and sulphur utilization ',9,11);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'nitrogen and sulphur transport ',9,12);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'nucleotide metabolism ',1,13);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'purine-ribonucleotide metabolism ',13,14);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'pyrimidine-ribonucleotide metabolism ',13,15);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'deoxyribonucleotide metabolism ',13,16);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'metabolism of cyclic and unusual nucleotides ',13,17);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'regulation of nucleotide metabolism ',13,18);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'polynucleotide degradation ',13,19);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'nucleotide transport ',13,20);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other nucleotide-metabolism activities ',13,21);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'phosphate metabolism ',1,22);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'phosphate utilization ',22,23);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'regulation of phosphate utilization ',22,24);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'phosphate transport ',22,25);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other phosphate metabolism activities ',22,26);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'C-compound and carbohydrate metabolism ',1,27);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'C-compound and carbohydrate utilization ',27,28);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'regulation of C-compound and carbohydrate utilization ',27,29);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'C-compound, carbohydrate transport ',27,30);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other carbohydrate metabolism activities ',27,31);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'lipid, fatty-acid and isoprenoid metabolism ',1,32);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'lipid, fatty-acid and isoprenoid biosynthesis ',32,33);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'phospholipid biosynthesis ',33,34);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'glycolipid biosynthesis ',33,35);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'isoprenoid biosynthesis ',33,36);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'tetracyclic and pentacyclic triterpenes (steroids and hopanoids) biosynthesis ',36,37);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'breakdown of lipids, fatty acids and isoprenoids ',32,38);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'lipid, fatty-acid and isoprenoid utilization ',32,39);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'regulation of lipid, fatty-acid and isoprenoid biosynthesis ',32,40);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'lipid and fatty-acid transport ',32,41);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'lipid and fatty-acid binding ',32,42);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other lipid, fatty-acid and isoprenoid metabolism activities ',32,43);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'metabolism of vitamins, cofactors, and prosthetic groups ',1,44);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'biosynthesis of vitamins, cofactors, and prosthetic groups ',44,45);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'utilization of vitamins, cofactors, and prosthetic groups ',44,46);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'regulation of vitamins, cofactors, and prosthetic groups ',44,47);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'transport of vitamins, cofactors, and prosthetic groups ',44,48);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other vitamin, cofactor, and prosthetic group activities ',44,49);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'secondary metabolism ',1,50);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'metabolism of primary metabolic sugars derivatives ',50,51);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'biosynthesis of glycosides ',51,52);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'biosynthesis of secondary products derived from primary amino acids ',50,53);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'biosynthesis of amines ',53,54);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'ENERGY ',0,55);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'glycolysis and gluconeogenesis ',55,56);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'pentose-phosphate pathway ',55,57);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'tricarboxylic-acid pathway ',55,58);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'electron transport and membrane-associated energy conservation ',55,59);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'accessory proteins of electron transport and membrane-associated energy conservation ',59,60);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other electron transport and membrane-associated energy conservation proteins ',59,61);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'respiration ',55,62);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'fermentation ',55,63);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'metabolism of energy reserves (glycogen, trehalose) ',55,64);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'glyoxylate cycle ',55,65);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'oxidation of fatty acids ',55,66);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other energy generation activities ',55,67);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'CELL GROWTH, CELL DIVISION AND DNA SYNTHESIS ',0,68);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'cell growth ',68,69);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'budding, cell polarity and filament formation ',68,70);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'pheromone response, mating-type determination, sex-specific proteins ',68,71);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'sporulation and germination ',68,72);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'meiosis ',68,73);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'DNA synthesis and replication ',68,74);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'recombination and DNA repair ',68,75);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'cell cycle control and mitosis ',68,76);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'cell cycle check point proteins ',76,77);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'cytokinesis ',68,78);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other cell growth, cell division and DNA synthesis activities ',68,79);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'TRANSCRIPTION ',0,80);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'rRNA transcription ',80,81);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'rRNA synthesis ',81,82);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'rRNA processing ',81,83);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other rRNA-transcription activities ',81,84);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'tRNA transcription ',80,85);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'tRNA synthesis ',85,86);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'tRNA processing ',85,87);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'tRNA modification ',85,88);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other tRNA-transcription activities ',85,89);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'mRNA transcription ',80,90);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'mRNA synthesis ',90,91);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'general transcription activities ',91,92);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'transcriptional control ',91,93);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'chromatin modification ',91,94);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'mRNA processing (splicing) ',90,95);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'mRNA processing (5\'-, 3\'-end processing, mRNA degradation) ',90,96);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'3\'-end processing ',96,97);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'mRNA degradation ',96,98);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other mRNA-transcription activities ',90,99);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'RNA transport ',80,100);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other transcription activities ',80,101);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'PROTEIN SYNTHESIS ',0,102);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'ribosomal proteins ',102,103);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'translation ',102,104);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'translational control ',102,105);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'tRNA-synthetases ',102,106);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other protein-synthesis activities ',102,107);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'PROTEIN DESTINATION ',0,108);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'protein folding and stabilization ',108,109);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'protein targeting, sorting and translocation ',108,110);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'protein modification ',108,111);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'modification with fatty acids (e.g. myristylation, palmitylation, farnesylation) ',111,112);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'modification by phosphorylation, dephosphorylation ',111,113);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'modification by acetylation ',111,114);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other protein modifications ',111,115);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'assembly of protein complexes ',108,116);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'proteolysis ',108,117);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'cytoplasmic and nuclear degradation ',117,118);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'lysosomal and vacuolar degradation ',117,119);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other proteolytic degradation ',117,120);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other proteolytic proteins ',117,121);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other protein-destination activities ',108,122);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'TRANSPORT FACILITATION ',0,123);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'channels/pores ',123,124);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'ion channels ',124,125);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'ion transporters ',123,126);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'metal ion transporters (Cu, Fe, etc.) ',126,127);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other cation transporters (Na, K, Ca , NH4, etc.) ',126,128);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'anion transporters (Cl, SO4, PO4, etc.) ',126,129);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'C-compound and carbohydrate transporters ',123,130);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other C-compound transporters ',130,131);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'amino-acid transporters ',123,132);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'peptide-transporters ',123,133);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'lipid transporters ',123,134);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'purine and pyrimidine transporters ',123,135);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'allantoin and allantoate transporters ',123,136);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'transport ATPases ',123,137);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'ABC transporters ',123,138);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'drug transporters ',123,139);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other transport facilitators ',123,140);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'CELLULAR TRANSPORT AND TRANSPORTMECHANISMS ',0,141);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'nuclear transport ',141,142);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'mitochondrial transport ',141,143);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'vesicular transport (Golgi network, etc.) ',141,144);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'peroxisomal transport ',141,145);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'vacuolar transport ',141,146);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'extracellular transport (secretion) ',141,147);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'cellular import ',141,148);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'cytoskeleton-dependent transport ',141,149);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'transport mechanism ',141,150);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other transport mechanisms ',150,151);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other intracellular-transport activities ',141,152);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'CELLULAR BIOGENESIS (proteins are not localized to the corresponding organelle) ',0,153);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'biogenesis of cell wall (cell envelope) ',153,154);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'biogenesis of plasma membrane ',153,155);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'biogenesis of cytoskeleton ',153,156);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'biogenesis of endoplasmatic reticulum ',153,157);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'biogenesis of Golgi ',153,158);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'biogenesis of intracellular transport vesicles ',153,159);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'nuclear biogenesis ',153,160);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'biogenesis of chromosome structure ',153,161);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'mitochondrial biogenesis ',153,162);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'peroxisomal biogenesis ',153,163);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'endosomal biogenesis ',153,164);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'vacuolar and lysosomal biogenesis ',153,165);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other cellular biogenesis activities ',153,166);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'CELLULAR COMMUNICATION/SIGNAL TRANSDUCTION ',0,167);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'intracellular communication ',167,168);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'unspecified signal transduction ',168,169);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'second messenger formation ',169,170);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'regulation of G-protein activity ',169,171);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'key kinases ',169,172);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other unspecified signal transduction activities ',169,173);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'morphogenesis ',168,174);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'G-proteins ',174,175);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'regulation of G-protein activity ',174,176);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'key kinases ',174,177);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other morphogenetic activities ',174,178);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'osmosensing ',168,179);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'receptor proteins ',179,180);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'mediator proteins ',179,181);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'key kinases ',179,182);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'key phosphatases ',179,183);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other osmosensing activities ',179,184);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'nutritional response pathway ',168,185);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'receptor proteins ',185,186);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'second messenger formation ',185,187);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'G-proteins ',185,188);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'regulation of G-protein activity ',185,189);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'key kinases ',185,190);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'key phosphatases ',185,191);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other nutritional-response activities ',185,192);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'pheromone response generation ',168,193);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'receptor proteins ',193,194);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'G-proteins ',193,195);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'regulation of G-protein activity ',193,196);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'key kinases ',193,197);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'key phosphatases ',193,198);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other pheromone response activities ',193,199);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other signal-transduction activities ',168,200);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'CELL RESCUE, DEFENSE, CELL DEATH AND AGEING ',0,201);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'stress response ',201,202);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'DNA repair ',201,203);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other DNA repair ',203,204);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'detoxificaton ',201,205);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'detoxification involving cytochrome P450 ',205,206);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other detoxification ',205,207);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'cell death ',201,208);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'ageing ',201,209);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'degradation of exogenous polynucleotides ',201,210);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other cell rescue activities ',201,211);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'IONIC HOMEOSTASIS ',0,212);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'homeostasis of cations ',212,213);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'homeostasis of metal ions ',213,214);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'homeostasis of protons ',213,215);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'homeostasis of other cations ',213,216);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'homeostasis of anions ',212,217);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'homeostasis of sulfates ',217,218);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'homeostasis of phosphate ',217,219);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'homeostasis of chloride ',217,220);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'homeostasis of other anions ',217,221);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'CELLULAR ORGANIZATION (proteins are localized to the corresponding organelle) ',0,222);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'organization of cell wall ',222,223);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'organization of plasma membrane ',222,224);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'organization of cytoplasm ',222,225);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'organization of cytoskeleton ',222,226);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'organization of centrosome ',222,227);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'organization of endoplasmatic reticulum ',222,228);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'organization of Golgi ',222,229);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'organization of intracellular transport vesicles ',222,230);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'nuclear organization ',222,231);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'organization of chromosome structure ',222,232);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'mitochondrial organization ',222,233);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'peroxisomal organization ',222,234);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'endosomal organization ',222,235);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'vacuolar and lysosomal organization ',222,236);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'inner membrane organization ',222,237);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'extracellular/secretion proteins ',222,238);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other cellular organization ',222,239);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'TRANSPOSABLE ELEMENTS, VIRAL AND PLASMID PROTEINS ',0,240);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'other transposable elements, viral and plasmid proteins ',240,241);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'CLASSIFICATION NOT YET CLEAR-CUT ',0,242);
+INSERT INTO funcat (icon, definition, name, parent_funcat, id) VALUES (NULL,NULL,'UNCLASSIFIED PROTEINS ',0,243);
+
+done
+creating project perl module...done
+creating project configuration...done
+adding project to project list...done
+You should now add tool to your new project.
+Use the add_*_tool scripts in /usr/local/share/genDB.

@@ -1,0 +1,129 @@
+GenDB project: 'OB2597'
+contig '1096704224162' initialized
+start = 1, stop = 10000
+registering ORFs from contig 1096704224162
+orf: C37_0001	# facts: 0	start: 0; stop: 491		length: 492
+   overlapping ORFs [1]:
+	C37_0002[63:473:411]
+		orfs are on opposite strands
+		overlap = 411
+		C37_0001 completely encompasses C37_0002
+		C37_0002 has 95 HQ facts, but C37_0001 has no facts
+		setting status of C37_0001 to ignored
+
+		checking whether any other ORFs are affected
+		setting status of C37_0002 to annotated
+
+
+orf: C37_0003	# facts: 0	start: 814; stop: 1257		length: 444
+		no overlaps
+		setting status of C37_0003 to annotated
+
+orf: C37_0004	# facts: 0	start: 1277; stop: 1414		length: 138
+		no overlaps
+		setting status of C37_0004 to annotated
+
+orf: C37_0005	# facts: 0	start: 1551; stop: 2048		length: 498
+		no overlaps
+		setting status of C37_0005 to annotated
+
+orf: C37_0006	# facts: 2	start: 2298; stop: 2555		length: 258
+   overlapping ORFs [1]:
+	skipping C37_0007 since it's status is ignored
+
+orf: C37_0007	# facts: 0	start: 2430; stop: 2612		length: 183
+   overlapping ORFs [1]:
+	C37_0006[2298:2555:258]
+		orfs are on opposite strands
+		overlap = 125
+		C37_0006 has 2 HQ facts, but C37_0007 has no facts
+		setting status of C37_0007 to ignored
+
+		checking whether any other ORFs are affected
+		setting status of C37_0006 to annotated
+
+
+orf: C37_0008	# facts: 1	start: 2630; stop: 3256		length: 627
+		no overlaps
+		setting status of C37_0008 to annotated
+
+orf: C37_0009	# facts: 0	start: 3285; stop: 4277		length: 993
+   overlapping ORFs [2]:
+	skipping C37_0010 since it's status is ignored
+	skipping C37_0011 since it's status is ignored
+
+orf: C37_0010	# facts: 0	start: 3480; stop: 4181		length: 702
+   overlapping ORFs [2]:
+	skipping C37_0009 since it's status is ignored
+	skipping C37_0011 since it's status is ignored
+
+orf: C37_0011	# facts: 0	start: 4178; stop: 4720		length: 543
+   overlapping ORFs [3]:
+	skipping C37_0009 since it's status is ignored
+	skipping C37_0010 since it's status is ignored
+	skipping C37_0012 since it's status is ignored
+
+orf: C37_0012	# facts: 0	start: 4690; stop: 5934		length: 1245
+   overlapping ORFs [2]:
+	skipping C37_0011 since it's status is ignored
+	C37_0013[4855:5838:984]
+		orfs are on opposite strands
+		overlap = 984
+		C37_0012 completely encompasses C37_0013
+		C37_0013 has 1 HQ facts, but C37_0012 has no facts
+		setting status of C37_0012 to ignored
+
+		checking whether any other ORFs are affected
+		setting status of C37_0013 to annotated
+
+
+orf: C37_0014	# facts: 0	start: 5993; stop: 6709		length: 717
+   overlapping ORFs [1]:
+	skipping C37_0015 since it's status is ignored
+
+orf: C37_0015	# facts: 0	start: 6005; stop: 6613		length: 609
+   overlapping ORFs [1]:
+	skipping C37_0014 since it's status is ignored
+
+orf: C37_0016	# facts: 0	start: 6808; stop: 9450		length: 2643
+   overlapping ORFs [3]:
+	skipping C37_0017 since it's status is ignored
+	C37_0018[7327:9273:1947]
+		orfs are on opposite strands
+		overlap = 1947
+		C37_0016 completely encompasses C37_0018
+		C37_0018 has 2 HQ facts, but C37_0016 has no facts
+		setting status of C37_0016 to ignored
+
+		checking whether any other ORFs are affected
+		setting status of C37_0018 to annotated
+
+		skipping C37_0019 since C37_0016 has been assigned status ignored
+
+orf: C37_0017	# facts: 0	start: 6829; stop: 7212		length: 384
+   overlapping ORFs [1]:
+	skipping C37_0016 since it's status is ignored
+
+orf: C37_0019	# facts: 14	start: 9438; stop: 11228		length: 1791
+   overlapping ORFs [1]:
+	skipping C37_0016 since it's status is ignored
+
+
+
+	Summary:
+
+C37_0001: ignored
+C37_0002: annotated
+C37_0003: annotated
+C37_0004: annotated
+C37_0005: annotated
+C37_0006: annotated
+C37_0007: ignored
+C37_0008: annotated
+C37_0012: ignored
+C37_0013: annotated
+C37_0016: ignored
+C37_0018: annotated
+
+
+updating GenDB annotation

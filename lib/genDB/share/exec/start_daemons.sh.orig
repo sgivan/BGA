@@ -1,0 +1,35 @@
+#!/bin/sh
+# $Id: start_daemons.sh,v 1.1.1.1 2005/02/22 18:05:36 givans Exp $
+
+# $Log: start_daemons.sh,v $
+# Revision 1.1.1.1  2005/02/22 18:05:36  givans
+#
+#
+# Revision 1.2  2002/01/29 16:05:58  blinke
+# added path to clusterlist
+#
+# Revision 1.1  2002/01/29 15:42:03  blinke
+# Initial revision
+#
+# Revision 1.1  2000/05/19 16:10:39  blinke
+# Initial revision
+#
+
+### configuration area
+
+GENDB_INSTALL_DIR=/local/cluster/genDB
+
+### end of config
+
+# load list of cluster machines
+
+. $GENDB_INSTALL_DIR/share/exec/clusterlist
+
+# loop
+for i in $CLUSTER_MACHINES
+do
+   
+   rsh $i $GENDB_INSTALL_DIR/bin/GENDB_daemon.pl
+   echo "started GENDB daemon on host $i"
+
+done

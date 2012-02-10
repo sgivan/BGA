@@ -1,0 +1,127 @@
+<PRE>
+</PRE>
+
+<html>
+<!---
+ENTRY       map00072
+DEFINITION  Synthesis and degradation of ketone bodies - Reference pathway
+--->
+<head>
+<title>
+Synthesis and degradation of ketone bodies - Reference pathway
+</title>
+<script language="JavaScript">
+<!---
+var stat = "";
+var intid = -1;
+var frame = 0;
+var nid = 4;
+function note(mes) {
+	stat = mes;
+	intid = setTimeout( 'intr()', 2000 );
+	frame = 0;
+	pushstat();
+}
+function intr() {
+	pushstat();
+	intid = setTimeout( 'intr()', 2000 );
+}
+function clr() {
+	clearTimeout( intid );
+	window.status = "";
+}
+function pushstat() {
+	var pos, f, pfr, suf;
+	var len = stat.length;
+
+	pfr = frame;
+	f = frame * nid;
+	for( var i = 0; i < len && f > 0; i++ ) {
+		if (stat.charAt(i) == " ") { f--; }
+	}
+	if (i < len) { pos = i; }
+	else { pos = 0; frame = 0; pfr = 0; }
+	f = nid;
+	if (pfr == 0) { f++; }
+	for( var i = pos; i < len && f > 0; i++ ) {
+		if (stat.charAt(i) == " ") { f--; }
+	}
+	suf = (pfr == 0) ? "" : " //";
+	if (i < len) { suf = "..."; }
+	window.status = stat.substring( pos, i ) + suf;
+	frame++;
+}
+//--->
+</script>
+</head>
+
+<body>
+<form method="GET" action="/dbget-bin/get_pathway">
+
+<b>Synthesis and degradation of ketone bodies - Reference pathway</b>
+<br>
+Go to: [
+<a href="/dbget-bin/get_linkdb?pathway+map00072">LinkDB search</a>
+]
+<br>
+Go to:
+<select name="org_name">
+<option value="map" selected>Reference pathway
+<option value="pae">Pseudomonas aeruginosa
+<option value="hpy">Helicobacter pylori 26695
+<option value="hpj">Helicobacter pylori J99
+<option value="bsu">Bacillus subtilis
+<option value="mtu">Mycobacterium tuberculosis
+<option value="bbu">Borrelia burgdorferi
+<option value="dra">Deinococcus radiodurans
+<option value="sce">Saccharomyces cerevisiae
+<option value="spo">Schizosaccharomyces pombe
+<option value="cel">Caenorhabditis elegans
+<option value="dme">Drosophila melanogaster
+<option value="mmu">Mus musculus
+<option value="hsa">Homo sapiens
+<option value="mim">Genetic diseases in OMIM
+<option value="gb">Sequences in GenBank
+<option value="sp">Sequences in SWISS-PROT
+<option value="pir">Sequences in PIR
+<option value="pdb">3D structures in PDB
+<option value="ot">All organisms in KEGG
+</select>
+
+<input type="submit" value="Exec">
+<input type="hidden" name="mapno" value="00072">
+<br>
+<img src="/kegg/pathway/map/map00072.gif" usemap="#mapdata">
+<map name="mapdata">
+
+<area shape=rect	coords=109,303,186,338	href="/kegg/pathway/map/map00100.html"	onMouseOver="note('map00100.html');return true"	onMouseOut="clr()">
+<area shape=rect	coords=146,47,388,90	href="/dbget-bin/get_linkdb?pathway+map00072"	onMouseOver="note('pathway: map00072');return true"	onMouseOut="clr()">
+<area shape=rect	coords=179,129,305,156	href="/kegg/pathway/map/map00071.html"	onMouseOver="note('map00071.html');return true"	onMouseOut="clr()">
+<area shape=rect	coords=217,267,262,284	href="/dbget-bin/www_bget?enzyme+4.1.3.5"	onMouseOver="note('enzyme: 4.1.3.5');return true"	onMouseOut="clr()">
+<area shape=rect	coords=217,345,262,362	href="/dbget-bin/www_bget?enzyme+4.1.3.4"	onMouseOver="note('enzyme: 4.1.3.4');return true"	onMouseOut="clr()">
+<area shape=rect	coords=218,454,263,471	href="/dbget-bin/www_bget?enzyme+4.1.1.4"	onMouseOver="note('enzyme: 4.1.1.4');return true"	onMouseOut="clr()">
+<area shape=rect	coords=283,201,328,218	href="/dbget-bin/www_bget?enzyme+2.3.1.9"	onMouseOver="note('enzyme: 2.3.1.9');return true"	onMouseOut="clr()">
+<area shape=rect	coords=296,454,340,471	href="/dbget-bin/www_bget?enzyme+1.1.1.30"	onMouseOver="note('enzyme: 1.1.1.30');return true"	onMouseOut="clr()">
+<area shape=rect	coords=364,168,486,195	href="/kegg/pathway/map/map00620.html"	onMouseOver="note('map00620.html');return true"	onMouseOut="clr()">
+<area shape=rect	coords=416,217,489,244	href="/kegg/pathway/map/map00010.html"	onMouseOver="note('map00010.html');return true"	onMouseOut="clr()">
+<area shape=rect	coords=51,307,96,324	href="/dbget-bin/www_bget?enzyme+2.8.3.5"	onMouseOver="note('enzyme: 2.8.3.5');return true"	onMouseOut="clr()">
+<area shape=rect	coords=77,496,152,531	href="/kegg/pathway/map/map00650.html"	onMouseOver="note('map00650.html');return true"	onMouseOut="clr()">
+<area shape=circle	coords=240,210,4	href="/dbget-bin/www_bget?compound+C00332"	onMouseOver="note('compound: C00332');return true"	onMouseOut="clr()">
+<area shape=circle	coords=240,320,4	href="/dbget-bin/www_bget?compound+C00356"	onMouseOver="note('compound: C00356');return true"	onMouseOut="clr()">
+<area shape=circle	coords=240,510,4	href="/dbget-bin/www_bget?compound+C00207"	onMouseOver="note('compound: C00207');return true"	onMouseOut="clr()">
+<area shape=circle	coords=240,429,4	href="/dbget-bin/www_bget?compound+C00164"	onMouseOver="note('compound: C00164');return true"	onMouseOut="clr()">
+<area shape=circle	coords=318,510,4	href="/dbget-bin/www_bget?compound+C01089"	onMouseOver="note('compound: C01089');return true"	onMouseOut="clr()">
+<area shape=circle	coords=362,259,4	href="/dbget-bin/www_bget?compound+C00024"	onMouseOver="note('compound: C00024');return true"	onMouseOut="clr()">
+
+</map>
+
+</form>
+</body>
+<!---
+///
+--->
+</html>
+<HR>
+<B>[ <A HREF="/kegg/kegg2.html">KEGG</A> | <A HREF="/dbget/dbget.links.html">DBGET</A> | <A HREF="/">GenomeNet</A> ]</B>
+</BODY>
+</HTML>

@@ -1,0 +1,63 @@
+## 
+## gendb.rc
+##
+## This is the default GENDB gff2ps configuration file:
+## 
+#
+# L ######PAGE LAYOUT & PROGRAM OPTIONS######
+#
+margin_upper=1cm
+margin_bottom=1cm
+margin_right=1cm
+margin_left=1cm
+background_color=white
+block_style=default
+show_blocks_top-bottom=1
+default_block_spacing_width=0.25cm
+default_track_width=1cm
+default_track_spacing_width=0.25cm
+strand_show_forward=on
+strand_show_independent=off
+strand_show_reverse=on
+default_scale_width=0.25cm
+major_tickmarks_nucleotides=25000
+minor_tickmarks_num=25
+show_positions=true
+#
+frame0_color=blue
+frame1_color=red
+frame2_color=green
+frame_unknown_color=orange
+#
+header_style=boxed
+#title=Contig co4 c. glutamicum
+#subtitle=Test and example for using gff.
+show_page_numbers=on
+show_time=off
+show_date=on
+#
+left_source_label_width=3cm
+#
+#
+# G ############GROUP FEATURES############
+#
+# For All Groups
+!/.*ID_(Fou|G\+C).*/::group_shape=line
+*::group_line=bracket
+#
+/.*std.*/::group_line_color=black
+#
+# S ############SOURCE FEATURES############
+#
+#
+# For All Sources
+*::unfold_grouped_ungrouped=off
+*::unfold_grouped_line=off
+*::unfold_ungrouped_line=off
+#
+# F ############GENOMIC FEATURES############
+#
+#
+# For All Features
+#*::fill_shape_mode=1_color
+*::fill_vector_mode=rainbow

@@ -1,0 +1,4 @@
+FactView.pm:	  Utils::open_url( $fact->SRSrecordURL );
+Utils.pm:###     open URL in Userdefined browser          ###
+Utils.pm:	$cmd = $GENDB::GENDB_CONFIG::GENDB_NETSCAPE." -remote 'openURL(".$url.",new-window) ||"..$GENDB::GENDB_CONFIG::GENDB_NETSCAPE." ".$url;
+Utils.pm:	$cmd = $GENDB::GENDB_CONFIG::GENDB_OPERA." -remote 'openURL(".$url.",new-window)'";

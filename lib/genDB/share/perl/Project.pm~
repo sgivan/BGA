@@ -1,0 +1,13 @@
+package Project;
+# $Id$
+
+use warnings;
+use strict;
+use Carp;
+use vars qw/ @ISA /;
+
+1;
+
+sub new {
+
+}

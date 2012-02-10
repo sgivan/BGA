@@ -1,0 +1,48 @@
+#!/bin/sh 
+# $Id: blast2,v 1.1.1.1 2005/02/22 18:05:36 givans Exp $
+#
+# A wrapper for blast2 to enable users to run blast2 as blast2 not
+# as blastall and a lot of options
+# 
+
+DBROOT=/dbase/NCBI/db
+export BLASTMAT=/local/cluster/share/ncbi/data
+export BLASTDB=/dbase/NCBI/db
+if [ $# -le 0 ]
+ then
+  echo "Usage: $0 <dbfile> <queryfile>"
+  exit
+fi
+
+tool=`basename $0`
+realtool=`echo $tool | sed -e 's/2//'`
+    
+# to emulate blast1 usage
+dbfile=$1
+shift
+
+if [ "$dbfile" = "embl.fas" ] 
+then
+ dbfile=nt
+elif [ "$dbfile" = "trembl.fas" ]
+then
+ dbfile=nr
+fi
+
+# are we using the short names like, sprot or embl?
+if [ ! -f $dbfile ]
+then
+  dbfile="$DBROOT/$dbfile"
+fi
+
+
+queryfile=$1;
+shift
+
+# set NCBI to point to ncbi data directory
+#NCBI=/vol/biotools/share/ncbi
+#export NCBI
+
+exec /local/cluster/bin/blastall -a 1 -e 0.0001 -p $realtool -d $dbfile -i $queryfile $*
+#exec /usr/local/share/ncbi/build/blastall -a 1 -p $realtool -d $dbfile -i $queryfile $*
+#exec rsh chrom40 blastall -a 1 -p $realtool -d $dbfile -i $queryfile $*

@@ -1,0 +1,29 @@
+/All_Aminoacid.pm/1.1.1.1/Tue Feb 22 18:05:37 2005//
+/Aminoacid.pm/1.1.1.1/Tue Feb 22 18:05:37 2005//
+/CoBias_helper.pm/1.1.1.1/Tue Feb 22 18:05:37 2005//
+/Codon.pm/1.1.1.1/Tue Feb 22 18:05:37 2005//
+/CodonUsage.pm/1.1.1.1/Tue Feb 22 18:05:37 2005//
+/FastaStorage.pm/1.1.1.1/Tue Feb 22 18:05:37 2005//
+/GODB.pm/1.1.1.1/Tue Feb 22 18:05:37 2005//
+/Gen_Codes.pm/1.1.1.1/Tue Feb 22 18:05:37 2005//
+/Importer.pm/1.1.1.1/Tue Feb 22 18:05:37 2005//
+/ProjectConfig.pm/1.1.1.1/Tue Feb 22 18:05:37 2005//
+/UserConfig.pm/1.1.1.1/Tue Feb 22 18:05:37 2005//
+/blast_helper_no_filter.pm/1.1.1.1/Tue Feb 22 18:05:37 2005//
+/embl_exporter.pm/1.1.1.1/Tue Feb 22 18:05:37 2005//
+/fasta_exporter.pm/1.1.1.1/Tue Feb 22 18:05:37 2005//
+/genbank_exporter.pm/1.1.1.1/Tue Feb 22 18:05:37 2005//
+/genetic_codes.pm/1.1.1.1/Tue Feb 22 18:05:37 2005//
+/genome_helper.pm/1.1.1.1/Tue Feb 22 18:05:37 2005//
+/genome_helper_no_filter.pm/1.1.1.1/Tue Feb 22 18:05:37 2005//
+/gff_export.pm/1.1.1.1/Tue Feb 22 18:05:37 2005//
+/interpro_helper.pm/1.1.1.1/Tue Feb 22 18:05:37 2005//
+/pfscan_helper.pm/1.1.1.1/Tue Feb 22 18:05:37 2005//
+/signalp_helper.pm/1.1.1.1/Tue Feb 22 18:05:37 2005//
+/tRNAScan.pm/1.1.1.1/Tue Feb 22 18:05:37 2005//
+/tmhmm_helper.pm/1.1.1.1/Tue Feb 22 18:05:37 2005//
+D/Importer////
+D/archive////
+/Glimmer2.pm/1.2/Fri Jan  5 23:11:33 2007//
+/blast_helper.pm/1.2/Mon Jul 18 21:16:30 2011//
+/pfam_helper.pm/1.3/Mon Jul 18 21:17:53 2011//
