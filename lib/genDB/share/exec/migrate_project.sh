@@ -4,7 +4,7 @@
 # to GENDB 1.1
 
 ### config area
-GENDB_INSTALL_DIR=/local/cluster/genDB
+GENDB_INSTALL_DIR=$HOME/projects/BGA/lib/genDB
 PATH=/bin:/usr/bin
 
 usage ()

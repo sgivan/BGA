@@ -17,7 +17,7 @@
 ### configuration area
 
 # root dir of gendb installation
-GENDB_INSTALL_DIR=/local/cluster/genDB
+GENDB_INSTALL_DIR=$HOME/projects/BGA/lib/genDB
 
 ### end of config area
 #. $GENDB_INSTALL_DIR/share/exec/clusterlist

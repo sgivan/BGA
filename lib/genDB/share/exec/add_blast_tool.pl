@@ -2,7 +2,7 @@
 # $Id: add_blast_tool.pl,v 1.1.1.1 2005/02/22 18:05:36 givans Exp $
 # little script to simply adding new tools to GENDB
 
-use lib "/local/cluster/genDB/share/perl";
+use lib "$ENV{HOME}/projects/BGA/lib/genDB/share/perl";
 
 use Projects;
 use GENDB::GENDB_CONFIG qw($GENDB_BLAST_PATH $GENDB_INSTALL_DIR);

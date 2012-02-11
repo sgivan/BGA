@@ -2,7 +2,7 @@
 
 # little script to simply adding signalp tools to GENDB
 
-use lib "/local/cluster/genDB/share/perl";
+use lib "$ENV{HOME}/projects/BGA/lib/genDB/share/perl";
 
 use Projects;
 use GENDB::GENDB_CONFIG qw($GENDB_SIGNALP);

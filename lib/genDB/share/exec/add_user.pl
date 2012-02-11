@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 # $Id: add_user.pl,v 1.1.1.1 2005/02/22 18:05:36 givans Exp $
 
-use lib "/local/cluster/genDB/share/perl";
+use lib "$ENV{HOME}/projects/BGA/lib/genDB/share/perl";
 use strict;
 use vars qw($opt_p $opt_l $opt_d $opt_r $opt_U $opt_P $opt_a);
 use Getopt::Std;

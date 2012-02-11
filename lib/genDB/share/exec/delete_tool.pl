@@ -3,7 +3,7 @@
 # little script to simply delete tools from GENDB
 
 #use lib "@GENDB_INSTALL_DIR@/share/perl";
-use lib "/local/cluster/genDB/share/perl";
+use lib "$ENV{HOME}/projects/BGA/lib/genDB/share/perl";
 
 use Projects;
 use Getopt::Std;

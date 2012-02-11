@@ -9,7 +9,7 @@
 #
 ####################################################
 
-use lib '/local/cluster/genDB/share/perl';
+use lib "$ENV{HOME}/projects/BGA/lib/genDB/share/perl";
 
 use strict 'refs';
 

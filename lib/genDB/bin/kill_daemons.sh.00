@@ -1,7 +1,7 @@
 #!/bin/sh
-i=`/local/cluster/genDB/bin/joblist.sql | wc -l`
-#. /mnt/local/cluster/sge/cgrb/common/settings.sh
-. /local/cluster/sge/cgrb/common/settings.sh
+i=`$HOME/projects/BGA/lib/genDB/bin/joblist.sql | wc -l`
+#. /mnt$HOME/projects/BGA/lib/sge/cgrb/common/settings.sh
+. $HOME/projects/BGA/lib/sge/cgrb/common/settings.sh
 echo; echo;
 echo '+++++++++++++++++++++++++++++++++'
 date

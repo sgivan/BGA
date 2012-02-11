@@ -23,8 +23,8 @@
 #
 
 ### config area
-GENDB_INSTALL_DIR=/local/cluster/genDB
-PATH=/bin:/usr/bin
+GENDB_INSTALL_DIR=$HOME/projects/BGA/lib/genDB
+PATH=/bin:/usr/bin:$HOME/projects/BGA/bin
     
 DEFAULT_SQL_SCRIPT=$GENDB_INSTALL_DIR/share/sql-scripts/main_init.sql
 CUSTOM_SCRIPTS_DIR=$GENDB_INSTALL_DIR/share/sql-scripts/custom_sql_scripts
