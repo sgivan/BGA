@@ -3,7 +3,7 @@
 ### configuration area
 
 # root dir of gendb installation
-GENDB_INSTALL_DIR=$HOME/projects/BGA/lib/genDB
+GENDB_INSTALL_DIR=$HOME/projects/BGA/share/genDB
 
 ### end of config area
 

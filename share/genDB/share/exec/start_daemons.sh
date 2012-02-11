@@ -17,15 +17,15 @@
 
 ### configuration area
 
-GENDB_INSTALL_DIR=$HOME/projects/BGA/lib/genDB
+GENDB_INSTALL_DIR=$HOME/projects/BGA/share/genDB
 
 ### end of config
 
 # load list of cluster machines
 
 . $GENDB_INSTALL_DIR/share/exec/clusterlist
-#. /mnt$ENV{HOME}/projects/BGA/lib/sge/cgrb/common/settings.sh
-. $HOME/projects/BGA/lib/sge/cgrb/common/settings.sh
+#. /mnt$ENV{HOME}/projects/BGA/share/sge/cgrb/common/settings.sh
+. $HOME/projects/BGA/share/sge/cgrb/common/settings.sh
 
 # loop
 for i in $CLUSTER_MACHINES

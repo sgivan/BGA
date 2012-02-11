@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 # $Id: job_submitter,v 1.1.1.1 2005/02/22 18:05:36 givans Exp $
 
-use lib "$ENV{HOME}/projects/BGA/lib/genDB/share/perl";
+use lib "$ENV{HOME}/projects/BGA/share/genDB/share/perl";
 
 use Projects;
 
