@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 # $Id: genDB_importContig.pl,v 3.2 2007/07/11 20:48:11 givans Exp $
 #
 use warnings;
@@ -8,7 +8,7 @@ use Carp;
 use Getopt::Std;
 #use Bio::Seq::SeqFactory;
 use Bio::SeqIO;
-use lib '/local/cluster/genDB/share/perl';
+use lib "$ENV{HOME}/projects/BGA/share/genDB/share/perl";
 use Projects;
 use vars qw/ $opt_p $opt_f $opt_v $opt_d $opt_h $opt_m /;
 use vars qw/ $ORF_STATE_ATTENTION_NEEDED $ORF_STATE_IGNORED $ORF_STATE_ANNOTATED $ORF_STATE_FINISHED /;

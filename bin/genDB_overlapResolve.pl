@@ -1,11 +1,11 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 # $Id: genDB_overlapResolve.pl,v 3.17 2006/10/03 23:59:01 givans Exp $
 use warnings;
 use strict;
 use Carp;
 use Getopt::Std;
 use vars qw/ $opt_v $opt_d $opt_h $opt_p $opt_c $opt_r $opt_z $opt_Z $opt_A $opt_i /;
-use lib '/local/cluster/genDB/share/perl';
+use lib "$ENV{HOME}/projects/BGA/share/genDB/share/perl";
 use Projects;
 
 $SIG{QUIT} = $SIG{INT} = $SIG{TERM} = $SIG{KILL} = $SIG{ABRT} = $SIG{STOP} = \&death;

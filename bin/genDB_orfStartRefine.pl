@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 #
 # $Id: genDB_orfStartRefine.pl,v 3.7 2006/10/03 16:55:39 givans Exp $
 #

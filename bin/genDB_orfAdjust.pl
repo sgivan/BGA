@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 # $Id: genDB_orfAdjust.pl,v 3.4 2005/06/02 02:32:34 givans Exp $
 
 #use warnings;
@@ -6,7 +6,7 @@ use strict;
 use Carp;
 use Getopt::Std;
 use vars qw/ $opt_d $opt_v $opt_h $opt_f $opt_p $opt_c $opt_D $ORF_STATE_ANNOTATED $opt_a $opt_A /;
-use lib '/local/cluster/genDB/share/perl';
+use lib "$ENV{HOME}/projects/BGA/share/genDB/share/perl";
 use Projects;
 
 getopts('f:p:c:dDvhaA');

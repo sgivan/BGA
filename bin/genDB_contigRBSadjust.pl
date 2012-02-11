@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 # $Id: genDB_contigRBSadjust.pl,v 3.3 2005/11/17 00:38:55 givans Exp $
 use warnings;
 use Carp;

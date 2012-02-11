@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 # $Id: genDB_annot_summary.pl,v 3.3 2005/06/30 23:16:39 givans Exp $
 
 use warnings;
@@ -8,7 +8,7 @@ use DB_File;
 use Fcntl;
 use Getopt::Std;
 use vars qw/ $opt_h $opt_v $opt_d $opt_p $opt_g $opt_P $opt_I $opt_t /;
-use lib '/local/cluster/genDB/share/perl';
+use lib "$ENV{HOME}/projects/BGA/share/genDB/share/perl";
 use Projects;
 
 getopts('hvdp:g:P:I:t:');

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 # $Id: annotator.pl,v 3.18.2.1 2008/01/31 03:44:37 givans Exp $
 #
 # standard version
@@ -14,7 +14,8 @@ use CGRB::PFAM;
 use SOAP::Lite;
 use Statistics::Distributions;
 use Statistics::Descriptive;
-use lib '/local/cluster/genDB/share/perl';
+#use lib '/local/cluster/genDB/share/perl';
+use lib "$ENV{HOME}/projects/BGA/share/genDB/share/perl";
 use Projects;
 
 getopts('p:o:c:b:Aa:l:g:F:r:RdDvfthOe:EiITzECGSX');

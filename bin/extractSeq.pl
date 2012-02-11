@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 # $Id: extractSeq.pl,v 1.6 2005/03/03 23:49:51 givans Exp $
 #
 use strict;

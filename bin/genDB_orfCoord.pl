@@ -1,11 +1,11 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 # $Id: genDB_orfCoord.pl,v 3.9 2005/03/25 01:16:44 givans Exp $
 use warnings;
 use strict;
 use Carp;
 use vars qw/ $opt_p $opt_o $opt_c $opt_f $opt_d $opt_v $opt_h $opt_F $opt_D $opt_A $opt_u /;
 use Getopt::Std;
-use lib '/local/cluster/genDB/share/perl';
+use lib "$ENV{HOME}/projects/BGA/share/genDB/share/perl";
 use Projects;
 
 getopts('p:o:c:f:dvhFD:Au');

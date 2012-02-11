@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 # $Id: genDB_getOrf.pl,v 3.12 2006/12/21 18:33:37 givans Exp $
 use warnings;
 use strict;
@@ -7,7 +7,7 @@ use vars qw/ $opt_d $opt_v $opt_h $opt_O $opt_o $opt_p $opt_u $opt_U $opt_D $opt
 use Getopt::Std;
 use Bio::Seq::SeqFactory;
 use Bio::SeqIO;
-use lib '/local/cluster/genDB/share/perl';
+use lib "$ENV{HOME}/projects/BGA/share/genDB/share/perl";
 use Projects;
 
 getopts('dvhO:o:p:u:D:Ff:Pc:C:UIgGrR');
