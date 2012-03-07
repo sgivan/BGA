@@ -15,7 +15,8 @@ require Exporter;
 #
 # root directory of GENDB installation
 #
-$GENDB_INSTALL_DIR="/local/cluster/genDB";
+#$GENDB_INSTALL_DIR="/local/cluster/genDB";
+$GENDB_INSTALL_DIR = "/home/cgrb/givans/projects/BGA/share/genDB";
 
 ###
 #

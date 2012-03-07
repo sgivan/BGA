@@ -223,7 +223,7 @@ foreach my $annotTool (@annotTool) {
 				 #			       -index      =>  'binarysearch',
 				 -index	   =>	'bdb',
 				);
-		if ($opt_I) {
+	if ($opt_I) {
       $toolDB->build_index('/dbase/scratch/swiss/sprot.dat') if ($opt_I);
       print "new index complete\n";
       exit();
@@ -266,23 +266,23 @@ foreach my $annotTool (@annotTool) {
     $toolDB = $pfam;
   } else {
     $toolDB = undef;
-  }
+  } # end of setting up $toolDB
 
   my $loopcnt = 0;
-  foreach my $orfName (@orfs) {
+  foreach my $orfName (@orfs) { # loop through all the ORFs in the genome project
     print "\$orfName isa '", ref($orfName), "'\n" if ($debug);
 #    last if ($loopcnt > 4000);
     if ($orfName) {
       print "if (\$orfName)\n" if ($debug);
       my ($orf,$orfCommonName);
-#      if ($orfName->isa('GENDB::orf')) {
+
       if (ref($orfName) && $orfName->isa('GENDB::orf')) {
-	print "if (\$orfName->isa('GENDB::orf'))\n" if ($debug);
-	$orf = $orfName;
-	$orfName = $orf->name();
+        print "if (\$orfName->isa('GENDB::orf'))\n" if ($debug);
+        $orf = $orfName;
+        $orfName = $orf->name();
       } else {
-	print "\$orfName is not a GENDB::orf\n" if ($debug);
-	$orf = GENDB::orf->init_name($orfName);
+        print "\$orfName is not a GENDB::orf\n" if ($debug);
+        $orf = GENDB::orf->init_name($orfName);
       }
       next if (!$orf->frame());
       #
@@ -290,15 +290,15 @@ foreach my $annotTool (@annotTool) {
       #
 
       if ($addAnnot) {
-	if ($addAnnot == 1) {
-	  next if ($orf->status() && $orf->status() == 3);
-	} elsif ($addAnnot == 2) {
-	  my $annotations = $orf->fetch_annotations($annotator->id());
-	  #	print "number of annotations:  ", scalar(keys %$annotations), "\n";
-	  my @annotations = keys %$annotations;
-	  
-	  next if (scalar(@annotations));
-	}
+        if ($addAnnot == 1) {
+          next if ($orf->status() && $orf->status() == 3);
+        } elsif ($addAnnot == 2) {
+          my $annotations = $orf->fetch_annotations($annotator->id()); # fetch all annotations from database
+          #	print "number of annotations:  ", scalar(keys %$annotations), "\n";
+          my @annotations = keys %$annotations;
+          
+          next if (scalar(@annotations)); # go to next ORF if there are no annotations
+        }
       }
 
       #
@@ -308,11 +308,10 @@ foreach my $annotTool (@annotTool) {
       # Skip "ignored" ORFs
       #
       if ($orf->status() == 2) { # these are 'ignored' ORFs
-#	print "ORF status is: '", $orf->status(), "'\n";
-	if (!$force) {
-	  print "not annotating ", $orf->name(), " since it's status is ", $orf->status(), "\n" if ($verbose);
-	  next;
-	}
+        if (!$force) {
+          print "not annotating ", $orf->name(), " since it's status is ", $orf->status(), "\n" if ($verbose);
+          next;
+        }
       }
       my $orfID = $orf->id();
       next unless ($orfID);
@@ -331,9 +330,9 @@ foreach my $annotTool (@annotTool) {
       # Determine length of protein
       #    
       if ($orf->stop() && $orf->start()) {
-	$protLength = int(abs($orf->stop() - $orf->start())/3);
+        $protLength = int(abs($orf->stop() - $orf->start())/3);
       } else {
-	$protLength = 10;
+        $protLength = 10;
       }
       #   print "length of product = '$protLength'\n" if ($verbose);
       #
@@ -344,179 +343,200 @@ foreach my $annotTool (@annotTool) {
       # Loop through facts
       #
       foreach my $factID (keys %$facts) {
-      
-	my $description = $facts->{$factID}->description();
-	my $toolResult = $facts->{$factID}->toolresult();
-	my $tool = GENDB::tool->init_id($facts->{$factID}->tool_id());
-	my $toolName = $tool->name();
-	my $dbRef = $facts->{$factID}->dbref();
- 
-	my ($toolScore,$toolE);
-      
-	if ($tool->id() == $annotTool) { # only cycle through facts from selected tool
-	  print "\n\nTesting:  $toolName [$toolResult]: $description\n" if ($debug && $toolName && $toolResult && $description);
-	  if ($toolResult =~ /\(s\:(\d+)\,e\:([0-9e\-\.]+)\)/) {
-	    $toolScore = $1;
-	    $toolE = $2;
-	  } elsif ($toolResult =~ /([\d\-e\.]+)/) {
-	    $toolE = $1;
-	    $toolScore = 1;
-	  } else {
-	    # Set scores to 0
-	    $toolScore = 0;
-	    $toolE = 0;
-	  }
-	  #	_debug("toolE = '$toolE', toolScore = '$toolScore'") if ($debug);
-	  next unless ($toolE <= $toolCutoff);
-	  #	_debug("$toolE passed toolCutoff ($toolCutoff)") if ($debug);
-	  #
-	  # fact is from correct tool and satisfies E-value threshold
-	  #
+          
+        my $description = $facts->{$factID}->description();
+        my $toolResult = $facts->{$factID}->toolresult();
+        my $tool = GENDB::tool->init_id($facts->{$factID}->tool_id());
+        my $toolName = $tool->name();
+        my $dbRef = $facts->{$factID}->dbref();
+     
+        my ($toolScore,$toolE);
+          
+        if ($tool->id() == $annotTool) { # only cycle through facts from selected tool
+          print "\n\nTesting:  $toolName [$toolResult]: $description\n" if ($debug && $toolName && $toolResult && $description);
+          if ($toolResult =~ /\(s\:(\d+)\,e\:([0-9e\-\.]+)\)/) {
+            $toolScore = $1;
+            $toolE = $2;
+          } elsif ($toolResult =~ /([\d\-e\.]+)/) {
+            $toolE = $1;
+            $toolScore = 1;
+          } else {
+            # Set scores to 0
+            $toolScore = 0;
+            $toolE = 0;
+          }
+          #	_debug("toolE = '$toolE', toolScore = '$toolScore'") if ($debug);
+          next unless ($toolE <= $toolCutoff);
+          #	_debug("$toolE passed toolCutoff ($toolCutoff)") if ($debug);
+          #
+          # fact is from correct tool and satisfies E-value threshold
+          #
 
-	  #
-	  # Go to next fact if fact is from excluded organism (only really applies to KEGG database)
-	  #
-	  if ($exclude) {
-	    next if ($facts->{$factID}->dbref() =~ /^$exclude\:/);
-	  }
+          #
+          # Go to next fact if fact is from excluded organism (only really applies to KEGG database)
+          #
+          if ($exclude) {
+            next if ($facts->{$factID}->dbref() =~ /^$exclude\:/);
+          }
 
-	  #
-	  # Check if db hit satisfies minimum overlap parameter
-	  #
-	  if ($facts->{$factID}->dbto() && $facts->{$factID}->dbfrom()) {
-	    my $span = (int(abs($facts->{$factID}->dbto() - $facts->{$factID}->dbfrom()))) / $protLength;
-	    #	  print "span = '$span'\n";
-	    #	  next unless ($span >= $overlapLength);
-	    if ($span >= $overlapLength) {
-	      _debug("span ($span) >= $overlapLength") if ($debug);
-	    } else {
-	      _debug("span ($span) < $overlapLength") if  ($debug);
-	      next;
-	    }
-	  }
+          #
+          # Check if db hit satisfies minimum overlap parameter
+          #
+          if ($facts->{$factID}->dbto() && $facts->{$factID}->dbfrom()) {
+            my $span = (int(abs($facts->{$factID}->dbto() - $facts->{$factID}->dbfrom()))) / $protLength;
+            #	  print "span = '$span'\n";
+            #	  next unless ($span >= $overlapLength);
+            if ($span >= $overlapLength) {
+              _debug("span ($span) >= $overlapLength") if ($debug);
+            } else {
+              _debug("span ($span) < $overlapLength") if  ($debug);
+              next;
+            }
+          }
 
-	  _debug('
-	  #
-	  # All preliminary parameters have been met
-	  # Add this fact to set of high-quality hits
-	  #
-	  ') if ($debug);
-	  
-	  $toolData{$factID} = [$toolScore, $toolE, $description, $dbRef];
-	  print "$toolName\n\tResult: [$toolResult]\n\tDBID: $dbRef\n\tDescr: $description\n" if ($debug && $toolName && $toolResult && $description);
-	  if ($toolDB) {
-	    #_debug('$toolDB exists') if ($debug);
-	    my $seq = $toolDB->get_Seq_by_id($dbRef);
-#	              print "seq: '", ref($seq), "'\n";
+          _debug('
+          #
+          # All preliminary parameters have been met
+          # Add this fact to set of high-quality hits
+          #
+          ') if ($debug);
+          
+          #
+          # populate %toolData with HQ hits
+          #
+          $toolData{$factID} = [$toolScore, $toolE, $description, $dbRef];# not sure if I need this - only exists on 2 lines
+          #
+          print "$toolName\n\tResult: [$toolResult]\n\tDBID: $dbRef\n\tDescr: $description\n" if ($debug && $toolName && $toolResult && $description);
+          if ($toolDB) {
+            #_debug('$toolDB exists') if ($debug);
+            my $seq = $toolDB->get_Seq_by_id($dbRef);# $seq should be a Bio::Seq object
+    	    _debug("seq: '" . ref($seq) . "'") if ($debug);
 
-	    push(@{$toolData{$factID}},$seq);
+            if (!$seq || !$seq->isa('Bio::Seq')) {
+                $seq = $toolDB->get_Seq_by_acc($dbRef);
+                die "can't retrieve Bio::Seq object from $toolDB\n" if (!$seq);
+            }
+            # use the description from the $seq object
+            $description = $seq->description();
 
-
-	    #
-	    #	Try to assign a gene name from reference species
-	    #
-	    if ($seq && $seq->isa('Bio::Seq')) {
-	      #_debug("OK, " . $seq->id()) if ($debug);
-	      if ($opt_g) {
-		_debug('
-		#
-		#	Gene Names determined by best hit in specificed species
-		#
-		') if ($debug);
-		if ($debug) {
-		  print "\tspecies: ", $seq->species()->binomial(), "\n" if ($seq->species() && $seq->species()->binomial());
-		}
-
-		foreach my $namingStd (@namingStd) {
-
-		  if ($seq->species() && $seq->species()->binomial() eq $namingStd) {
-		    if ($tools->{$annotTool}->description() =~ /swiss/i) {
-#		      print "sequence is from $namingStd\n";
-		      my $ac = $seq->annotation();
-		      my @geneName = $ac->get_Annotations('gene_name');
-		      #print "geneName: '", scalar(@geneName), "'\n";
-		      next if (!@geneName);
-		      my $tmpName = $geneName[0]->as_text();
-		      $tmpName =~ s/Value:\s//;
-#		      print "adding potential name: '$tmpName'\n";
-		      $geneName{$toolE} = $tmpName;
-#		      print "\tGene: $tmpName\n" if ($debug);
-		    }
+            # push Bio::Seq object onto the end of the array in %toolData
+            push(@{$toolData{$factID}},$seq); # not sure if I need this, $toolData only exists on 2 lines
 
 
-		  } elsif ($tools->{$annotTool}->description() =~ /kegg/i) {
-		    my $korg;
-		    if ($namingStd eq 'Escherichia coli') {
-		      $korg = 'ec[ojesc]';
-		    } else {
-		      $korg = $namingStd;
-		    }
+            #
+            #	Try to assign a gene name from reference species
+            #
+            if ($seq && $seq->isa('Bio::Seq')) {
+              #_debug("OK, " . $seq->id()) if ($debug);
+              if ($opt_g) {
+                _debug('
+                #
+                #	Gene Names determined by best hit in specificed species
+                #
+                ') if ($debug);
+                if ($debug) {
+                  print "\tspecies: ", $seq->species()->binomial(), "\n" if ($seq->species() && $seq->species()->binomial());
+                }
 
-		    if ($seq->id() =~ /^$korg:/) {
-		      #		    print "\nKEGG method (" . $seq->id() . "; " . $seq->description() . ")\n";
-		      if ($seq->description =~ /^(\w+)[,;]/) {
-			#		      print "\tpotential homolog in $korg: $1 (E: $toolE)\n\n";
-			$geneName{$toolE} = $1;
-		      }
-		    }
-		  }
-		}
-	      } elsif ($opt_G) {
-		_debug('
-		#
-		#	Try to assign a gene name from best BLAST hit
-		#
-		') if ($debug);
-		if ($tools->{$annotTool}->description() =~ /kegg/i) {
-#		  print "opt_G KEGG\n";
-		  $geneName{$seq->id()} = $seq->description();
-		  _debug("Gene Name: '" . $seq->description() . "'") if ($debug);
-		} elsif ($seq->species() && $seq->species()->binomial()) {
-		  #print "opt_G species()\n";
-		    if ($tools->{$annotTool}->description() =~ /swiss/i) {
-		      my $ac = $seq->annotation();
-		      my @geneName = $ac->get_Annotations('gene_name');
-		      #print "swissprot geneName for " . $seq->id() . ": '", scalar(@geneName), "'\n";
-		      
-		      if (scalar(@geneName)) {
-#		      	next if (!@geneName);
-#			print "extracting gene name as text\n" if ($verbose);
-		      	my $tmpName = $geneName[0]->as_text();
-			$tmpName =~ s/Value:\s//;
-#		      	print "swissprot adding potential name: '$tmpName' $toolE\n" if ($verbose);
-		      	$geneName{$toolE} = $tmpName;
-			_debug("Gene Name: $tmpName") if ($debug);
-		      } else {
-#			$geneName{$toolE} = '';
-			_debug('unable to assign gene name from BLAST description') if ($debug);
-		      }
+                foreach my $namingStd (@namingStd) {
+
+                  if ($seq->species() && $seq->species()->binomial() eq $namingStd) {
+                    if ($tools->{$annotTool}->description() =~ /swiss/i) {
+    #                 print "sequence is from $namingStd\n";
+                      my $ac = $seq->annotation();
+                      my @geneName = $ac->get_Annotations('gene_name');
+                      #print "geneName: '", scalar(@geneName), "'\n";
+                      next if (!@geneName);
+                      my $tmpName = $geneName[0]->as_text();
+                      $tmpName =~ s/Value:\s//;
+    #                 print "adding potential name: '$tmpName'\n";
+                      $geneName{$toolE} = $tmpName;
+    #                 print "\tGene: $tmpName\n" if ($debug);
+                    }
 
 
-		    }
-		}
+                  } elsif ($tools->{$annotTool}->description() =~ /kegg/i) {
+                    my $korg;
+                    if ($namingStd eq 'Escherichia coli') {
+                      $korg = 'ec[ojesc]';
+                    } else {
+                      $korg = $namingStd;
+                    }
 
-	      } else {
-		print "\n" if ($debug);
-	      }
-	    }
-	  }
-	  #
-	  #	End of gene name assignment
-	  #
+                    if ($seq->id() =~ /^$korg:/) {
+                      #		    print "\nKEGG method (" . $seq->id() . "; " . $seq->description() . ")\n";
+                      if ($seq->description =~ /^(\w+)[,;]/) {
+                    #		      print "\tpotential homolog in $korg: $1 (E: $toolE)\n\n";
+                    $geneName{$toolE} = $1;
+                      }
+                    }
+                  }
+                }
+              } elsif ($opt_G) {
+                _debug('
+                #
+                #	Try to assign a gene name from best BLAST hit
+                #
+                ') if ($debug);
+                if ($tools->{$annotTool}->description() =~ /kegg/i) {
+                  #print "opt_G KEGG\n";
+                  $geneName{$seq->id()} = $seq->description();
+                  _debug("Gene Name: '" . $seq->description() . "'") if ($debug);
+#                } elsif ($seq->species() && $seq->species()->binomial()) {  # why am I checking for this here?
+#                                                                            # maybe just to make sure std methods 
+#                                                                            # are available for this obj
+                 } elsif ($seq->isa('Bio::Seq')) {
+                    #print "opt_G swiss()\n";
+                    if ($tools->{$annotTool}->description() =~ /swiss/i) {
+                      my $ac = $seq->annotation();
+                      my @geneName = $ac->get_Annotations('gene_name');
+#                        print "Gene Names for '" . $seq->display_name() . "'\n";
+#                        for my $geneName (@geneName) {
+#                            print "gene name: '$geneName'\n";
+#                        }
+                      
+                      if (scalar(@geneName)) {
+    #                   next if (!@geneName);
+    #                   print "extracting gene name as text\n" if ($verbose);
+                        my $tmpName = $geneName[0]->as_text();
+                        $tmpName =~ s/Value:\s//;
+    #                   print "swissprot adding potential name: '$tmpName' $toolE\n" if ($verbose);
+                        $geneName{$toolE} = $tmpName;
+                        _debug("Gene Name: $tmpName") if ($debug);
+                      } else {
+    #                   $geneName{$toolE} = '';
+                        _debug('unable to assign gene name from BLAST description') if ($debug);
+                      }
 
-	  #
-	  #	For each fact, extract words and EC numbers and add to the running tally & score
-	  #
 
-	  my @EC = getEC($description,$tools->{$annotTool}->description());
-	  _debug("sending '$description' to getWords()") if ($debug);
-	  my @words = getWords($description); # extract all "words" from hit description
-	  $cnt += scalar(@words);
-	  uniqueWords(\%factDB,\@words,$toolScore); # identify and tally unique words
-	  uniqueWords(\%EC,\@EC,$toolScore); # identify and tally EC numbers
-	}
-	#
-	#
+                    }
+                } else {
+                    print "unknown object '" . ref($seq) . "' - cannot retrieve annotations\n" if ($verbose);
+                }
+
+              } else {
+                #print "annotation for this gene is not available" if ($debug);
+                print "annotation for this gene is not available" if ($verbose);
+              }
+            }
+          }
+          #
+          #	End of gene name assignment
+          #
+
+          #
+          #	For each fact, extract words and EC numbers and add to the running tally & score
+          #
+
+          my @EC = getEC($description,$tools->{$annotTool}->description());
+          _debug("sending '$description' to getWords()") if ($debug);
+          my @words = getWords($description); # extract all "words" from hit description
+          $cnt += scalar(@words);
+          uniqueWords(\%factDB,\@words,$toolScore); # identify and tally unique words
+          uniqueWords(\%EC,\@EC,$toolScore); # identify and tally EC numbers
+        } # end of if ($tool->id() == $annotTool)
+        #
+        #
       }
 
       if ($verbose) {
@@ -1114,7 +1134,8 @@ sub getEC {
   #  @EC = $description =~ /\(EC\s([\d\.\-]+)\)/g;
 
   if (!$tool_description || $tool_description =~ /swiss/i) {
-    @EC = $description =~ /\(EC\s([\d\.\-]+)\)/g;
+    #@EC = $description =~ /\(EC\s([\d\.\-]+)\)/g;
+    @EC = $description =~ /\sEC[\s\=]([\d\.\-]+);/g;
   } elsif ($tool_description =~ /kegg/i) {
     @EC = $description =~ /\[EC\:([\d\.\-\s]+)\s*\]/g;
   }

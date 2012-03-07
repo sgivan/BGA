@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 # wrapper for Glimmer am/23/08/01
-# $Id: glimmer-2.02,v 1.3 2007/01/05 23:15:55 genDB Exp $
+#
 use strict;
 use Getopt::Std;
 use POSIX;
@@ -39,7 +39,7 @@ if ($#ARGV < 0) {
     usage;
 }
 
-my $adress = "givans\@cgrb.oregonstate.edu";
+my $adress = "givans\@missouri.edu";
 
 # parse the arguments
 getopts('pvlrxf:a:t:s:S:m:c:o:');
@@ -107,8 +107,7 @@ my $cmd;
 if (! $use_model) {
     if (!$orf_file) {
 	print STDERR "Find non-overlapping orfs in $contig_file\n" if $verbose;
-	$cmd ="long-orfs".($gen_code ? "$gen_code": "").
-	    " $contig_file 2>/dev/null| get-putative 2>/dev/null >$tmp_coord_file";
+	$cmd ="long-orfs" . ($gen_code ? "$gen_code": "") . " $contig_file 2>/dev/null| get-putative 2>/dev/null >$tmp_coord_file";
 	system($cmd);
     }
     else {$tmp_coord_file = $orf_file}
@@ -129,7 +128,8 @@ else {
 
 # Building command from options
 #$cmd = "glimmer2" . ($gen_code ? "$gen_code": "") . " $file $model_file " . "-X -o 30 " .  ($choose_start ? " -f":"") . ($rbs_seq ? " -s $rbs_seq" :"") . ($circular ? " -l": "") . " 2>/dev/null" . $detailed_info.$out_file;
-$cmd = "glimmer3" . ($circular ? " -l": "") . " $file $model_file $out_file " . " 2> /dev/null";
+#$cmd = "glimmer3" . ($circular ? " -l": "") . " $file $model_file $out_file " . " 2> /dev/null";
+$cmd = "glimmer3" . ($circular ? "": " -l") . " $file $model_file $out_file " . " 2> /dev/null";
 print STDERR $cmd."\n" if ($verbose);
 system($cmd);
 #system("awk '{ if (!/>/) { sub(\/orf0+\/,\"\",\$1); print \$1 \"\\t\" $2 \"\\t\" $3-3 \"\\t[\" $4 \" L=\" sqrt((($3-3) - $2)**2) + 1 \" r=-1.276]\"; } }' $out_file.predict");

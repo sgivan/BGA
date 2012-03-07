@@ -1,6 +1,6 @@
 package GENDB::Tools::Glimmer3;
 
-# simple package to encapsulate glimmer2
+# simple package to encapsulate glimmer3
 #
 # used by GENDB
 
@@ -215,9 +215,12 @@ sub run_glimmer {
 			my $file = $tempfh->filename();
 			#print "temp fasta file = '$file'\n";
 			create_fasta_file ($file, $seq, $self->{_sequences}->{$seq});
-			print "using cmd:  '$glimmer_cmd $glimmer_parameters -f $file\n" if ($self->verbose());
-			open (GLIMMERRESULT, "$glimmer_cmd ".$glimmer_parameters."-v -f $file |")
+            # USAGE:  glimmer3 [options] <sequence-file> <icm-file> <tag>
+    		print "using cmd:  '$glimmer_cmd $glimmer_parameters -f $file\n" if ($self->verbose());
+    		open (GLIMMERRESULT, "$glimmer_cmd ".$glimmer_parameters."-v -f $file |")
 					or die "Cannot run glimmer.....";
+#    		print "using cmd:  '$glimmer_cmd $glimmer_parameters -v $file " . $self->model_file() . "'\n" if ($self->verbose());
+#    		open (GLIMMERRESULT, "$glimmer_cmd $glimmer_parameters -v -f $file " . $self->model_file() . " |") or die "Cannot run glimmer.....";
 		
 			my $orfcounter=0; my $specialcounter=0;
 		#	my $glimmerout = POSIX::tmpnam;

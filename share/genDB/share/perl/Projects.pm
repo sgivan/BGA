@@ -38,6 +38,7 @@ sub _load_project_list {
     while (<PROJECTS>) {
 	my ($projectname, $projectpath) = split /\s/;
 	$projects->{$projectname} = $projectpath;
+	#$projects->{$projectname} = eval $projectpath;
     }
     close (PROJECTS);
     return $projects;

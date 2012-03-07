@@ -1,11 +1,10 @@
 WH6 $HOME/projects/BGA/lib/genDB/lib/WH6
 WH6-01 $HOME/projects/BGA/lib/genDB/lib/WH6-01
-WH6-01 $HOME/projects/BGA/lib/genDB/lib/WH6-01
 xhc $HOME/projects/BGA/lib/genDB/lib/xhc
 annotate $HOME/projects/BGA/lib/genDB/lib/annotate
 WH6-G3 $HOME/projects/BGA/lib/genDB/lib/WH6-G3
 xhc-G3 $HOME/projects/BGA/lib/genDB/lib/xhc-G3
 Rfascians $HOME/projects/BGA/lib/genDB/lib/Rfascians
-Rfascians $HOME/projects/BGA/lib/genDB/lib/Rfascians
-Rfascians $HOME/projects/BGA/lib/genDB/lib/Rfascians
-Rfascians $HOME/projects/BGA/lib/genDB/lib/Rfascians
+Rfascians02 /home/cgrb/givans/projects/BGA/lib/genDB/lib/Rfascians02
+TEST /home/cgrb/givans/projects/BGA/share/genDB/lib/TEST
+Rfascians02 /home/cgrb/givans/projects/BGA/share/genDB/lib/Rfascians02

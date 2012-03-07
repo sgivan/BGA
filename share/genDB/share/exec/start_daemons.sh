@@ -25,7 +25,8 @@ GENDB_INSTALL_DIR=$HOME/projects/BGA/share/genDB
 
 . $GENDB_INSTALL_DIR/share/exec/clusterlist
 #. /mnt$ENV{HOME}/projects/BGA/share/sge/cgrb/common/settings.sh
-. $HOME/projects/BGA/share/sge/cgrb/common/settings.sh
+#. $HOME/projects/BGA/share/sge/cgrb/common/settings.sh
+. /local/cluster/sge/cgrb/common/settings.sh
 
 # loop
 for i in $CLUSTER_MACHINES

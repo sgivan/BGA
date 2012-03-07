@@ -87,7 +87,8 @@ BEGIN {
     if (defined $Config::alternate_codon_table) {
 	*symboltable = *{Common::};
 	$codontable = $Config::alternate_codon_table;
-	if (defined &{%symboltable->{'dna2aa_'.$codontable}}) {
+	#if (defined &{%symboltable->{'dna2aa_'.$codontable}}) {
+	if (defined &{$symboltable->{'dna2aa_'.$codontable}}) {
 	    $symboltable->{'dna2aa'}=\&{'dna2aa_'.$codontable};
 	}
 	else {
