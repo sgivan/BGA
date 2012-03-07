@@ -1,0 +1,8 @@
+./bin/joblist.sql:mysql -u genDB_cluster -h pearson.cgrb.oregonstate.edu -e 'select * from job' gendb_jobs
+./share/perl/GENDB/DBMS.pm:$GENDB_DBH = DBI->connect($GENDB_DBSOURCE,'genDB_cluster')
+./share/perl/GENDB/DBMS.pm:  $GENDB_DBH = DBI->connect($dbsource,'genDB_cluster') || die "can't connect to database: $!";
+./share/perl/GENDB/archive/DBMS.pm:$GENDB_DBH = DBI->connect($GENDB_DBSOURCE,'genDB_cluster')
+./share/perl/GENDB/archive/DBMS.pm:  $GENDB_DBH = DBI->connect($dbsource,'genDB_cluster') || die "can't connect to database: $!";
+./share/perl/Job.pm:$JOBDB_DBH = DBI->connect($JOBDB_DBSOURCE,'genDB_cluster')
+./share/perl/pathwayDB/DBMS.pm:$pathwayDB_DBH = DBI->connect("DBI:mysql:pathwaydb:pearson.science.oregonstate.local",'genDB_cluster')
+./share/perl/pathwayDB/DBMS.pm:#$pathwayDB_DBH = DBI->connect("DBI:mysql:pathwaydb:pearson.cgrb.oregonstate.edu",'genDB_cluster')

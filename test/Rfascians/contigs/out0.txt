@@ -1,0 +1,55 @@
+genDB_importContig.pl -f 01/contig_1 -m model -p TEST
+cannot 'use' GENDB::Config: Can't locate GENDB/Config.pm in @INC (@INC contains: /usr/local/gendb/lib/TEST /home/cgrb/givans/projects/BGA/share/genDB/share/perl /home/cgrb/givans/lib/perl5/5.14.2/x86_64-linux /home/cgrb/givans/lib/perl5/5.14.2 /home/cgrb/givans/lib/perl5/x86_64-linux /home/cgrb/givans/lib/perl5 /local/cluster/dev/lib/perl5/site_perl /local/cluster/lib/perl5/site_perl /local/cluster/lib64/perl5/site_perl /home/cgrb/cgrblib/perl5/COGDB /home/cgrb/givans/dev/lib/perl5 /home/cgrb/givans/lib/perl5/site_perl/5.14.2/x86_64-linux /home/cgrb/givans/lib/perl5/site_perl/5.14.2 .) at /home/cgrb/givans/projects/BGA/share/genDB/share/perl/Projects.pm line 117.
+ at /home/cgrb/givans/projects/BGA//bin/genDB_importContig.pl line 35
+rm: cannot remove `*.detail': No such file or directory
+mv: cannot stat `*.predict': No such file or directory
+genDB_importContig.pl -f 02/contig_2 -m model -p TEST
+cannot 'use' GENDB::Config: Can't locate GENDB/Config.pm in @INC (@INC contains: /usr/local/gendb/lib/TEST /home/cgrb/givans/projects/BGA/share/genDB/share/perl /home/cgrb/givans/lib/perl5/5.14.2/x86_64-linux /home/cgrb/givans/lib/perl5/5.14.2 /home/cgrb/givans/lib/perl5/x86_64-linux /home/cgrb/givans/lib/perl5 /local/cluster/dev/lib/perl5/site_perl /local/cluster/lib/perl5/site_perl /local/cluster/lib64/perl5/site_perl /home/cgrb/cgrblib/perl5/COGDB /home/cgrb/givans/dev/lib/perl5 /home/cgrb/givans/lib/perl5/site_perl/5.14.2/x86_64-linux /home/cgrb/givans/lib/perl5/site_perl/5.14.2 .) at /home/cgrb/givans/projects/BGA/share/genDB/share/perl/Projects.pm line 117.
+ at /home/cgrb/givans/projects/BGA//bin/genDB_importContig.pl line 35
+rm: cannot remove `*.detail': No such file or directory
+mv: cannot stat `*.predict': No such file or directory
+genDB_importContig.pl -f 03/contig_3 -m model -p TEST
+cannot 'use' GENDB::Config: Can't locate GENDB/Config.pm in @INC (@INC contains: /usr/local/gendb/lib/TEST /home/cgrb/givans/projects/BGA/share/genDB/share/perl /home/cgrb/givans/lib/perl5/5.14.2/x86_64-linux /home/cgrb/givans/lib/perl5/5.14.2 /home/cgrb/givans/lib/perl5/x86_64-linux /home/cgrb/givans/lib/perl5 /local/cluster/dev/lib/perl5/site_perl /local/cluster/lib/perl5/site_perl /local/cluster/lib64/perl5/site_perl /home/cgrb/cgrblib/perl5/COGDB /home/cgrb/givans/dev/lib/perl5 /home/cgrb/givans/lib/perl5/site_perl/5.14.2/x86_64-linux /home/cgrb/givans/lib/perl5/site_perl/5.14.2 .) at /home/cgrb/givans/projects/BGA/share/genDB/share/perl/Projects.pm line 117.
+ at /home/cgrb/givans/projects/BGA//bin/genDB_importContig.pl line 35
+rm: cannot remove `*.detail': No such file or directory
+mv: cannot stat `*.predict': No such file or directory
+genDB_importContig.pl -f 04/contig_4 -m model -p TEST
+cannot 'use' GENDB::Config: Can't locate GENDB/Config.pm in @INC (@INC contains: /usr/local/gendb/lib/TEST /home/cgrb/givans/projects/BGA/share/genDB/share/perl /home/cgrb/givans/lib/perl5/5.14.2/x86_64-linux /home/cgrb/givans/lib/perl5/5.14.2 /home/cgrb/givans/lib/perl5/x86_64-linux /home/cgrb/givans/lib/perl5 /local/cluster/dev/lib/perl5/site_perl /local/cluster/lib/perl5/site_perl /local/cluster/lib64/perl5/site_perl /home/cgrb/cgrblib/perl5/COGDB /home/cgrb/givans/dev/lib/perl5 /home/cgrb/givans/lib/perl5/site_perl/5.14.2/x86_64-linux /home/cgrb/givans/lib/perl5/site_perl/5.14.2 .) at /home/cgrb/givans/projects/BGA/share/genDB/share/perl/Projects.pm line 117.
+ at /home/cgrb/givans/projects/BGA//bin/genDB_importContig.pl line 35
+rm: cannot remove `*.detail': No such file or directory
+mv: cannot stat `*.predict': No such file or directory
+genDB_importContig.pl -f 05/contig_5 -m model -p TEST
+cannot 'use' GENDB::Config: Can't locate GENDB/Config.pm in @INC (@INC contains: /usr/local/gendb/lib/TEST /home/cgrb/givans/projects/BGA/share/genDB/share/perl /home/cgrb/givans/lib/perl5/5.14.2/x86_64-linux /home/cgrb/givans/lib/perl5/5.14.2 /home/cgrb/givans/lib/perl5/x86_64-linux /home/cgrb/givans/lib/perl5 /local/cluster/dev/lib/perl5/site_perl /local/cluster/lib/perl5/site_perl /local/cluster/lib64/perl5/site_perl /home/cgrb/cgrblib/perl5/COGDB /home/cgrb/givans/dev/lib/perl5 /home/cgrb/givans/lib/perl5/site_perl/5.14.2/x86_64-linux /home/cgrb/givans/lib/perl5/site_perl/5.14.2 .) at /home/cgrb/givans/projects/BGA/share/genDB/share/perl/Projects.pm line 117.
+ at /home/cgrb/givans/projects/BGA//bin/genDB_importContig.pl line 35
+rm: cannot remove `*.detail': No such file or directory
+mv: cannot stat `*.predict': No such file or directory
+genDB_importContig.pl -f 06/contig_6 -m model -p TEST
+cannot 'use' GENDB::Config: Can't locate GENDB/Config.pm in @INC (@INC contains: /usr/local/gendb/lib/TEST /home/cgrb/givans/projects/BGA/share/genDB/share/perl /home/cgrb/givans/lib/perl5/5.14.2/x86_64-linux /home/cgrb/givans/lib/perl5/5.14.2 /home/cgrb/givans/lib/perl5/x86_64-linux /home/cgrb/givans/lib/perl5 /local/cluster/dev/lib/perl5/site_perl /local/cluster/lib/perl5/site_perl /local/cluster/lib64/perl5/site_perl /home/cgrb/cgrblib/perl5/COGDB /home/cgrb/givans/dev/lib/perl5 /home/cgrb/givans/lib/perl5/site_perl/5.14.2/x86_64-linux /home/cgrb/givans/lib/perl5/site_perl/5.14.2 .) at /home/cgrb/givans/projects/BGA/share/genDB/share/perl/Projects.pm line 117.
+ at /home/cgrb/givans/projects/BGA//bin/genDB_importContig.pl line 35
+rm: cannot remove `*.detail': No such file or directory
+mv: cannot stat `*.predict': No such file or directory
+genDB_importContig.pl -f 07/contig_7 -m model -p TEST
+cannot 'use' GENDB::Config: Can't locate GENDB/Config.pm in @INC (@INC contains: /usr/local/gendb/lib/TEST /home/cgrb/givans/projects/BGA/share/genDB/share/perl /home/cgrb/givans/lib/perl5/5.14.2/x86_64-linux /home/cgrb/givans/lib/perl5/5.14.2 /home/cgrb/givans/lib/perl5/x86_64-linux /home/cgrb/givans/lib/perl5 /local/cluster/dev/lib/perl5/site_perl /local/cluster/lib/perl5/site_perl /local/cluster/lib64/perl5/site_perl /home/cgrb/cgrblib/perl5/COGDB /home/cgrb/givans/dev/lib/perl5 /home/cgrb/givans/lib/perl5/site_perl/5.14.2/x86_64-linux /home/cgrb/givans/lib/perl5/site_perl/5.14.2 .) at /home/cgrb/givans/projects/BGA/share/genDB/share/perl/Projects.pm line 117.
+ at /home/cgrb/givans/projects/BGA//bin/genDB_importContig.pl line 35
+rm: cannot remove `*.detail': No such file or directory
+mv: cannot stat `*.predict': No such file or directory
+genDB_importContig.pl -f 08/contig_8 -m model -p TEST
+cannot 'use' GENDB::Config: Can't locate GENDB/Config.pm in @INC (@INC contains: /usr/local/gendb/lib/TEST /home/cgrb/givans/projects/BGA/share/genDB/share/perl /home/cgrb/givans/lib/perl5/5.14.2/x86_64-linux /home/cgrb/givans/lib/perl5/5.14.2 /home/cgrb/givans/lib/perl5/x86_64-linux /home/cgrb/givans/lib/perl5 /local/cluster/dev/lib/perl5/site_perl /local/cluster/lib/perl5/site_perl /local/cluster/lib64/perl5/site_perl /home/cgrb/cgrblib/perl5/COGDB /home/cgrb/givans/dev/lib/perl5 /home/cgrb/givans/lib/perl5/site_perl/5.14.2/x86_64-linux /home/cgrb/givans/lib/perl5/site_perl/5.14.2 .) at /home/cgrb/givans/projects/BGA/share/genDB/share/perl/Projects.pm line 117.
+ at /home/cgrb/givans/projects/BGA//bin/genDB_importContig.pl line 35
+rm: cannot remove `*.detail': No such file or directory
+mv: cannot stat `*.predict': No such file or directory
+genDB_importContig.pl -f 09/contig_9 -m model -p TEST
+cannot 'use' GENDB::Config: Can't locate GENDB/Config.pm in @INC (@INC contains: /usr/local/gendb/lib/TEST /home/cgrb/givans/projects/BGA/share/genDB/share/perl /home/cgrb/givans/lib/perl5/5.14.2/x86_64-linux /home/cgrb/givans/lib/perl5/5.14.2 /home/cgrb/givans/lib/perl5/x86_64-linux /home/cgrb/givans/lib/perl5 /local/cluster/dev/lib/perl5/site_perl /local/cluster/lib/perl5/site_perl /local/cluster/lib64/perl5/site_perl /home/cgrb/cgrblib/perl5/COGDB /home/cgrb/givans/dev/lib/perl5 /home/cgrb/givans/lib/perl5/site_perl/5.14.2/x86_64-linux /home/cgrb/givans/lib/perl5/site_perl/5.14.2 .) at /home/cgrb/givans/projects/BGA/share/genDB/share/perl/Projects.pm line 117.
+ at /home/cgrb/givans/projects/BGA//bin/genDB_importContig.pl line 35
+rm: cannot remove `*.detail': No such file or directory
+mv: cannot stat `*.predict': No such file or directory
+genDB_importContig.pl -f 10/contig_10 -m model -p TEST
+cannot 'use' GENDB::Config: Can't locate GENDB/Config.pm in @INC (@INC contains: /usr/local/gendb/lib/TEST /home/cgrb/givans/projects/BGA/share/genDB/share/perl /home/cgrb/givans/lib/perl5/5.14.2/x86_64-linux /home/cgrb/givans/lib/perl5/5.14.2 /home/cgrb/givans/lib/perl5/x86_64-linux /home/cgrb/givans/lib/perl5 /local/cluster/dev/lib/perl5/site_perl /local/cluster/lib/perl5/site_perl /local/cluster/lib64/perl5/site_perl /home/cgrb/cgrblib/perl5/COGDB /home/cgrb/givans/dev/lib/perl5 /home/cgrb/givans/lib/perl5/site_perl/5.14.2/x86_64-linux /home/cgrb/givans/lib/perl5/site_perl/5.14.2 .) at /home/cgrb/givans/projects/BGA/share/genDB/share/perl/Projects.pm line 117.
+ at /home/cgrb/givans/projects/BGA//bin/genDB_importContig.pl line 35
+rm: cannot remove `*.detail': No such file or directory
+mv: cannot stat `*.predict': No such file or directory
+genDB_importContig.pl -f 11/contig_11 -m model -p TEST
+cannot 'use' GENDB::Config: Can't locate GENDB/Config.pm in @INC (@INC contains: /usr/local/gendb/lib/TEST /home/cgrb/givans/projects/BGA/share/genDB/share/perl /home/cgrb/givans/lib/perl5/5.14.2/x86_64-linux /home/cgrb/givans/lib/perl5/5.14.2 /home/cgrb/givans/lib/perl5/x86_64-linux /home/cgrb/givans/lib/perl5 /local/cluster/dev/lib/perl5/site_perl /local/cluster/lib/perl5/site_perl /local/cluster/lib64/perl5/site_perl /home/cgrb/cgrblib/perl5/COGDB /home/cgrb/givans/dev/lib/perl5 /home/cgrb/givans/lib/perl5/site_perl/5.14.2/x86_64-linux /home/cgrb/givans/lib/perl5/site_perl/5.14.2 .) at /home/cgrb/givans/projects/BGA/share/genDB/share/perl/Projects.pm line 117.
+ at /home/cgrb/givans/projects/BGA//bin/genDB_importContig.pl line 35
+rm: cannot remove `*.detail': No such file or directory
+mv: cannot stat `*.predict': No such file or directory

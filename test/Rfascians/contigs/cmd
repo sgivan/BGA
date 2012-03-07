@@ -1,0 +1,3 @@
+fasta_format.pl -f genome.nfa -O contigs.nfa -n -P #
+cat contigs.nfa | sed -r 's/>([0-9]*)_.*/>C\1/' > contigs_1.nfa
+genDB_importContig.sh TEST

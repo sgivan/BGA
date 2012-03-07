@@ -1,0 +1,26 @@
+USAGE:  build-icm [options] output_file < input-file
+
+Read sequences from standard input and output to  output-file
+the interpolated context model built from them.
+Input also can be piped into the program, e.g.,
+  cat abc.in | build-icm xyz.icm
+If <output-file> is "-", then output goes to standard output
+
+Options:
+ -d <num>
+    Set depth of model to <num>
+ -F
+    Ignore input strings with in-frame stop codons
+ -h
+    Print this message
+ -p <num>
+    Set period of model to <num>
+ -r
+    Use the reverse of input strings to build the model
+ -t
+    Output model as text (for debugging only)
+ -v <num>
+    Set verbose level; higher is more diagnostic printouts
+ -w <num>
+    Set length of model window to <num>
+

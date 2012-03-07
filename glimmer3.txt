@@ -1,0 +1,87 @@
+Starting at Sat Feb 11 14:37:24 2012
+
+USAGE:  glimmer3 [options] <sequence-file> <icm-file> <tag>
+
+Read DNA sequences in <sequence-file> and predict genes
+in them using the Interpolated Context Model in <icm-file>.
+Output details go to file <tag>.detail and predictions go to
+file <tag>.predict
+
+Options:
+ -A <codon-list>
+ --start_codons <codon-list>
+    Use comma-separated list of codons as start codons
+    Sample format:  -A atg,gtg
+    Use -P option to specify relative proportions of use.
+    If -P not used, then proportions will be equal
+ -b <filename>
+ --rbs_pwm <filename>
+    Read a position weight matrix (PWM) from <filename> to identify
+    the ribosome binding site to help choose start sites
+ -C <p>
+ --gc_percent <p>
+    Use <p> as GC percentage of independent model
+    Note:  <p> should be a percentage, e.g., -C 45.2
+ -E <filename>
+ --entropy <filename>
+    Read entropy profiles from <filename>.  Format is one header
+    line, then 20 lines of 3 columns each.  Columns are amino acid,
+    positive entropy, negative entropy.  Rows must be in order
+    by amino acid code letter
+ -f
+ --first_codon
+    Use first codon in orf as start codon
+ -g <n>
+ --gene_len <n>
+    Set minimum gene length to <n>
+ -h
+ --help
+    Print this message
+ -i <filename>
+ --ignore <filename>
+    <filename> specifies regions of bases that are off 
+    limits, so that no bases within that area will be examined
+ -l
+ --linear
+    Assume linear rather than circular genome, i.e., no wraparound
+ -L <filename>
+ --orf_coords <filename>
+    Use <filename> to specify a list of orfs that should
+    be scored separately, with no overlap rules
+ -M
+ --separate_genes
+    <sequence-file> is a multifasta file of separate genes to
+    be scored separately, with no overlap rules
+ -o <n>
+ --max_olap <n>
+    Set maximum overlap length to <n>.  Overlaps this short or shorter
+    are ignored.
+ -P <number-list>
+ --start_probs <number-list>
+    Specify probability of different start codons (same number & order
+    as in -A option).  If no -A option, then 3 values for atg, gtg and ttg
+    in that order.  Sample format:  -P 0.6,0.35,0.05
+    If -A is specified without -P, then starts are equally likely.
+ -q <n>
+ --ignore_score_len <n>
+    Do not use the initial score filter on any gene <n> or more
+    base long
+ -r
+ --no_indep
+    Don't use independent probability score column
+ -t <n>
+ --threshold <n>
+    Set threshold score for calling as gene to n.  If the in-frame
+    score >= <n>, then the region is given a number and considered
+    a potential gene.
+ -X
+ --extend
+    Allow orfs extending off ends of sequence to be scored
+ -z <n>
+ --trans_table <n>
+    Use Genbank translation table number <n> for stop codons
+ -Z <codon-list>
+ --stop_codons <codon-list>
+    Use comma-separated list of codons as stop codons
+    Sample format:  -Z tag,tga,taa
+

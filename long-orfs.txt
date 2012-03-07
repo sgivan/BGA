@@ -1,0 +1,65 @@
+Starting at Sat Feb 11 14:58:52 2012
+
+USAGE:  long-orfs [options] <sequence-file> <output-file>
+
+Read DNA sequence in <sequence-file> and find and output the
+coordinates of long, non-overlapping orfs in it.
+Output goes to file <output-file> or standard output if <output-file>
+is "-"
+
+Options:
+ -A <codon-list>
+ --start_codons <codon-list>
+    Use comma-separated list of codons as start codons
+    Sample format:  -A atg,gtg
+ -E <filename>
+ --entropy <filename>
+    Read entropy profiles from <filename>.  Format is one header
+    line, then 20 lines of 3 columns each.  Columns are amino acid,
+    positive entropy, negative entropy.  Rows must be in order
+    by amino acid code letter
+ -f
+ --fixed
+    Do *NOT* automatically determine the minimum gene length so as
+    to maximize the total length of output regions
+ -g <n>
+ --min_len <n>
+    Only genes with length >= <n> will be considered
+ -h
+ --help
+    Print this message
+ -i <filename>
+ --ignore <filename>
+    <filename> specifies regions of bases that are off 
+    limits, so that no bases within that area will be examined
+ -l
+ --linear
+    Assume linear rather than circular genome, i.e., no wraparound
+ -L
+ --length_opt
+    Find and use the minimum gene length that maximizes the total
+    length of non-overlapping genes, instead of maximizing the
+    number of such genes
+ -n
+ --no_header
+    Do not include heading information in the output; only output
+    the orf-coordinate lines
+ -o <n>
+ --max_olap <n>
+    Set maximum overlap length to <n>.  Overlaps this short or shorter
+    are ignored.
+ -t <x>
+ --cutoff <x>
+    Only genes with entropy distance score less than <x> will be considered
+ -w
+ --without_stops
+    Do *NOT* include the stop codon in the output coordinates.
+    By default, it is included.
+ -z <n>
+ --trans_table <n>
+    Use Genbank translation table number <n> for stop codons
+ -Z <codon-list>
+ --stop_codons <codon-list>
+    Use comma-separated list of codons as stop codons
+    Sample format:  -Z tag,tga,taa
+
