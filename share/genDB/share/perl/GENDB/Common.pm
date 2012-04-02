@@ -479,6 +479,7 @@ sub binarysearch {
 # removes directories recursivly 
 sub remove_dir {
     my ($dirname) = @_;
+#    return 1;
 
     opendir (DIR, $dirname);
     for my $file (readdir (DIR)) {
@@ -503,7 +504,8 @@ sub remove_dir {
 
 sub create_temp_file {
   $infh = new File::Temp( TEMPLATE	=> 	'genDB_XXXXXXXXXX',
-			  DIR	  	=>	"/local/cluster/tmp/",
+			  DIR	  	=>	"/tmp/",
+#			  DIR	  	=>	"/local/cluster/tmp/",
 #			  SUFFIX	=>	".txt",
 #			  UNLINK 	=> 	0,
 			);
@@ -519,7 +521,8 @@ sub create_temp_file {
 
 sub create_temp_dir {
   my $template = 'genDB_XXXXXXXXXX';
-  my $dir_path = '/local/cluster/tmp/';
+  #my $dir_path = '/local/cluster/tmp/';
+  my $dir_path = '/tmp/';
   
 #  my $dir = tempdir( $template, DIR => $dir_path, CLEANUP => 1 );
   my $dir = tempdir( $template, DIR => $dir_path, CLEANUP => 0 );

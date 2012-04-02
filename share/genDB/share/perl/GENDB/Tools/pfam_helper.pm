@@ -28,8 +28,10 @@ use GENDB::Common qw( create_fasta_file remove_dir create_temp_dir );
 use lib '/home/cgrb/givans/dev/lib/perl5/bioperl-dev';
 use Bio::SearchIO;
 
-use lib '/local/cluster/lib/perl5/site_perl';
-use CGRB::PFAM;
+#use lib '/local/cluster/lib/perl5/site_perl';
+use lib '/home/sgivan/projects/BGA/lib';
+#use CGRB::PFAM;
+use BGA::PFAM;
 
 use POSIX qw (tmpnam);
 use Carp;
@@ -140,7 +142,7 @@ sub run_job {
                      );
 
     my $hmm_rslt = $hmm_parser->next_result;
-	my $pfam = CGRB::PFAM->new();# this will allow me to retrieve better descriptions
+	my $pfam = BGA::PFAM->new();# this will allow me to retrieve better descriptions
     while (my $hit = $hmm_rslt->next_model) {
         my $new_fact = GENDB::fact->create($orf->id);
     	die "cannot allocate new fact object" if ($new_fact < 0);

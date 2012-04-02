@@ -15,7 +15,8 @@ package blast_helper;
 # (why doesn't perl provide a way to hide 
 #  methods...... ? )
 
-use lib '/local/cluster/lib/perl5/site_perl';
+#use lib '/local/cluster/lib/perl5/site_perl';
+use lib '/ircf/ircfapps/lib/perl5';
 use GENDB::tool;
 use GENDB::fact;
 use GENDB::GENDB_CONFIG;
@@ -358,7 +359,7 @@ sub dbsequence {
     } else {
 
       my $seqID = $fact->dbref();
-      open(FASTACMD, "/local/cluster/bin/fastacmd -d /dbase/NCBI/db/$dbfile -s '$seqID' |");
+      open(FASTACMD, "/evbio/NCBI/ncbitools/ncbi/build/fastacmd -d /ircf/dbase/BLASTDB/$dbfile -s '$seqID' |");
 
       my $seqIO = Bio::SeqIO->new(
 				-fh	=>	\*FASTACMD,

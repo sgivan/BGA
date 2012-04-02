@@ -1,4 +1,5 @@
 #!/bin/tcsh
+setenv PATH /home/sgivan/projects/BGA/bin:$PATH
 long-orfs concat.nfa -g 500 -l -o 30 | get-putative > concat.coord
 extract concat.nfa concat.coord > concat.extract
 build-icm < concat.extract > orf.00.model

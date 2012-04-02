@@ -1,6 +1,7 @@
 #!/bin/bash
 # $Id: genDB_rbsRefine.sh,v 3.1 2007/07/12 17:23:02 givans Exp $
 #
+export PATH=/home/sgivan/projects/BGA/bin:$PATH
 if [[ $1 == "-h" ]]
 then
 		echo "usage:  genDB_rbsRefine.sh <RBS sequence, ie. AGGAG> <GenDB Project Code, ie. PU7211>"

@@ -1,7 +1,4 @@
-#$ -o /home/cgrb/genDB/cluster
-#$ -e /home/cgrb/genDB/cluster
-#$ -N GENDB 
-#$ -S /usr/bin/perl
+#!/usr/bin/env perl
 # $Id: GENDB_daemon.pl,v 1.4 2006/07/13 19:02:47 genDB Exp $
 ####################################################
 #
@@ -10,8 +7,9 @@
 ####################################################
 
 use lib "$ENV{HOME}/projects/BGA/share/genDB/share/perl";
-
+use lib '/ircf/ircfapps/lib/perl5/x86_64-linux';
 use strict 'refs';
+use autodie;
 
 use GENDB::GENDB_CONFIG;
 use Job;
@@ -29,13 +27,13 @@ my $hostname=`hostname`;
 chomp $hostname;
 
 # start daemon child
-# $pid = fork;
+#$pid = fork;
 $pid = $$;
 
 # end parent process
-#exit if $pid;       
+#exit if ($pid);       
 
-die "Cannot fork: $!" unless defined ($pid);
+#die "Cannot fork: $!" unless defined ($pid);
 
 # don't rely on working directory....
 chdir ("/");
@@ -130,18 +128,18 @@ until($time_to_die) {
 	    }
 	    print "signal $exitcode\n";
 	}
-    }	
-    else {
-      print STDOUT "$ltime:  no new job in queue\n";
-	$wait_timeout = $start_wait_timeout;
-	until($time_to_die) {
-	    sleep $wait_timeout;
-	    if (Job->fetchnextjob() != -1) {
-		last;
+    } else {
+        print STDOUT "$ltime:  no new job in queue\n";
+        $wait_timeout = $start_wait_timeout;
+        until($time_to_die) {
+            sleep $wait_timeout;
+            if (Job->fetchnextjob() != -1) {
+            last;
+            }
+            # prolong wait_timeout, 2 mins max
+            $wait_timeout *= 2 if ($wait_timeout < 120);
+        #	    print "waiting for $wait_timeout seconds\n";
 	    }
-	    # prolong wait_timeout, 2 mins max
-	    $wait_timeout *= 2 if ($wait_timeout < 120);
-#	    print "waiting for $wait_timeout seconds\n";
-	}
     }
 }
+

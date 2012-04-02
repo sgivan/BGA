@@ -1,6 +1,7 @@
 #!/bin/bash
 # $Id$
 
+export PATH=/home/sgivan/projects/BGA/bin:$PATH
 for i in `ls -1`
 	do
 		if [ -d $i ]

@@ -1,5 +1,6 @@
 package GENDB::DBMS;
 
+use lib '/ircf/ircfapps/lib/perl5/x86_64-linux';
 use DBI;
 
 use GENDB::Config;
@@ -8,7 +9,7 @@ require Exporter;
 @ISA = qw{Exporter};
 @EXPORT = qw{$GENDB_DBH newid};
 
-$GENDB_DBH = DBI->connect($GENDB_DBSOURCE,'genDB_cluster')
+$GENDB_DBH = DBI->connect($GENDB_DBSOURCE,$USER,$PSSWD)
     || die "can't connect to database: $!";
 
 sub newid {
@@ -36,6 +37,6 @@ sub switch_db {
   my $dbsource = shift;
 
 #  print "\$dbsource = '$dbsource'\n";
-  $GENDB_DBH = DBI->connect($dbsource,'genDB_cluster') || die "can't connect to database: $!";
+  $GENDB_DBH = DBI->connect($dbsource,$USER,$PSSWD) || die "can't connect to database: $!";
 
 }

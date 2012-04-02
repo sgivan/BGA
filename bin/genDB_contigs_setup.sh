@@ -1,6 +1,8 @@
 #!/bin/bash
 # $Id: genDB_contigs_setup.sh,v 3.1 2007/07/11 20:50:19 givans Exp $
 #
+
+export PATH=/home/sgivan/projects/BGA/bin:$PATH
 for file in `ls contig_*`;
 	do
 		#echo $file;

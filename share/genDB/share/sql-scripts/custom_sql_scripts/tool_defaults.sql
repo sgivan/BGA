@@ -2,7 +2,7 @@
 INSERT INTO `tool` VALUES (
 '1',
 'BLASTP-KEGG',
-'/local/cluster/genDB/bin/blast2p',
+'/home/sgivan/projects/BGA/share/genDB/bin/blast2p',
 'BLASTP of KEGG',
 'kegg',
 'www.kegg.com/dbget-bin/www_bget?',
@@ -21,7 +21,7 @@ NULL,
 INSERT INTO `tool` VALUES (
 '1',
 'BLASTP-swissprot',
-'/local/cluster/genDB/bin/blast2p',
+'/home/sgivan/projects/BGA/share/genDB/bin/blast2p',
 'BLASTP of Swissprot',
 'swissprot',
 'expasy.org/uniprot/',

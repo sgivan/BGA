@@ -17,11 +17,14 @@ package blast_helper_no_filter;
 # (why doesn't perl provide a way to hide 
 #  methods...... ? )
 
+use lib '/ircf/ircfapps/lib/perl5';
 use GENDB::tool;
 use GENDB::fact;
 use GENDB::GENDB_CONFIG;
 use GENDB::Common;
-use Bio::Tools::Blast;
+#use Bio::Tools::Blast;
+use Bio::SearchIO;
+use Bio::SeqIO;
 use POSIX qw (tmpnam);
 use File::Basename;
 
@@ -151,10 +154,16 @@ sub run_job {
 	# encapsulate the blast parser
 	# there is a known problem when
 	# parsing report without a hit
-	my $blast_run;
+	#my $blast_run;
+	my ($blast_run,$blast_in);
 	eval {
-	    $blast_run = Bio::Tools::Blast->new(-file=> $resultfile,
-						-parse => 1);
+   #     $blast_run = Bio::Tools::Blast->new(-file=> $resultfile,
+   # 					-parse => 1);
+        $blast_in = Bio::SearchIO->new(
+                                            -file   =>  $resultfile,
+                                            -format =>  'blast',
+                                        );
+        $blast_run = $blast_in->next_result();
 	};
 	if ($@ || ($blast_run < 0)) {
 	    print STDERR "Error parsing blast report (perhabs no hits?):\n$@";
@@ -315,18 +324,53 @@ sub level {
     return 5;
 }
 
+#sub dbsequence {
+#    my ($fact) = @_;
+##    print "\n\n\nchecking dbsequence\n\n\n";
+#    my $used_tool = GENDB::tool->init_id($fact->tool_id);
+#
+#    # we use the Bio::Index system of BioPerl to index
+#    # and query fasta entry from databases
+#
+#    # test whether we can access the index file and
+#
+#    if ($BLAST_DATABASE_INDEX) {
+#	my ($dbfile,undef,undef) = fileparse($used_tool->dbname());
+#	my $index_file = $BLAST_DATABASE_INDEX."/".$dbfile;
+#	if (-r $index_file ) {
+#	    # access the index
+#	    require Bio::Index::Fasta;
+#	    my $index = Bio::Index::Fasta->new(-filename => $index_file,
+#					       -write_flag => 0);
+#	    
+#	    if ($index) {
+#		# get a Bio::Seq object 
+#		
+#		my $seq = $index->fetch($fact->dbref());
+#		if ($seq) {
+#		    # return the sequence itself
+#		    return $seq->seq();
+#		}
+#	    }
+#	}
+#    }
+#    # we cannot access the index, so return error state
+#    return -1;
+#}
+
 sub dbsequence {
     my ($fact) = @_;
-#    print "\n\n\nchecking dbsequence\n\n\n";
+#    print "\n\n\nfinding dbsequence\n\n\n";
     my $used_tool = GENDB::tool->init_id($fact->tool_id);
 
     # we use the Bio::Index system of BioPerl to index
     # and query fasta entry from databases
 
     # test whether we can access the index file and
+    my ($dbfile,undef,undef) = fileparse($used_tool->dbname());
 
     if ($BLAST_DATABASE_INDEX) {
-	my ($dbfile,undef,undef) = fileparse($used_tool->dbname());
+#	my ($dbfile,undef,undef) = fileparse($used_tool->dbname());
 	my $index_file = $BLAST_DATABASE_INDEX."/".$dbfile;
 	if (-r $index_file ) {
 	    # access the index
@@ -342,11 +386,22 @@ sub dbsequence {
 		    # return the sequence itself
 		    return $seq->seq();
 		}
+		
 	    }
 	}
+    } else {
+
+      my $seqID = $fact->dbref();
+      open(FASTACMD, "/evbio/NCBI/ncbitools/ncbi/build/fastacmd -d /ircf/dbase/BLASTDB/$dbfile -s '$seqID' |");
+
+      my $seqIO = Bio::SeqIO->new(
+				-fh	=>	\*FASTACMD,
+				-format	=>	'fasta',
+				);
+      my $seq = $seqIO->next_seq();
+      return $seq->seq();
     }
     # we cannot access the index, so return error state
     return -1;
 }
-
 

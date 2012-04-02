@@ -16,7 +16,7 @@ require Exporter;
 # root directory of GENDB installation
 #
 #$GENDB_INSTALL_DIR="/local/cluster/genDB";
-$GENDB_INSTALL_DIR = "/home/cgrb/givans/projects/BGA/share/genDB";
+$GENDB_INSTALL_DIR = "/home/sgivan/projects/BGA/share/genDB";
 
 ###
 #
@@ -58,36 +58,44 @@ $GENDB_GENOMEPLOT="/usr/local/bin/genome_plot.pl";
 
 
 ## executable pathname for tRNAScan-SE
-$GENDB_TRNASCANSE="/usr/local/bin/tRNAscan-SE";
+#$GENDB_TRNASCANSE="/usr/local/bin/tRNAscan-SE";
+$GENDB_TRNASCANSE = "/share/ircfapps/bin/tRNAscan-SE";
 
 
 #### misc tools for sequence analyzes
 
 ### helix-turn-helix tool
-$GENDB_HTH="/usr/local/bin/hth";
+#$GENDB_HTH="/usr/local/bin/hth";
+$GENDB_HTH="/ircf/ircfapps/bin/hth";
 
 ### saps (statistical analysis of protein sequences)
-$GENDB_SAPS="/usr/local/bin/saps";
+#$GENDB_SAPS="/usr/local/bin/saps";
+$GENDB_SAPS="/ircf/ircfapps/bin/saps";
 
 ### signalp (signal peptide)
-$GENDB_SIGNALP="/home/cgrb/givans/scratch/signalp";
+#$GENDB_SIGNALP="/home/cgrb/givans/scratch/signalp";
+$GENDB_SIGNALP="/ircf/ircfapps/bin/signalp";
 
 ### TMHMM (transmembrane helix)
-$GENDB_TMHMM="/local/cluster/bin/tmhmm";
+#$GENDB_TMHMM="/local/cluster/bin/tmhmm";
+$GENDB_TMHMM="/ircf/ircfapps/bin/tmhmm";
 
 
 #### blast 2 setup
-
+$blast_install = '/evbio/NCBI/ncbitools/ncbi/build/';
 ### blast 2 binary
 #$GENDB_BLAST_PATH="/usr/local/share/ncbi/build/blastall";
+$GENDB_BLAST_PATH="$blast_install/blastall";
 #$GENDB_BLAST_PATH="/usr/local/share/ncbi/bin/blastall";
-$GENDB_BLAST_PATH="/home/cgrb/genDB/blastall_rsh";
+#$GENDB_BLAST_PATH="/home/cgrb/genDB/blastall_rsh";
 
 ## indexing of blast database
-$FORMATDB_TOOL="/local/cluster/bin/formatdb";
+#$FORMATDB_TOOL="/local/cluster/bin/formatdb";
+$FORMATDB_TOOL="$blast_install/formatdb";
 
 ## blastable databases, e.g. nt and nr 
-$BLAST_DATABASE_DIR="/dbase/NCBI/db";
+#$BLAST_DATABASE_DIR="/dbase/NCBI/db";
+$BLAST_DATABASE_DIR="/ircf/dbase/BLASTDB";
 
 ## index to blastable databases
 $BLAST_DATABASE_INDEX=undef;
@@ -108,14 +116,16 @@ $GENDB_BLAST_LEVEL5_CUTOFF="yes";
 ### pfam
 #$GENDB_PFAM="/usr/local/bin/hmmpfam";
 #$GENDB_PFAM="/local/cluster/bin/hmmpfam";
-$GENDB_PFAM="/home/cgrb/givans/bin/hmmscan";
+#$GENDB_PFAM="/home/cgrb/givans/bin/hmmscan";
+$GENDB_PFAM="/ircf/ircfapps/bin/hmmscan";
 
 ## PFam tools
 #$HMMFETCH_TOOL="/local/cluster/bin/hmmfetch";
-$HMMFETCH_TOOL="/home/cgrb/givans/bin/hmmfetch";
+#$HMMFETCH_TOOL="/home/cgrb/givans/bin/hmmfetch";
+$HMMFETCH_TOOL="/ircf/ircfapps/bin/hmmfetch";
 
 ## path to Pfam database
-$PFAM_DB_DIR="/dbase/PFAM";
+$PFAM_DB_DIR="/ircf/dbase/PFAM";
 
 
 #### browser setup

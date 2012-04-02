@@ -11,13 +11,11 @@
 #
 
 use lib "$ENV{HOME}/projects/BGA/share/genDB/share/perl";
-
 use Projects;
-
 use Getopt::Std;
 use Job;
-
 use strict;
+use autodie;
 use vars qw/ $opt_n $opt_r $opt_v $opt_l $opt_t $opt_p $opt_d $opt_T $opt_c /;
 
 sub usage {
@@ -27,27 +25,27 @@ GENDB Job Submitter
 
 usage: job_submitter.pl [-v] [-t] (-n | -r) -p <project_name>
 
-where  -n                : generate new job
-                           should be used when new orfs or new tools
-                           are to be run
-       -r                : restart failed jobs
-                           collects information about failed jobs
-                           (e.g. due to insufficient disk space)
-                           and puts them into the job queue again
-                           you should check the queue before !
-       -v                : be verbose (at least a kind of....)
-       -T <int>		Run jobs for tool #
-	-c <int>	Run jobs for ORFs on contig id #
-       -t                : test only mode
-       -p <project_name> : Name des Projektes
+    -n        : generate new job
+               should be used when new orfs or new tools
+               are to be run
+    -r        : restart failed jobs
+               collects information about failed jobs
+               (e.g. due to insufficient disk space)
+               and puts them into the job queue again
+               you should check the queue before !
+    -v        : be verbose (at least a kind of....)
+    -T <int>    Run jobs for tool #
+    -c <int>	Run jobs for ORFs on contig id #
+    -t        : test only mode
+    -p <project_name> : Name des Projektes
 
 EOU
     exit;
 }
-
                    
 if ($#ARGV < 1) {
-    usage ();
+    print "usage:\n";
+    usage();
 }
 
 getopts("vnrtdl:p:T:c:");

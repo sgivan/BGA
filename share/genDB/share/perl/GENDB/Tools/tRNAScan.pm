@@ -25,12 +25,15 @@ use Carp qw(croak);
 use strict;
 use POSIX qw(tmpnam);
 
+my $debug = 0;
+
 1;
 
 	
 # the annotator name for this importer
 sub annotator_name {
-    return "tRNAScan Predictor";
+    #return "tRNAScan Predictor";
+    return "tRNAscan-SE";
 }
 
 # helper for creating and retrieving the annotator 
@@ -38,9 +41,9 @@ sub annotator_name {
 sub _get_annotator {
     my $annotator = GENDB::annotator->init_name(&annotator_name);
     if ($annotator == -1) {
-	$annotator = GENDB::annotator->create();
-	$annotator->name(&annotator_name);
-	$annotator->description('tRNAScan-SE trna prediction');
+        $annotator = GENDB::annotator->create();
+        $annotator->name(&annotator_name);
+        $annotator->description('tRNAScan-SE trna prediction');
     }
     return $annotator;
 }
@@ -56,36 +59,43 @@ sub _parse_trnascan{
     my $annotator=_get_annotator;
     my $trna_feature = GENDB::feature_type->init_by_feature_name('tRNA');
     while (<OUTPUT>) {
-	chomp;
-	if (/^\S+\s+(\d+)\s+(\d+)\s+(\d+)\s+(\w+)\s+(\w+)\s+\S+\s+\S+\s+([0123456789.]+)/) {
-	    ($rnanr,$start,$stop,$tRNAtype,$anticodon,$score) = ($1, $2, $3, $4, $5, $6);  
-	    my $orf;
-	    if ($start < $stop) {
-		$orf = GENDB::orf->create($contig->id, $start, $stop, 
-					  sprintf ("C%d_tRNA_f_%d (AA: %s, Cod: %s)",
-						   $contig->id,$counter,
-						   $tRNAtype, $anticodon));
-	    }
-	    else {
-		$orf = GENDB::orf->create($contig->id, $stop, $start,
-					  sprintf ("C%d_tRNA_r_%d (AA: %s, Cod: %s)",
-						   $contig->id,$counter,
-						   $tRNAtype, $anticodon));
-	    }
-	    $counter++;
-	    $orf->frame(0);
-	    $orf->startcodon("");
-	    $orf->status($ORF_STATE_ANNOTATED);
+        chomp;
+        if (/^\S+\s+(\d+)\s+(\d+)\s+(\d+)\s+(\w+)\s+(\w+)\s+\S+\s+\S+\s+([0123456789.]+)/) {
+            ($rnanr,$start,$stop,$tRNAtype,$anticodon,$score) = ($1, $2, $3, $4, $5, $6);  
+            my $orf;
+            if ($start < $stop) {
+                $orf = GENDB::orf->create($contig->id, $start, $stop, 
+                              sprintf ("C%d_tRNA_f_%d (AA: %s, Cod: %s)",
+                                   $contig->id,$counter,
+                                   $tRNAtype, $anticodon));
+            } else {
+                $orf = GENDB::orf->create($contig->id, $stop, $start,
+                              sprintf ("C%d_tRNA_r_%d (AA: %s, Cod: %s)",
+                                   $contig->id,$counter,
+                                   $tRNAtype, $anticodon));
+            }
+            if ($debug) {
+                print "\$orf isa '", ref($orf), "'\n";
+                print "orf id: '", $orf->id(), "'\n";
+                print "contig id: '", $contig->id(), "'\t";
+                print "start: '$start'; stop: '$stop'\n";
+            }
+            $counter++;
+            $orf->frame(0);
+            $orf->startcodon("");
+            $orf->status($ORF_STATE_ANNOTATED);
 
-	    # write an annotation for that trna
-	    my $annotation=GENDB::annotation->create(sprintf ("tRNA, AA:%s, Anticodon:%s",
-							      $tRNAtype,
-							      $anticodon), 
-						     $orf->id);
-	    $annotation->date(time());
-	    $annotation->annotator_id($annotator->id);
-	    $annotation->feature_type($trna_feature->id);
-	}
+            print "write an annotation for the trna\n" if ($debug);
+            my $annotation=GENDB::annotation->create(sprintf ("tRNA, AA:%s, Anticodon:%s",
+                                      $tRNAtype,
+                                      $anticodon), 
+                                 $orf->id);
+            $annotation->date(time());
+            $annotation->annotator_id($annotator->id);
+            $annotation->feature_type($trna_feature->id);
+        } else {
+            warn("parse_trnascan can't parse this line:\n'$_'\n") if ($debug);
+        }
     }
 
 }
@@ -114,6 +124,7 @@ sub run_on_contig{
     # assume bacteria (-B)
     # be quiet (-q)
     my $cmdline = "$GENDB_TRNASCANSE -B -q $contigfile > $outfile";
+    print "tRNAscan cmd: '$cmdline'\n";
     system($cmdline);
     
     # call parser

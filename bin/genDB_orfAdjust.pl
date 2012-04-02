@@ -68,7 +68,7 @@ require GENDB::annotation;
 require GENDB::annotator;
 require GENDB::contig;
 require GENDB::Common;
-require Job;
+#require Job;
 
 $contig_name = $opt_c;
 if (!$contig_name) {
@@ -132,12 +132,13 @@ foreach my $line (@rbs) {
 	GENDB::orf::molweight($orf,$MW);
 
 	if ($opt_D) {
-	  $orf->drop_facts() if ($opt_D);
+        require Job;
+        $orf->drop_facts() if ($opt_D);
 
-	  $orf->toollevel(0);
-	  for (my $job_id = $orf->order_next_job; $job_id != -1; $job_id = $orf->order_next_job) {
-	    Job->create($GENDB::Config::GENDB_CONFIG, $job_id);
-	  }
+        $orf->toollevel(0);
+        for (my $job_id = $orf->order_next_job; $job_id != -1; $job_id = $orf->order_next_job) {
+            Job->create($GENDB::Config::GENDB_CONFIG, $job_id);
+        }
 	}
 
 	if ($opt_a) {

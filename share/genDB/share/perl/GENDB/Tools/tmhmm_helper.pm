@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 # this packages is part of the tool concept of GENDB
 # it contains several methods to maintain and 
