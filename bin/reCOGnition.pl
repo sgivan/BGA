@@ -1,24 +1,25 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 # $Id: reCOGnition.pl,v 3.22 2010/03/22 23:39:49 givans Exp $
 
 use warnings;
 use strict;
 use Carp;
 use Getopt::Std;
-use vars qw/ $opt_d $opt_D $opt_v $opt_h $opt_F $opt_f $opt_b $opt_o $opt_S $opt_l $opt_r $opt_M $opt_w $opt_p $opt_U $opt_L $opt_i $opt_X $opt_e /;
+use vars qw/ $opt_d $opt_D $opt_v $opt_h $opt_F $opt_f $opt_b $opt_o $opt_S $opt_l $opt_r $opt_R $opt_M $opt_w $opt_p $opt_U $opt_L $opt_i $opt_X $opt_e /;
 use Bio::SearchIO;
+use lib '/home/sgivan/projects/COGDB';
 use COGDB;
 #use Statistics::Descriptive;
 use Data::Dumper;
 use IO::File;# I use this in the data_in() and data_out() methods
 
-getopts('dDvhF:f:b:o:Slr:M:w:pU:L:i:Xe:');
+getopts('dDvhF:f:b:o:Slr:RM:w:pU:L:i:Xe:');
 
 if ($opt_X) {
   
 }
 
-my($debug,$ddebug,$verbose,$help,$folder,$file,$blast,$outfile,@files,$cogsummary,$coglist,$crossref,$minimum_membership,$local_whog,$nonpathogen,$input_file,$exclude_list);
+my($debug,$ddebug,$verbose,$help,$folder,$file,$blast,$outfile,@files,$cogsummary,$coglist,$crossref,$nocrossref,$minimum_membership,$local_whog,$nonpathogen,$input_file,$exclude_list);
 my ($upper,$lower);
 
 $help = $opt_h;
@@ -43,6 +44,7 @@ Options:
 -l    generate a COG List
 -r <text> cross-reference to related bugs --
                 (can enclose multiple divisions separated by spaces; enclose in quotes)
+-R don't cross-ref
 -p    when cross-referencing, exclude pathogenic strains
 -e <text> when cross-referencing, exclude this list of org ID's (comma-separated list)
 -U    when cross-referencing, fractional upper threshold to define common COGs (default = 0.90)
@@ -78,6 +80,7 @@ $outfile = $opt_o || 'reCOGnition.out';
 $cogsummary = $opt_S;
 $coglist = $opt_l;
 $crossref = $opt_r;
+$nocrossref = $opt_R;
 $nonpathogen = $opt_p if ($crossref);
 $minimum_membership = $opt_M || 2;
 $local_whog = $opt_w;
@@ -164,59 +167,66 @@ if (!$input_file) {
       #######################
 
       foreach my $hit (@hits) {
-  next unless ($hit->start());
-  ++$hit_cnt;
-  print "hit name: ", $hit->name(), ", E = ", $hit->significance(), " [", $hit->start(), "-", $hit->end(), "]\n" if ($debug);
+          next unless ($hit->start());
+          ++$hit_cnt;
+          print "hit name: ", $hit->name(), ", E = ", $hit->significance(), " [", $hit->start(), "-", $hit->end(), "]\n" if ($debug);
 
-  ########################
+            if (substr($hit->name(),0,3) eq 'lcl') {
+                my $temphitname = $hit->name();
+                $temphitname =~ s/lcl\|//;
+                $hit->name($temphitname);
+                print "hit name changed to '" . $hit->name() . "'\n" if ($debug);
+            }
 
-  # set some hit quality thresholds
+          ########################
 
-  ########################
+          # set some hit quality thresholds
 
-  #      next unless (eval { if ($hit->frac_aligned_hit() >= 0.75) { return 1; } else { return 0; } });
+          ########################
 
-
-  ##################
-
-  # collect COG memberships for each DB hit
-
-  ##################
-
-  my $whogs = $whog->fetch_by_name($hit->name());
-  my $COGS_cnt = 0;
-      COGS: foreach my $cog (map { $_->cog() } @$whogs) { # this may be unneccessary since there seems to be 1 COG per hit
-    ++$COGS_cnt;
-    print "\t\t" . $hit->name() . "has more than one COG\n" if (($COGS_cnt > 1) && $debug);
-    print "\tCOG:  ", $cog->name(), "\n" if ($debug); #, " - ", $cog->description(), "\n" if ($debug);
+          #      next unless (eval { if ($hit->frac_aligned_hit() >= 0.75) { return 1; } else { return 0; } });
 
 
-    #######################
+          ##################
 
-    # only keep first (best) COG for each fcnl category
+          # collect COG memberships for each DB hit
 
-    #######################
+          ##################
 
-
-    #   foreach my $category (@{$cog->categories()}) {
-    #     last COGS if ($categories{$category->name()} && $categories{$category->name()} >= $minimum_membership);
-    #     ++$categories{$category->name()};
-    #   }
-
-    #   if ($cogs{$cog->name()}->{pos_min} && $cogs{$cog->name()}->{pos_max}) {
-    #     next COGS if ($hit->start() < $cogs{$cog->name()}->{pos_max} && $hit->end() > $cogs{$cog->name()}->{pos_min});
-    #   }
+          my $whogs = $whog->fetch_by_name($hit->name());
+          my $COGS_cnt = 0;
+              COGS: foreach my $cog (map { $_->cog() } @$whogs) { # this may be unneccessary since there seems to be 1 COG per hit
+            ++$COGS_cnt;
+            print "\t\t" . $hit->name() . "has more than one COG\n" if (($COGS_cnt > 1) && $debug);
+            print "\tCOG:  ", $cog->name(), "\n" if ($debug); #, " - ", $cog->description(), "\n" if ($debug);
 
 
-      
+            #######################
 
-    ++$cogs{$cog->name()}->{count};
-    $cogs{$cog->name()}->{cog} = $cog;
-    $cogs{$cog->name()}->{pos_min} = $hit->start() if (!$cogs{$cog->name()}->{pos_min} || ($hit->start() < $cogs{$cog->name()}->{pos_min}));
-    $cogs{$cog->name()}->{pos_max} = $hit->end() if (!$cogs{$cog->name()}->{pos_max} || ($hit->end() < $cogs{$cog->name()}->{pos_max}));
-    $cogs{$cog->name()}->{E} = $hit->significance() if (!$cogs{$cog->name()}->{E} || ($hit->significance() < $cogs{$cog->name()}->{E}));
-  }     ## end of COGS routine
-  #       last;
+            # only keep first (best) COG for each fcnl category
+
+            #######################
+
+
+            #   foreach my $category (@{$cog->categories()}) {
+            #     last COGS if ($categories{$category->name()} && $categories{$category->name()} >= $minimum_membership);
+            #     ++$categories{$category->name()};
+            #   }
+
+            #   if ($cogs{$cog->name()}->{pos_min} && $cogs{$cog->name()}->{pos_max}) {
+            #     next COGS if ($hit->start() < $cogs{$cog->name()}->{pos_max} && $hit->end() > $cogs{$cog->name()}->{pos_min});
+            #   }
+
+
+              
+
+            ++$cogs{$cog->name()}->{count};
+            $cogs{$cog->name()}->{cog} = $cog;
+            $cogs{$cog->name()}->{pos_min} = $hit->start() if (!$cogs{$cog->name()}->{pos_min} || ($hit->start() < $cogs{$cog->name()}->{pos_min}));
+            $cogs{$cog->name()}->{pos_max} = $hit->end() if (!$cogs{$cog->name()}->{pos_max} || ($hit->end() < $cogs{$cog->name()}->{pos_max}));
+            $cogs{$cog->name()}->{E} = $hit->significance() if (!$cogs{$cog->name()}->{E} || ($hit->significance() < $cogs{$cog->name()}->{E}));
+          }     ## end of COGS routine
+          #       last;
       }       ## end of foreach $hit
 
 
@@ -243,34 +253,34 @@ if (!$input_file) {
       ++$chk_loop;
 
       if ($debug) {
-  print "\n\t$cogname ($cogs{$cogname}->{count}): ", $cogs{$cogname}->{cog}->description(), "\n";
-  print "\t\tregion: ", $cogs{$cogname}->{pos_min}, " - ", $cogs{$cogname}->{pos_max}, "\n";
-  print "\t\tE:  ", $cogs{$cogname}->{E}, "\n";
+          print "\n\t$cogname ($cogs{$cogname}->{count}): ", $cogs{$cogname}->{cog}->description(), "\n";
+          print "\t\tregion: ", $cogs{$cogname}->{pos_min}, " - ", $cogs{$cogname}->{pos_max}, "\n";
+          print "\t\tE:  ", $cogs{$cogname}->{E}, "\n";
       }
 
       next unless ($cogs{$cogname}->{count} && $cogs{$cogname}->{count} >= $minimum_membership);
 
       my $overlap = 0;
       if ($chk_loop == 1) {
-  push(@tmp_regions,[$cogs{$cogname}->{pos_min}, $cogs{$cogname}->{pos_max}]);
+          push(@tmp_regions,[$cogs{$cogname}->{pos_min}, $cogs{$cogname}->{pos_max}]);
       } else {
-  foreach my $region (@tmp_regions) {
-    if ($cogs{$cogname}->{pos_min} < $region->[1] && $cogs{$cogname}->{pos_max} > $region->[0]) {
-      $overlap = 1;
-      print "\t\t[$cogs{$cogname}->{pos_min} - $cogs{$cogname}->{pos_max}] overlaps [$region->[0] - $region->[1]]\n" if ($debug);
-    } else {
-      print "\t\t[$cogs{$cogname}->{pos_min} - $cogs{$cogname}->{pos_max}] doesn't overlap [$region->[0] - $region->[1]]\n" if ($debug);
-    }
-  }
+        foreach my $region (@tmp_regions) {
+            if ($cogs{$cogname}->{pos_min} < $region->[1] && $cogs{$cogname}->{pos_max} > $region->[0]) {
+              $overlap = 1;
+              print "\t\t[$cogs{$cogname}->{pos_min} - $cogs{$cogname}->{pos_max}] overlaps [$region->[0] - $region->[1]]\n" if ($debug);
+            } else {
+              print "\t\t[$cogs{$cogname}->{pos_min} - $cogs{$cogname}->{pos_max}] doesn't overlap [$region->[0] - $region->[1]]\n" if ($debug);
+            }
+        }
       
-  if (!$overlap) {
-    push(@tmp_regions, [$cogs{$cogname}->{pos_min}, $cogs{$cogname}->{pos_max}]);
-  }
+        if (!$overlap) {
+            push(@tmp_regions, [$cogs{$cogname}->{pos_min}, $cogs{$cogname}->{pos_max}]);
+        }
       }       ## end of if ($chk_loop) else
 
       if ($overlap) {
-  print "\t\tcog $cogname overlaps another COG\n" if ($debug);
-  next;
+          print "\t\tcog $cogname overlaps another COG\n" if ($debug);
+          next;
       }
 
       push(@cognames,$cogname); ## pushes cogname onto array if no overlap with other COG alignments was detected
@@ -444,7 +454,7 @@ if ($local_whog) {
 
 ###########################
 
-if ($crossref) {
+if ($crossref && !$nocrossref) {
   print "\n\nCOG cross-reference report - vs '$crossref'\n" if ($verbose);
   print OUT "\n\nCOG cross-reference report - vs $crossref\n";
   print "excluding pathgenic strains\n" if ($nonpathogen && $verbose);
