@@ -6,11 +6,13 @@
 
 use warnings;
 use strict;
+use lib '/home/sgivan/projects/BGA/lib';
 use Carp;
 use Getopt::Std;
 use vars qw/ $opt_p $opt_d $opt_D $opt_v $opt_o $opt_O $opt_f $opt_F $opt_c $opt_b $opt_a $opt_A $opt_t $opt_T $opt_h $opt_i $opt_I $opt_l $opt_g $opt_G $opt_r $opt_R $opt_z $opt_E $opt_C $opt_S $opt_e $opt_X /;
 use Bio::DB::Flat;
-use CGRB::PFAM;
+#use CGRB::PFAM;
+use BGA::PFAM;
 use SOAP::Lite;
 use Statistics::Distributions;
 use Statistics::Descriptive;
@@ -207,9 +209,11 @@ foreach my $annotTool (@annotTool) {
   #foreach my $annotTool ((1,2)) {
   print "\n\n", "*" x 60, "\n\n*** Annotating with results of '", $tools->{$annotTool}->description(), "'  ***\n\n", "*" x 60, "\n\n" if ($verbose);
 
-  my $pfam = CGRB::PFAM->new();	# create a CGRB::PFAM object no matter which tool we are using
+  #my $pfam = CGRB::PFAM->new();	# create a CGRB::PFAM object no matter which tool we are using
+  my $pfam = BGA::PFAM->new();	# create a BGA::PFAM object no matter which tool we are using
   my $toolDB; # this will be a reference to a class that interacts/retrieves data from selected database
-  my $index_dir = "/home/cgrb/givans/lib/annotator/indices";
+  #my $index_dir = "/home/cgrb/givans/lib/annotator/indices";
+  my $index_dir = "/home/sgivan/lib/annotator/indices";
   if ($tools->{$annotTool}->description() =~ /swiss/i) {
     #  my $index_dir = "/home/cgrb/givans/lib/annotator/indices";
     my $write_flag = 0;
@@ -224,9 +228,10 @@ foreach my $annotTool (@annotTool) {
 				 -index	   =>	'bdb',
 				);
 	if ($opt_I) {
-      $toolDB->build_index('/dbase/scratch/swiss/sprot.dat') if ($opt_I);
-      print "new index complete\n";
-      exit();
+      #$toolDB->build_index('/dbase/scratch/swiss/sprot.dat') if ($opt_I);
+      $toolDB->build_index('/ircf/dbase/swissprot/uniprot_sprot.dat') if ($opt_I);
+      print "new swissprot index complete\n";
+#      exit();
     }
     print "using swissprot index\n" if ($debug);
 
@@ -242,7 +247,11 @@ foreach my $annotTool (@annotTool) {
 				 -write_flag =>  $write_flag,
 				 -index	   =>	'bdb',
 				);
-    $toolDB->build_index('/dbase/KEGG/genes') if ($opt_i);
+    if ($opt_i) {
+        #$toolDB->build_index('/dbase/KEGG/genes') if ($opt_i);
+        $toolDB->build_index('/ircf/dbase/KEGG/genes') if ($opt_i);
+        print "new KEGG index complete\n";
+    }
     print "using KEGG index\n" if ($debug);
 
     # Initialize KEGG SOAP interface
@@ -267,6 +276,8 @@ foreach my $annotTool (@annotTool) {
   } else {
     $toolDB = undef;
   } # end of setting up $toolDB
+
+    next if ($opt_I || $opt_i);
 
   my $loopcnt = 0;
   foreach my $orfName (@orfs) { # loop through all the ORFs in the genome project
@@ -349,7 +360,13 @@ foreach my $annotTool (@annotTool) {
         my $tool = GENDB::tool->init_id($facts->{$factID}->tool_id());
         my $toolName = $tool->name();
         my $dbRef = $facts->{$factID}->dbref();
-     
+        #my $dbRef = 'Q3KCC5';
+        if ($toolName eq 'BLASTP-swissprot') {
+            if (substr($dbRef,0,3) eq 'sp|') {
+                my @spvals = split /\|/, $dbRef;
+                $dbRef = $spvals[1];
+            }
+        } 
         my ($toolScore,$toolE);
           
         if ($tool->id() == $annotTool) { # only cycle through facts from selected tool
@@ -571,18 +588,18 @@ foreach my $annotTool (@annotTool) {
       #########################
       #
       if ($opt_g) {
-	my @minE = keys %geneName;
-	if (@minE) {
-	  if (scalar(@minE) > 1) {
-	    @minE = sort { $a <=> $b } @minE;
-	  }
-	  $A_name = $geneName{$minE[0]};
-	} elsif (0) {
+        my @minE = keys %geneName;
+        if (@minE) {
+            if (scalar(@minE) > 1) {
+                @minE = sort { $a <=> $b } @minE;
+            }
+            $A_name = $geneName{$minE[0]};
+        } elsif (0) {
 
-	} else {
-	  $A_name = $orf->name();
-	}
-	print "gene name (\$A_name) = '$A_name'\n" if ($verbose);
+        } else {
+            $A_name = $orf->name();
+        }
+        print "gene name (\$A_name) = '$A_name'\n" if ($verbose);
       }
 
       #
@@ -732,7 +749,8 @@ foreach my $annotTool (@annotTool) {
 	    print "\$seq is a ", ref($seq), "\n" if ($seq && $debug);
 	  }
 
-	  if ($verbose && ref($toolDB) =~ /CGRB::PFAM/) {
+	  #if ($verbose && ref($toolDB) =~ /CGRB::PFAM/) {
+	  if ($verbose && ref($toolDB) =~ /BGA::PFAM/) {
 
 	    print "PFAM id = '$bestHit->[3]'\n";
 	    print "PFAM acc = ", $toolDB->id_to_acc($bestHit->[3]),"\n";
@@ -791,17 +809,17 @@ foreach my $annotTool (@annotTool) {
 	      );
 	  #
 	  #
-	  print "one\n" if ($debug);
+	  #print "one\n" if ($debug);
 	}
-	print "two\n" if ($debug);
+	#print "two\n" if ($debug);
       }
-      print "three\n" if ($debug);
+      #print "three\n" if ($debug);
     }
-    print "four\n" if ($debug);
+    #print "four\n" if ($debug);
   }				## end of foreach $orf
-  print "five\n" if ($debug);
+  #print "five\n" if ($debug);
 }
-print "six\n" if ($debug);
+#print "six\n" if ($debug);
 #
 #
 print "\n\n", "+" x 60,"\ndeciding which annotation to use ...\n", "+" x 60, "\n\n" if ($verbose);
@@ -985,8 +1003,8 @@ foreach my $annotation_calls (values %annotation_calls) {
 	    ++$annot_cnt;
  	  }
 }
-# 	  #  }
 # #
+# 	  #  }
 # # End of database insertion
 # ################################
 # #
@@ -1024,30 +1042,30 @@ close(OUT) if ($opt_F);
 #
 
 sub getWords {			# returns an array of 'words'
-  my $line = shift;
-  _debug("getWords() received '$line'") if ($debug);
-  my @words = ();
+    my $line = shift;
+    _debug("getWords() received '$line'") if ($debug);
+    my @words = ();
 
-  #  print "getWords('$line')\n";
-  if (!$filter) {
-    #    print "not using custom filter\n";
-    @words = split /\s/, $line;
-  } else {
-    #    print "using custom filter, min word size = 4\n";
-    @words = $line =~ /\s*([\w\-\d\(\)\+\/\.]{4,})[\,\s\-]*/g;
+    #  print "getWords('$line')\n";
+    if (!$filter) {
+        #    print "not using custom filter\n";
+        @words = split /\s/, $line;
+    } else {
+        #    print "using custom filter, min word size = 4\n";
+        @words = $line =~ /\s*([\w\-\d\(\)\+\/\.]{4,})[\,\s\-]*/g;
 
-    #     if (scalar(@words) <= 1) {
-    #       print "too few words, use custom filter min word size = 4\n";
-    push(@words,$line =~ /\s*([\w\-\d\(\)\+\/\.]+\s[\w\-\d\(\)\+\/\.]+)[\,\s\-]*/g);
-    #       push(@words,$line =~ /\s*(([\w\-\d\(\)\+\/\.]+[\s\b]){2,4})[\,\s\-]*/g);
-    #     }
-    map { s/[()]//g } @words;
-    #    foreach my $word (@words) {
-    #      print "word:  '$word'\n";
-    #    }
-  }
- 
-  return @words
+        #     if (scalar(@words) <= 1) {
+        #       print "too few words, use custom filter min word size = 4\n";
+        push(@words,$line =~ /\s*([\w\-\d\(\)\+\/\.]+\s[\w\-\d\(\)\+\/\.]+)[\,\s\-]*/g);
+        #       push(@words,$line =~ /\s*(([\w\-\d\(\)\+\/\.]+[\s\b]){2,4})[\,\s\-]*/g);
+        #     }
+        map { s/[()]//g } @words;
+        #    foreach my $word (@words) {
+        #      print "word:  '$word'\n";
+        #    }
+    }
+    _debug("getWords() returning '@words'") if ($debug);
+    return @words
 }
 
 sub uniqueWords {		##  Tallies and scores each "word"
