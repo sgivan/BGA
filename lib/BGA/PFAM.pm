@@ -17,7 +17,8 @@ use vars qw/ @ISA /;
 sub new {
   my $pkg = shift;
 
-  my $self = $pkg->generate('PFAM25','genDB_web','microbes');
+  #my $self = $pkg->generate('PFAM25','genDB_web','microbes');
+  my $self = $pkg->generate('PFAM25','pfamDB','^wF9OE4$');
 
   return $self;
 }

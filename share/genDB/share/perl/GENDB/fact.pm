@@ -253,15 +253,15 @@ sub mset {
     my $curbuffer = $self->buffered;
     $self->buffer;
     foreach $key (keys(%$hashref)) {
-	# prevent really stupid tricks
-	if ($key eq 'id') {
-	    return(-1);
-	}
-	my $val = $hashref->{$key};
-	eval $self->$key($val);
+        # prevent really stupid tricks
+        if ($key eq 'id') {
+            return(-1);
+        }
+        my $val = $hashref->{$key};
+        eval $self->$key($val);
     }
     if (!$curbuffer) {
-	$self->unbuffer;
+	    $self->unbuffer;
     }
 }
 
@@ -295,13 +295,13 @@ sub buffer {
 sub unbuffer {
     my ($self) = @_;
     if ($self->buffered) {
-	my @sql = ();
-	foreach $key (qw{dbto tool_id orfto dbfrom orffrom dbref orf_id description toolresult id information}) {
-	    push(@sql, "$key=".$GENDB_DBH->quote($self->{$key}));
-	}
-	my $id = $self->id;
-	my $sql = "UPDATE fact SET ".join(', ', @sql)." WHERE id=$id";
-	$GENDB_DBH->do($sql) || return(-1);
+        my @sql = ();
+        foreach $key (qw{dbto tool_id orfto dbfrom orffrom dbref orf_id description toolresult id information}) {
+            push(@sql, "$key=".$GENDB_DBH->quote($self->{$key}));
+        }
+        my $id = $self->id;
+        my $sql = "UPDATE fact SET ".join(', ', @sql)." WHERE id=$id";
+        $GENDB_DBH->do($sql) || return(-1);
     }
     $self->{'_buffer'} = 0;
 }
@@ -311,13 +311,13 @@ sub getset {
     my ($self, $var, $val) = @_;
     my $id = $self->id;
     if (defined($val)) {
-	if (!$self->buffered) {
-	    my $qval = $GENDB_DBH->quote($val);
-	    $GENDB_DBH->do(qq {
-		UPDATE fact SET $var=$qval WHERE id=$id
-		}) || return(-1);
-	}
-	$self->{$var} = $val;
+        if (!$self->buffered) {
+            my $qval = $GENDB_DBH->quote($val);
+            $GENDB_DBH->do(qq {
+            UPDATE fact SET $var=$qval WHERE id=$id
+            }) || return(-1);
+        }
+        $self->{$var} = $val;
     }
     return($self->{$var});
 }

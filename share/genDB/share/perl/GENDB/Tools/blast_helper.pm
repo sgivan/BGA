@@ -167,51 +167,53 @@ sub run_job {
 
 	if ($@ || ($blast_run < 0)) {
 	    print STDERR "Error parsing blast report (perhabs no hits?):\n$@";
-	}
-	else {
+	} else {
 	    my $counter=0; # count hsps
 	    foreach $hit ($blast_run->hits) {
 		
-#		my $desc= $hit->desc;
-		my $desc= $hit->description;
-		my $db=$hit->name;
-		foreach $hsp ($hit->hsps) {
-		    
-		    $counter++;
+    #		my $desc= $hit->desc;
+            my $desc= $hit->description;
+            my $db=$hit->name;
+            foreach $hsp ($hit->hsps) {
+                    
+                    $counter++;
 
-                    # skip this fact if the expect value 
-		    # is too high
-		    next if ($GENDB_BLAST_LEVEL5_CUTOFF &&
-			     $hsp->expect > $tool->level5);
-		    my $fact=GENDB::fact->create($orf->id);
-		    
-		    # IC IC IC ....
-		    if ($fact < 0) {
-			die "can't save fact $fact";
-		    }
-		    
-		    my ($orffrm,$orfto)= $hsp->range('query');
-#		    my ($dbfrm,$dbto)= $hsp->range('sbjct');
-		    my ($dbfrm,$dbto)= $hsp->range('hit');
-		    my $evalue=$hsp->expect;
-		    
-		    my $res="(s:".$hsp->score.",e:".$evalue.")";
-		    $fact->toolresult($res);
-		    
-		    $fact->information($hsp->bits); 
-		    # information on the
-		    # hit in bits is slightly better to compare then 
-		    # p or e values.
-		    
-		    $fact->dbfrom($dbfrm);
-		    $fact->dbto($dbto);
-		    $fact->description($desc);
-		    $fact->orffrom($orffrm);
-		    $fact->orfto($orfto);
-		    $fact->tool_id($tool->id);
-		    $fact->dbref($db);
-		    
-		}
+                            # skip this fact if the expect value 
+                    # is too high
+                    next if ($GENDB_BLAST_LEVEL5_CUTOFF &&
+                        $hsp->expect > $tool->level5);
+                    my $fact=GENDB::fact->create($orf->id);
+
+                    $fact->buffer();
+
+                    # IC IC IC ....
+                    if ($fact < 0) {
+                        die "can't save fact $fact";
+                    }
+                    
+                    my ($orffrm,$orfto)= $hsp->range('query');
+        #		    my ($dbfrm,$dbto)= $hsp->range('sbjct');
+                    my ($dbfrm,$dbto)= $hsp->range('hit');
+                    my $evalue=$hsp->expect;
+                    
+                    my $res="(s:".$hsp->score.",e:".$evalue.")";
+                    $fact->toolresult($res);
+                    
+                    $fact->information($hsp->bits); 
+                    # information on the
+                    # hit in bits is slightly better to compare then 
+                    # p or e values.
+                    
+                    $fact->dbfrom($dbfrm);
+                    $fact->dbto($dbto);
+                    $fact->description($desc);
+                    $fact->orffrom($orffrm);
+                    $fact->orfto($orfto);
+                    $fact->tool_id($tool->id);
+                    $fact->dbref($db);
+
+                    $fact->unbuffer();
+            }
 	    }
 	}
 	$what->finished(); 
