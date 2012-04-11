@@ -206,10 +206,9 @@ my @annotation_calls;
 my %annotation_calls;
 #@annotTool = (1,2);
 foreach my $annotTool (@annotTool) {
-  #foreach my $annotTool ((1,2)) {
+
   print "\n\n", "*" x 60, "\n\n*** Annotating with results of '", $tools->{$annotTool}->description(), "'  ***\n\n", "*" x 60, "\n\n" if ($verbose);
 
-  #my $pfam = CGRB::PFAM->new();	# create a CGRB::PFAM object no matter which tool we are using
   my $pfam = BGA::PFAM->new();	# create a BGA::PFAM object no matter which tool we are using
   my $toolDB; # this will be a reference to a class that interacts/retrieves data from selected database
   #my $index_dir = "/home/cgrb/givans/lib/annotator/indices";
@@ -282,7 +281,7 @@ foreach my $annotTool (@annotTool) {
   my $loopcnt = 0;
   foreach my $orfName (@orfs) { # loop through all the ORFs in the genome project
     print "\$orfName isa '", ref($orfName), "'\n" if ($debug);
-#    last if ($loopcnt > 4000);
+
     if ($orfName) {
       print "if (\$orfName)\n" if ($debug);
       my ($orf,$orfCommonName);
@@ -504,29 +503,34 @@ foreach my $annotTool (@annotTool) {
 #                                                                            # are available for this obj
                  } elsif ($seq->isa('Bio::Seq')) {
                     #print "opt_G swiss()\n";
+                    # $seq isa Bio::Seq::RichSeq
                     if ($tools->{$annotTool}->description() =~ /swiss/i) {
-                      my $ac = $seq->annotation();
-                      my @geneName = $ac->get_Annotations('gene_name');
-#                        print "Gene Names for '" . $seq->display_name() . "'\n";
-#                        for my $geneName (@geneName) {
-#                            print "gene name: '$geneName'\n";
-#                        }
-                      
-                      if (scalar(@geneName)) {
-    #                   next if (!@geneName);
-    #                   print "extracting gene name as text\n" if ($verbose);
-                        my $tmpName = $geneName[0]->as_text();
-                        $tmpName =~ s/Value:\s//;
-    #                   print "swissprot adding potential name: '$tmpName' $toolE\n" if ($verbose);
-                        $geneName{$toolE} = $tmpName;
-                        _debug("Gene Name: $tmpName") if ($debug);
-                      } else {
-    #                   $geneName{$toolE} = '';
+                        my $ac = $seq->annotation();
+#                        my @geneName = $ac->get_Annotations('gene_name');
+#                            print "Gene Names for '" . $seq->display_name() . "'\n";
+#                            for my $geneName (@geneName) {
+#                                print "\$geneName isa '" . ref($geneName) . "'\n";
+#                                my $gname = $geneName->find('Name');
+#                                print "\$gname: '" . $gname . "'\n";
+#                                #print "gene name: '" . $geneName->value('Name') . "'\n";
+#                            }
+#                        
+                        my @geneName = $ac->get_Annotations('gene_name');# will return an array of Bio::Annotation::TagTree 
+#                        print "\@geneName has '" . scalar(@geneName) . "' elements\n";
+#                        if (scalar(@geneName)) {
+#                        my $tmpName = $geneName[0]->as_text();
+                        #  $tmpName =~ s/Value:\s//;
+                        if ($geneName[0]->can('find')) {# fancy introspection
+                            $geneName{$toolE} = $geneName[0]->find('Name');#find is a Bio::Annotation::TagTree method
+                            #$geneName{$toolE} = $tmpName;
+                            #_debug("Gene Name: $tmpName") if ($debug);
+                            _debug("Gene Name: $geneName{$toolE}") if ($debug);
+                        } else {
                         _debug('unable to assign gene name from BLAST description') if ($debug);
-                      }
+                        }
 
 
-                    }
+                    } # end of swissprot name extract bracket
                 } else {
                     print "unknown object '" . ref($seq) . "' - cannot retrieve annotations\n" if ($verbose);
                 }
@@ -624,200 +628,203 @@ foreach my $annotTool (@annotTool) {
       #
 
       if (%factDB && %toolData) {
-	#	my ($bestHit,$bestscore) = bestHit(\%factDB,\%toolData,\%EC);
-	my $maxScore = 0;
-	foreach my $tool_data (values %toolData) {
-	  $maxScore = $tool_data->[0] if ($tool_data->[0] > $maxScore);
-	}
+        #	my ($bestHit,$bestscore) = bestHit(\%factDB,\%toolData,\%EC);
+        my $maxScore = 0;
+        foreach my $tool_data (values %toolData) {
+            $maxScore = $tool_data->[0] if ($tool_data->[0] > $maxScore);
+        }
 
-	my ($bestHit,$bestscore,$best_scoredata,$scores) = bestHit(\%factDB,\%toolData,$A_ec,$maxScore);
-	my $A_ec = '';
+        my ($bestHit,$bestscore,$best_scoredata,$scores) = bestHit(\%factDB,\%toolData,$A_ec,$maxScore);
+        my $A_ec = '';
 
-	print "trying to determine EC number\n" if ($verbose);
-	$A_ec = (getEC($bestHit->[2],$tools->{$annotTool}->description()))[0];
-	my @dash = $A_ec =~ /-/g if ($A_ec);
+        print "trying to determine EC number\n" if ($verbose);
+        $A_ec = (getEC($bestHit->[2],$tools->{$annotTool}->description()))[0];
+        my @dash = $A_ec =~ /-/g if ($A_ec);
 
-	if (! $A_ec || scalar(@dash) >= 2) {
-	  print "using alternative EC algorithm '@dash'\n" if ($verbose);
-	  print "no A_ec\n" if (!$A_ec && $verbose);
-	  $A_ec = ECscore(\%EC,$scores,$bestHit->[0])->[1];
-	}
-	$A_ec = '' unless ($A_ec);
-	print "EC number: $A_ec\n" if ($verbose);
-	#
-	# $bestHit is a reference to an array:
-	#  [0] tool score
-	#  [1] tool E-value
-	#  [2] hit description
-	#  [3] ID of hit from it's particular database
- 	#  [4] Bio::Seq or Bio::PrimarySeq object containing the hit sequence
-	#
-	#
-
-
-	if ($bestHit && ref $bestHit eq 'ARRAY') {
-	  print "using hit ($bestscore): $bestHit->[0] $bestHit->[1] $bestHit->[2] $bestHit->[3]\n" if ($verbose);
-	  $A_description = $bestHit->[2];
-	  $A_product = $bestHit->[2];
-	  $A_db_id = $bestHit->[3];
-
-	  if ($tools->{$annotTool}->description() =~ /kegg/i) {
-	    if ($opt_G) {
-	      print "determining gene Name from best hit\n" if ($verbose);
-	      #	    if ($A_description =~ /(\w+?)\;/) {
-	    
-	      #	    if ($A_description =~ /([\S]+?)\;/) {
-	      if ($A_description =~ /^([\S]{2,})\;/) {
-		print "best hit has decipherable gene name: '$1'\n" if ($verbose);
-		$A_name = $1;
-	      } else {
-		foreach my $id (keys %geneName) {
-		  if ($id =~ /^ec[ojesc]\:/) {
-		    print "resorting to E. coli gene name\n\tid: '$id'; $geneName{$id}\n" if ($verbose);
-		    if ($geneName{$id} =~ /^([\S]+?)[;,]/) {
-		      print "\tgene name will be set to: '$1'\n" if ($verbose);
-		      $A_name = $1;
-		      last;
-		    }
-		  }
-		}
-	      }
-	    }
-	  } elsif ($tools->{$annotTool}->description() =~ /swiss/i) {
-	    #	    foreach my $key (keys %geneName) {
-	    #	      print "key: $key; value: $geneName{$key}\n";
-	    #	    }
-	  }
+        if (! $A_ec || scalar(@dash) >= 2) {
+            print "using alternative EC algorithm '@dash'\n" if ($verbose);
+            print "no A_ec\n" if (!$A_ec && $verbose);
+            $A_ec = ECscore(\%EC,$scores,$bestHit->[0])->[1];
+        }
+        $A_ec = '' unless ($A_ec);
+        print "EC number: $A_ec\n" if ($verbose);
+        #
+        # $bestHit is a reference to an array:
+        #  [0] tool score
+        #  [1] tool E-value
+        #  [2] hit description
+        #  [3] ID of hit from it's particular database
+        #  [4] Bio::Seq or Bio::PrimarySeq object containing the hit sequence
+        #
+        #
 
 
-	  #
-	  # The best hit sequence can be either a Bio::Seq object
-	  # or a Bio::PrimarySeq object.  Bio::Seq objects
-	  # carry more annotation.
-	  #
-	  my $seq = $bestHit->[4];
-	  if ($seq && $seq->isa('Bio::Seq')) {
-	    my $ac = $seq->annotation();
-	    $hit_id = $seq->id();
+        if ($bestHit && ref $bestHit eq 'ARRAY') {
+            print "using hit ($bestscore): $bestHit->[0] $bestHit->[1] $bestHit->[2] $bestHit->[3]\n" if ($verbose);
+            $A_description = $bestHit->[2];
+            $A_product = $bestHit->[2];
+            $A_db_id = $bestHit->[3];
 
-	    foreach my $dblink ($ac->get_Annotations('dblink')) {
-	      if ($dblink->database eq 'Pfam') {
-		#	      print "\tPfam link: ", $dblink->primary_id(), "\n";
-		my $pfam_id = $pfam->acc_to_id($dblink->primary_id());
-		#		my $pfam_id = $toolDB->acc_to_id($dblink->primary_id());
-		#	      print "\t\tInterpro abstract: ", $pfam->interpro_abstract($pfam_id)->[0], "\n";
-		#	      print "GO fcn: ", $pfam->go_function($pfam_id)->[0], "\n" if (defined $pfam->go_function($pfam_id)->[0]);
-		#	      print "GO process: ", $pfam->go_process($pfam_id)->[0], "\n" if (defined $pfam->go_process($pfam_id)->[0]);
-		#	      print "GO component: ", $pfam->go_component($pfam_id)->[0], "\n" if (defined $pfam->go_component($pfam_id)->[0]);
-	      }
-	    }
-
-	    if (0) { # not used, but illustrates how to retrieve annotations from Bio::Seq objects
-	      if ($verbose) {
-		my @aKeys = $ac->get_all_annotation_keys();
-		foreach my $aKey (@aKeys) {
-		  print "annot key: '$aKey'\n";
-		  my @values = $ac->get_Annotations($aKey);
-		  foreach my $value (@values) {
-		    print "\t'",$value->as_text(),"'\n";
-		  }
-		}
-	      }
-	    }
-      
-	    my @hit_geneNames = $ac->get_Annotations('gene_name');
-
-	    if ($bestHit->[4] && ref($bestHit->[4]) =~ /Bio\:\:/) {
-	      $hit_seq = $bestHit->[4]->seq();
-	    }
-
-	    #
-	    #	For file output, we can provide name of best hit and species
-	    #
-	    if ($hit_geneNames[0] && $hit_geneNames[0]->can('as_text')) {
-	      $hit_geneName = $hit_geneNames[0]->as_text();
-	      $hit_geneName =~ s/Value\:\s//;
-	    }
-
-	    $hit_binomial = $seq->species()->binomial() if ($seq && $seq->isa('Bio::Seq') && $seq->species());
-
-	  } elsif ($seq && $seq->isa('Bio::PrimarySeq')) {
-	    $hit_id = $seq->id();
-	    $hit_geneName = $seq->id();
-	    $hit_seq = $seq->seq() || '';
-	  } else {
-	    print "\$seq is a ", ref($seq), "\n" if ($seq && $debug);
-	  }
-
-	  #if ($verbose && ref($toolDB) =~ /CGRB::PFAM/) {
-	  if ($verbose && ref($toolDB) =~ /BGA::PFAM/) {
-
-	    print "PFAM id = '$bestHit->[3]'\n";
-	    print "PFAM acc = ", $toolDB->id_to_acc($bestHit->[3]),"\n";
-# 	    my $abstracts = $toolDB->interpro_abstract($bestHit->[3]);
-# 	    if (ref($abstracts)) {
-# 	      my $abstract_cnt;
-# 	      foreach my $abstract (@$abstracts) {
-# 		print "abstract ", ++$abstract_cnt, ": '$abstract'\n\n";
-# 	      }
-# 	    }
-	    
-	    my $interpro_info = $toolDB->interpro_info($bestHit->[3]);
-	    foreach my $ref (@$interpro_info) {
-	      print "interpro id: '", $ref->[0], "\n";
-	      print "interpro abstract: '", $ref->[1], "\n";
-	    }
+            if ($tools->{$annotTool}->description() =~ /kegg/i) {
+                if ($opt_G) {
+                    print "determining gene Name from best hit\n" if ($verbose);
+                    #	    if ($A_description =~ /(\w+?)\;/) {
+                    
+                    #	    if ($A_description =~ /([\S]+?)\;/) {
+                    if ($A_description =~ /^([\S]{2,})\;/) {
+                        print "best hit has decipherable gene name: '$1'\n" if ($verbose);
+                        $A_name = $1;
+                    } else {
+                        foreach my $id (keys %geneName) {
+                            if ($id =~ /^ec[ojesc]\:/) {
+                                print "resorting to E. coli gene name\n\tid: '$id'; $geneName{$id}\n" if ($verbose);
+                                if ($geneName{$id} =~ /^([\S]+?)[;,]/) {
+                                    print "\tgene name will be set to: '$1'\n" if ($verbose);
+                                    $A_name = $1;
+                                    last;
+                                }
+                            }
+                        }
+                    }
+                }
+            } elsif ($tools->{$annotTool}->description() =~ /swiss/i) {
+                #	    foreach my $key (keys %geneName) {
+                #	      print "key: $key; value: $geneName{$key}\n";
+                #	    }
+            }
 
 
-	    my $go_info = $toolDB->go_info($bestHit->[3]);
-	    foreach my $ref (@$go_info) {
-	      print "GO ID: '", $ref->[0], "'\n";
-	      print "GO term: '", $ref->[1], "'\n";
-	      print "GO category: '", $ref->[2], "'\n";
-	    }
+            #
+            # The best hit sequence can be either a Bio::Seq object
+            # or a Bio::PrimarySeq object.  Bio::Seq objects
+            # carry more annotation.
+            #
+            my $seq = $bestHit->[4];
+            if ($seq && $seq->isa('Bio::Seq')) {
+                #print "using Bio::Seq object\n";
+                my $ac = $seq->annotation();
+                $hit_id = $seq->id();
 
-#  	    map { print $_ if ($_) } $toolDB->go_id($bestHit->[3]);
-# 	    print "\n";
-# 	    print "GO:  ", $toolDB->go_category($bestHit->[3]), " -> ", $toolDB->go_term($bestHit->[3]), "\n";
-# 	    print "\n";
-	  }
+                foreach my $dblink ($ac->get_Annotations('dblink')) {
+                    if ($dblink->database eq 'Pfam') {
+                        #	      print "\tPfam link: ", $dblink->primary_id(), "\n";
+                                my $pfam_id = $pfam->acc_to_id($dblink->primary_id());
+                        #		my $pfam_id = $toolDB->acc_to_id($dblink->primary_id());
+                        #	      print "\t\tInterpro abstract: ", $pfam->interpro_abstract($pfam_id)->[0], "\n";
+                        #	      print "GO fcn: ", $pfam->go_function($pfam_id)->[0], "\n" if (defined $pfam->go_function($pfam_id)->[0]);
+                        #	      print "GO process: ", $pfam->go_process($pfam_id)->[0], "\n" if (defined $pfam->go_process($pfam_id)->[0]);
+                        #	      print "GO component: ", $pfam->go_component($pfam_id)->[0], "\n" if (defined $pfam->go_component($pfam_id)->[0]);
+                    }
+                }
 
-#	  print "hopefully the gene name will be '$geneName{$bestHit->[1]}' $bestHit->[1]\n";
+                if (0) { # not used, but illustrates how to retrieve annotations from Bio::Seq objects
+                    if ($verbose) {
+                        my @aKeys = $ac->get_all_annotation_keys();
+                        foreach my $aKey (@aKeys) {
+                            print "annot key: '$aKey'\n";
+                            my @values = $ac->get_Annotations($aKey);
+                            foreach my $value (@values) {
+                                print "\t'",$value->as_text(),"'\n";
+                            }
+                        }
+                    }
+                }
+            
+                my @hit_geneNames = $ac->get_Annotations('gene_name');
 
-	  push(@{$annotation_calls{$orf->id()}},
-	       {
-		tool_descrip	=>	$tools->{$annotTool}->description(),
-		orf_name	=>	$orfName,
-		orf_id		=>	$orf->id(),
-		A_name		=>	$A_name || $hit_geneName || $geneName{$bestHit->[1]} || $orf->name(),
-		A_product	=>	$A_product,
-		A_description	=>	$A_description,
-		A_ec		=>	$A_ec,
-		tool_id		=>	$annotTool,
-		hit_score	=>	$bestHit->[0],
-		hit_E		=>	$bestHit->[1],
-		hit_id		=>	$bestHit->[3],
-		hit_description	=>	$bestHit->[2],
-		hit_gene_name	=>	$hit_geneName,
-		hit_sequence	=>	$hit_seq,
-		hit_binomial	=>	$hit_binomial,
-		best_score	=>	$bestscore,
-		score_data	=>	$best_scoredata,
-		summary		=>	$tools->{$annotTool}->description() . "; dbid=" . $bestHit->[3] . "; $A_description",
-		scores		=>	$scores,
-	       }
-	      );
-	  #
-	  #
-	  #print "one\n" if ($debug);
-	}
-	#print "two\n" if ($debug);
-      }
-      #print "three\n" if ($debug);
-    }
-    #print "four\n" if ($debug);
-  }				## end of foreach $orf
-  #print "five\n" if ($debug);
+                if ($bestHit->[4] && ref($bestHit->[4]) =~ /Bio\:\:/) {
+                    $hit_seq = $bestHit->[4]->seq();
+                }
+
+                #
+                #	For file output, we can provide name of best hit and species
+                #
+                if ($hit_geneNames[0] && $hit_geneNames[0]->can('find')) {
+                    $hit_geneName = $hit_geneNames[0]->find('Name');
+                } elsif ($hit_geneNames[0] && $hit_geneNames[0]->can('as_text')) {
+                    $hit_geneName = $hit_geneNames[0]->as_text();
+                    $hit_geneName =~ s/Value\:\s//;
+                }
+
+                $hit_binomial = $seq->species()->binomial() if ($seq && $seq->isa('Bio::Seq') && $seq->species());
+
+            } elsif ($seq && $seq->isa('Bio::PrimarySeq')) {
+                $hit_id = $seq->id();
+                $hit_geneName = $seq->id();
+                $hit_seq = $seq->seq() || '';
+            } else {
+                print "\$seq is a ", ref($seq), "\n" if ($seq && $debug);
+            }
+
+            #if ($verbose && ref($toolDB) =~ /CGRB::PFAM/) {
+            if ($verbose && ref($toolDB) =~ /BGA::PFAM/) {
+
+                print "PFAM id = '$bestHit->[3]'\n";
+                print "PFAM acc = ", $toolDB->id_to_acc($bestHit->[3]),"\n";
+        # 	    my $abstracts = $toolDB->interpro_abstract($bestHit->[3]);
+        # 	    if (ref($abstracts)) {
+        # 	      my $abstract_cnt;
+        # 	      foreach my $abstract (@$abstracts) {
+        # 		print "abstract ", ++$abstract_cnt, ": '$abstract'\n\n";
+        # 	      }
+        # 	    }
+                
+                my $interpro_info = $toolDB->interpro_info($bestHit->[3]);
+                foreach my $ref (@$interpro_info) {
+                print "interpro id: '", $ref->[0], "\n";
+                print "interpro abstract: '", $ref->[1], "\n";
+                }
+
+
+                my $go_info = $toolDB->go_info($bestHit->[3]);
+                foreach my $ref (@$go_info) {
+                print "GO ID: '", $ref->[0], "'\n";
+                print "GO term: '", $ref->[1], "'\n";
+                print "GO category: '", $ref->[2], "'\n";
+                }
+
+        #  	    map { print $_ if ($_) } $toolDB->go_id($bestHit->[3]);
+        # 	    print "\n";
+        # 	    print "GO:  ", $toolDB->go_category($bestHit->[3]), " -> ", $toolDB->go_term($bestHit->[3]), "\n";
+        # 	    print "\n";
+            }
+
+        #	  print "hopefully the gene name will be '$geneName{$bestHit->[1]}' $bestHit->[1]\n";
+
+            push(@{$annotation_calls{$orf->id()}},
+                {
+                tool_descrip	=>	$tools->{$annotTool}->description(),
+                orf_name	=>	$orfName,
+                orf_id		=>	$orf->id(),
+                A_name		=>	$A_name || $hit_geneName || $geneName{$bestHit->[1]} || $orf->name(),
+                A_product	=>	$A_product,
+                A_description	=>	$A_description,
+                A_ec		=>	$A_ec,
+                tool_id		=>	$annotTool,
+                hit_score	=>	$bestHit->[0],
+                hit_E		=>	$bestHit->[1],
+                hit_id		=>	$bestHit->[3],
+                hit_description	=>	$bestHit->[2],
+                hit_gene_name	=>	$hit_geneName,
+                hit_sequence	=>	$hit_seq,
+                hit_binomial	=>	$hit_binomial,
+                best_score	=>	$bestscore,
+                score_data	=>	$best_scoredata,
+                summary		=>	$tools->{$annotTool}->description() . "; dbid=" . $bestHit->[3] . "; $A_description",
+                scores		=>	$scores,
+                }
+                );
+            #
+            #
+            #print "one\n" if ($debug);
+            }
+            #print "two\n" if ($debug);
+            }
+            #print "three\n" if ($debug);
+            }
+            #print "four\n" if ($debug);
+    }				## end of foreach $orf
+    #print "five\n" if ($debug);
 }
 #print "six\n" if ($debug);
 #
@@ -1004,23 +1011,9 @@ foreach my $annotation_calls (values %annotation_calls) {
  	  }
 }
 # #
-# 	  #  }
 # # End of database insertion
 # ################################
 # #
-
-# 	} # end of if ($bestHit && ref $bestHit eq 'ARRAY')
-#       } # end of if (%factDB && %toolData)
-
-#   } # end of if ($orfName)
-#   ++$cnt;
-#   if ($opt_T) {
-#     if (($annot_cnt % 100) == 0) {
-#       print "$annot_cnt\n";
-#     }
-#   }
-# } # end of foreach my $orfName (@orfs)
-
 
 print $annot_cnt . " ORFs annotated\n" if ($opt_T && $annot_cnt);
 
