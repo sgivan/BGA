@@ -276,7 +276,7 @@ foreach my $annotTool (@annotTool) {
     $toolDB = undef;
   } # end of setting up $toolDB
 
-    next if ($opt_I || $opt_i);
+  next if ($opt_I || $opt_i);
 
   my $loopcnt = 0;
   foreach my $orfName (@orfs) { # loop through all the ORFs in the genome project
@@ -520,7 +520,7 @@ foreach my $annotTool (@annotTool) {
 #                        if (scalar(@geneName)) {
 #                        my $tmpName = $geneName[0]->as_text();
                         #  $tmpName =~ s/Value:\s//;
-                        if ($geneName[0]->can('find')) {# fancy introspection
+                        if ($geneName[0] && $geneName[0]->can('find')) {# fancy introspection
                             $geneName{$toolE} = $geneName[0]->find('Name');#find is a Bio::Annotation::TagTree method
                             #$geneName{$toolE} = $tmpName;
                             #_debug("Gene Name: $tmpName") if ($debug);
@@ -756,7 +756,6 @@ foreach my $annotTool (@annotTool) {
                 print "\$seq is a ", ref($seq), "\n" if ($seq && $debug);
             }
 
-            #if ($verbose && ref($toolDB) =~ /CGRB::PFAM/) {
             if ($verbose && ref($toolDB) =~ /BGA::PFAM/) {
 
                 print "PFAM id = '$bestHit->[3]'\n";
@@ -792,27 +791,27 @@ foreach my $annotTool (@annotTool) {
         #	  print "hopefully the gene name will be '$geneName{$bestHit->[1]}' $bestHit->[1]\n";
 
             push(@{$annotation_calls{$orf->id()}},
-                {
-                tool_descrip	=>	$tools->{$annotTool}->description(),
-                orf_name	=>	$orfName,
-                orf_id		=>	$orf->id(),
-                A_name		=>	$A_name || $hit_geneName || $geneName{$bestHit->[1]} || $orf->name(),
-                A_product	=>	$A_product,
-                A_description	=>	$A_description,
-                A_ec		=>	$A_ec,
-                tool_id		=>	$annotTool,
-                hit_score	=>	$bestHit->[0],
-                hit_E		=>	$bestHit->[1],
-                hit_id		=>	$bestHit->[3],
-                hit_description	=>	$bestHit->[2],
-                hit_gene_name	=>	$hit_geneName,
-                hit_sequence	=>	$hit_seq,
-                hit_binomial	=>	$hit_binomial,
-                best_score	=>	$bestscore,
-                score_data	=>	$best_scoredata,
-                summary		=>	$tools->{$annotTool}->description() . "; dbid=" . $bestHit->[3] . "; $A_description",
-                scores		=>	$scores,
-                }
+                    {
+                        tool_descrip	=>	$tools->{$annotTool}->description(),
+                        orf_name	=>	$orfName,
+                        orf_id		=>	$orf->id(),
+                        A_name		=>	$A_name || $hit_geneName || $geneName{$bestHit->[1]} || $orf->name(),
+                        A_product	=>	$A_product,
+                        A_description	=>	$A_description,
+                        A_ec		=>	$A_ec,
+                        tool_id		=>	$annotTool,
+                        hit_score	=>	$bestHit->[0],
+                        hit_E		=>	$bestHit->[1],
+                        hit_id		=>	$bestHit->[3],
+                        hit_description	=>	$bestHit->[2],
+                        hit_gene_name	=>	$hit_geneName,
+                        hit_sequence	=>	$hit_seq,
+                        hit_binomial	=>	$hit_binomial,
+                        best_score	=>	$bestscore,
+                        score_data	=>	$best_scoredata,
+                        summary		=>	$tools->{$annotTool}->description() . "; dbid=" . $bestHit->[3] . "; $A_description",
+                        scores		=>	$scores,
+                    }
                 );
             #
             #
@@ -826,189 +825,188 @@ foreach my $annotTool (@annotTool) {
     }				## end of foreach $orf
     #print "five\n" if ($debug);
 }
+print "number of annotations to load: '" . scalar(keys(%annotation_calls)) . "'\n";
 #print "six\n" if ($debug);
 #
 #
 print "\n\n", "+" x 60,"\ndeciding which annotation to use ...\n", "+" x 60, "\n\n" if ($verbose);
+
 my $annot_cnt;
 foreach my $annotation_calls (values %annotation_calls) {
-  @annotation_calls = @$annotation_calls;
-  if ($opt_D) {
-    my %probs;
-    my $stat = Statistics::Descriptive::Full->new();
-    my @scores;
-    foreach my $annot (@annotation_calls) {
-      push(@scores,@{$annot->{scores}});
+    @annotation_calls = @$annotation_calls;
+    if ($opt_D) {
+        my %probs;
+        my $stat = Statistics::Descriptive::Full->new();
+        my @scores;
+        foreach my $annot (@annotation_calls) {
+            push(@scores,@{$annot->{scores}});
+        }
+
+        $stat->add_data(@scores);
+
+        if ($stat->standard_deviation()) {
+            $stat->sort_data();
+            my $mean = $stat->mean();
+            my $sd = $stat->standard_deviation();
+            my $count = $stat->count();
+            foreach my $pt ($stat->get_data()) {
+                my $t = ($pt - $mean) / $sd;
+                my $tprob = Statistics::Distributions::tprob(($count - 1),$t);
+                print "t-test for '$pt': t = $t, tprob = $tprob\n" if ($debug);
+                $probs{$pt} = $tprob;
+            }
+
+
+            foreach my $annot (@annotation_calls) {
+                $annot->{tprob} = $probs{$annot->{best_score}};
+                $annot->{summary} .= "; t-prob = $probs{$annot->{best_score}}";
+            }
+
+
+
+            @annotation_calls = sort { $a->{tprob} <=> $b->{tprob} } @annotation_calls;
+        }
+
+    } else {
+        @annotation_calls = sort { $b->{best_score} <=> $a->{best_score} } @annotation_calls;
     }
 
-    $stat->add_data(@scores);
+    my $annot = $annotation_calls[0];
 
-    if ($stat->standard_deviation()) {
-      $stat->sort_data();
-      my $mean = $stat->mean();
-      my $sd = $stat->standard_deviation();
-      my $count = $stat->count();
-      foreach my $pt ($stat->get_data()) {
-	my $t = ($pt - $mean) / $sd;
-	my $tprob = Statistics::Distributions::tprob(($count - 1),$t);
-	print "t-test for '$pt': t = $t, tprob = $tprob\n" if ($debug);
-	$probs{$pt} = $tprob;
-      }
+    if ($verbose) {
+        print "\n\nAnnotation call [" . $tools->{$annot->{tool_id}}->description() . "]:\n\n";
 
-
-      foreach my $annot (@annotation_calls) {
-	$annot->{tprob} = $probs{$annot->{best_score}};
-	$annot->{summary} .= "; t-prob = $probs{$annot->{best_score}}";
-      }
-
-
-
-      @annotation_calls = sort { $a->{tprob} <=> $b->{tprob} } @annotation_calls;
+        foreach my $characteristic (sort {$a cmp $b}  keys %$annot) {
+            printf "%30s\t%80s\n", $characteristic, length($annot->{$characteristic}) > 80 ? substr($annot->{$characteristic},0,70) . " ..." : $annot->{$characteristic};
+        #    print "$characteristic\t $annot->{$characteristic}\n";
+        }
     }
 
-  } else {
-    @annotation_calls = sort { $b->{best_score} <=> $a->{best_score} } @annotation_calls;
-  }
+    #
+    #
+    #################################
+    #	File Output		#
+    #################################
+    #
+    #
+    if ($opt_F) {			## file output
+        #	    print OUT "'$orfName'\t'$A_name'\t'$A_product'\t'$A_description'\t'$A_ec'\t'$bestHit->[0]'\t'$bestHit->[1]'\t'$bestHit->[3]'\t'$bestHit->[2]'\t'$hit_geneName'\t'$hit_seq'\t'$hit_binomial'\n";
+        my $line = '';
+        my @columns = ('orf_name','A_name','A_product','summary','A_ec','hit_score','hit_E','hit_id','hit_description','hit_gene_name','hit_sequence','hit_binomial');
 
-  my $annot = $annotation_calls[0];
-
-  if ($verbose) {
-    print "\n\nAnnotation call [" . $tools->{$annot->{tool_id}}->description() . "]:\n\n";
-
-    foreach my $characteristic (sort {$a cmp $b}  keys %$annot) {
-      printf "%30s\t%80s\n", $characteristic, length($annot->{$characteristic}) > 80 ? substr($annot->{$characteristic},0,70) . " ..." : $annot->{$characteristic};
-    #    print "$characteristic\t $annot->{$characteristic}\n";
+        foreach my $column (@columns) {
+            my $value = $annot->{$column} || '';
+            $line .= "\t$value";
+        }
+        $line .= "\n";
+        print OUT $line;
     }
-  }
+    #
+    #	End of File Output
+    ##############################
+    #
 
-  #
-  #
-  #################################
-  #	File Output		#
-  #################################
-  #
-  #
-  if ($opt_F) {			## file output
-    #	    print OUT "'$orfName'\t'$A_name'\t'$A_product'\t'$A_description'\t'$A_ec'\t'$bestHit->[0]'\t'$bestHit->[1]'\t'$bestHit->[3]'\t'$bestHit->[2]'\t'$hit_geneName'\t'$hit_seq'\t'$hit_binomial'\n";
-    my $line = '';
-    my @columns = ('orf_name','A_name','A_product','summary','A_ec','hit_score','hit_E','hit_id','hit_description','hit_gene_name','hit_sequence','hit_binomial');
+    #exit();
 
-    foreach my $column (@columns) {
-      my $value = $annot->{$column} || '';
-      $line .= "\t$value";
-    }
-    $line .= "\n";
-    print OUT $line;
-  }
-  #
-  #	End of File Output
-  ##############################
-  #
+    #comment start
 
-  #exit();
+    # #
+    # #
+    # #########################################
+    # # Insert into GenDB annotation table	#
+    # #########################################
+    # #
+    # #
 
-  #comment start
-
-  # #
-  # #
-  # #########################################
-  # # Insert into GenDB annotation table	#
-  # #########################################
-  # #
-  # #
-
-  # 	  my $annotations = {
-  # 			     product		=>	$A_product,
-  # 			     name		=>	$A_name || $orf->name(),
-  # 			     description	=>	$A_description,
-  # #			     ec			=>	$A_ec,
-  # 			     date		=>	time(),
-  # #			     db_id		=>	$A_db_id,
-  # 			    };
-  my $annotations = {
-		     product		=>	$annot->{A_product},
-		     name		=>	$annot->{A_name},
-		     #name		=>	'blah',
-		     # 			     description	=>	$annot->{A_description},
-		     description	=>	$annot->{A_description},
-		     #			     ec			=>	$A_ec,
-		     date		=>	time(),
-		     #			     db_id		=>	$A_db_id,
-		    };
-			      
-  if ($keepEC) {
-    # 	      my $latest_annotation = GENDB::annotation->latest_annotation_init_orf_id($orf->id());
+    # 	  my $annotations = {
+    # 			     product		=>	$A_product,
+    # 			     name		=>	$A_name || $orf->name(),
+    # 			     description	=>	$A_description,
+    # #			     ec			=>	$A_ec,
+    # 			     date		=>	time(),
+    # #			     db_id		=>	$A_db_id,
+    # 			    };
+    my $annotations = {
+                product		=>	$annot->{A_product},
+                name	    	=>	$annot->{A_name},
+                #name	    	=>	'blah',
+                #description	=>	$annot->{A_description},
+                description	=>	$annot->{A_description},
+                #ec			=>	$A_ec,
+                date		    =>	time(),
+                #db_id		=>	$A_db_id,
+            };
+                    
+    if ($keepEC) {
+    #my $latest_annotation = GENDB::annotation->latest_annotation_init_orf_id($orf->id());
     my $latest_annotation = GENDB::annotation->latest_annotation_init_orf_id($annot->{orf_id});
     my $ec = $latest_annotation->ec();
     if ($ec && $ec =~ /[0-9\.\-]+/) {
-      print "old EC = '$ec'\n" if ($verbose);
-      # 		$A_ec = $ec;
-      $annot->{A_ec} = $ec;
+        print "old EC = '$ec'\n" if ($verbose);
+        # 		$A_ec = $ec;
+        $annot->{A_ec} = $ec;
     } elsif ($annot->{A_ec}) {
-      print "new EC\n" if ($verbose);
+        print "new EC\n" if ($verbose);
     }
-  }
+    }
 	     
- 	    print "EC number will be set to: " . $annot->{A_ec} . "\n\n\n\n" if ($verbose);
- 	    $annotations->{ec} = $annot->{A_ec};
+    print "EC number will be set to: " . $annot->{A_ec} . "\n\n\n\n" if ($verbose);
+    $annotations->{ec} = $annot->{A_ec};
 # 	    $annotations->{comment} = "auto-annotation derived from facts\nTool: " . $tools->{$annotTool}->description() . "\nDB ID: $hit_id";
- 	    $annotations->{comment} = "auto-annotation derived from facts\n" . $annot->{summary};
- 	    $annotations->{annotator_id} = $annotator->id();
+    $annotations->{comment} = "auto-annotation derived from facts\n" . $annot->{summary};
+    $annotations->{annotator_id} = $annotator->id();
 
- 	  if ($kegg_soap) {
- 	    my ($KO,$korg);
- 	    if ($annotations->{description} =~ /\[(KO:\w+)\]/) {
- 	      $KO = $1;
- #	      print "\$KO = '$KO'\n" if ($verbose);
- 	    }
- 	    if (defined($annotations->{db_id}) && $annotations->{db_id} =~ /(\w+):/) {
- 	      $korg = $1;
- #	      print "\$korg = '$korg'\n" if ($verbose);
- 	    }
-		  
- 	    if ($KO && $korg) {
- #	      my $kgenes = $kegg_soap->get_genes_by_ko($KO,$korg);
- 	      my $kgenes = $kegg_soap->get_genes_by_ko($KO,'eco');
- 	      if ($kgenes) {
- 		foreach my $gene (@$kgenes) {
- 		  print "gene: '",$gene->{entry_id}, "'\t'", $gene->{definition}, "'\n" if ($verbose);
+    if ($kegg_soap) {
+        my ($KO,$korg);
+        if ($annotations->{description} =~ /\[(KO:\w+)\]/) {
+            $KO = $1;
+    #	      print "\$KO = '$KO'\n" if ($verbose);
+        }
+        if (defined($annotations->{db_id}) && $annotations->{db_id} =~ /(\w+):/) {
+            $korg = $1;
+    #	      print "\$korg = '$korg'\n" if ($verbose);
+        }
+            
+        if ($KO && $korg) {
+    #	      my $kgenes = $kegg_soap->get_genes_by_ko($KO,$korg);
+            my $kgenes = $kegg_soap->get_genes_by_ko($KO,'eco');
+            if ($kgenes) {
+                foreach my $gene (@$kgenes) {
+                    print "gene: '",$gene->{entry_id}, "'\t'", $gene->{definition}, "'\n" if ($verbose);
 
- # 		  my $motifs = $kegg_soap->get_motifs_by_gene($gene->{entry_id},'pfam');
- # 		  foreach my $motif (@$motifs) {
- # 		    print "motif:  " . $motif->{definition} . "\n";
- # 		    kdump($motifs);
- # 		    print "\n\n";
- # 		  }
+            # 		  my $motifs = $kegg_soap->get_motifs_by_gene($gene->{entry_id},'pfam');
+            # 		  foreach my $motif (@$motifs) {
+            # 		    print "motif:  " . $motif->{definition} . "\n";
+            # 		    kdump($motifs);
+            # 		    print "\n\n";
+            # 		  }
 
- 		}
- 	      }
- 	    }
+                }
+            }
+        }
+    }
 
- 	  }
-
- 	  if ($verbose) {
- 	    print "adding to annotations:\n";
- 	    foreach my $key (sort {$a cmp $b} keys %$annotations) {
- 	      my $value = $annotations->{$key};
- 	      $value =~ tr/\n/ /;
- 	      printf "\t%s = %s\n", $key, length($value) > 70 ? substr($value,0,70) . " ..." : $value;
- 	    }
- 	    print "\n\n";
-
-
- 	  }
+    if ($verbose) {
+        print "adding to annotations:\n";
+        foreach my $key (sort {$a cmp $b} keys %$annotations) {
+            my $value = $annotations->{$key};
+            $value =~ tr/\n/ /;
+            printf "\t%s = %s\n", $key, length($value) > 70 ? substr($value,0,70) . " ..." : $value;
+        }
+        print "\n\n";
+    }
 
 
- 	  if (!$opt_z) {
-# 	    my $Annot = GENDB::annotation->create($orfName,$orfID);
- 	    my $Annot = GENDB::annotation->create($annot->{orf_name},$annot->{orf_id});
- 	    $Annot->mset($annotations);
-# 	    $Annot->tool_id($annotTool);
- 	    $Annot->tool_id($annot->{tool_id});
-	    my $orf = GENDB::orf->init_name($annot->{orf_name});
- 	    $orf->status('1');
-	    ++$annot_cnt;
- 	  }
+    if (!$opt_z) {
+    #   my $Annot = GENDB::annotation->create($orfName,$orfID);
+        my $Annot = GENDB::annotation->create($annot->{orf_name},$annot->{orf_id});
+        $Annot->mset($annotations);
+    #    $Annot->tool_id($annotTool);
+        $Annot->tool_id($annot->{tool_id});
+        my $orf = GENDB::orf->init_name($annot->{orf_name});
+        $orf->status('1');
+        ++$annot_cnt;
+    }
 }
 # #
 # # End of database insertion
