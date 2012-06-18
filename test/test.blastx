@@ -1,0 +1,6 @@
+# BLASTX 2.2.26+
+# Query: TCONS_00000354 gene_id "XLOC_000237"; transcript_id "TCONS_00000354"; exon_number "2"; oId "CUFF.148.1"; class_code "u"; tss_id "TSS287";
+# Database: NR/nr
+# Fields: query id, subject id, % identity, alignment length, mismatches, gap opens, q. start, q. end, s. start, s. end, evalue, bit score
+# 324 hits found
+TCONS_00000354	gi|388493176|gb|AFK34654.1|	74.63	67	17	0	285	85	5	71	5e-28	 109
