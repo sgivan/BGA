@@ -64,12 +64,22 @@ while (<$IN>) {
 
     $bga->filter(1);
     my @words = $bga->getWords($title);
-    print "number of words = ", scalar(@words), "\n";
+    is(scalar(@words),4, "returned 4 words");
+
     my $wdcnt = 0;
     for my $word (@words) {
         ++$wdcnt;
         say "$wdcnt\t$word";
     }
+
+    my %hash = ();
+    $bga->uniqueWords(\%hash,\@words,$evalue);
+    my $sorted = $bga->sort_by_value(\%hash);
+    $bga->printHash($sorted,\%hash,4);
+
+    my $score = $bga->scoreData($title,\%hash);
+    say "score: '$score'";
+    
 }
 
 done_testing();

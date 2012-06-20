@@ -1,6 +1,8 @@
 package BGA::Util;
 
+use 5.010;
 use Moose;
+use autodie;
 use strict;
 
 # the following variables were originally defined in annotator.pl
@@ -24,10 +26,33 @@ has 'verbose'   =>  (
     default     =>  0,
 );
 
-#my $debug = 0;
-#my $verbose = 1;
-#my $filter = 0;
+has 'coverage'    =>  (
+    is          =>  'rw',
+    isa         =>  'Num',
+    default     =>  0.65,
+);
+
+has 'evalue'    =>  (
+    is          =>  'rw',
+    isa         =>  'Num',
+    default     =>  1e-6,
+);
+
+has 'maxScore'   => (
+    is          =>  'rw',
+    isa         =>  'Num',
+    default     =>  0,
+);
+
+has '_joined_titles'    => (
+    is          =>  'rw',
+    isa         =>  'Str',
+);
+    
 my $opt_R = 1;
+# I don't think I need to provide any access to these hashes, so define them locally:
+my %toolData = ();
+my %factDB = ();
 
 1;
 
@@ -63,38 +88,26 @@ sub getWords {			# returns an array of 'words'
 sub uniqueWords {		##  Tallies and scores each "word"
     my $self = shift;
     my $unique = shift;		# a hash reference
+                            # hash ref will be modified and returned
     my $words = shift;		# an array reference
     my $toolScore = shift;
     $toolScore = 1 unless ($toolScore);
 
     foreach my $word (@$words) {
-        #    print "tallying '$word'\n";
         #
         # Don't count low information content words
         #
-        #    next if ($word =~ /protein/i);
         next if ($word eq 'protein');
-        #    next if ($word =~ /family/i);
         next if ($word eq 'family');
-        #    next if ($word =~ /strain/i);
         next if ($word eq 'strain');
-        #    next if ($word =~ /imported/i);
         next if ($word eq 'imported');
-        #    next if ($word =~ /subsp/i);
         next if ($word eq 'subsp');
-        #    next if ($word =~ /function/i);
         next if ($word eq 'function');
-        #    next if ($word =~ /probable/i);
         next if ($word eq 'probable');
         next if ($word eq 'homolog');
         next if ($word eq 'putative');
         next if ($word eq 'domain');
-        #     next if ($word =~ /homolog/i);
-        #     next if ($word =~ /putative/i);
-        #    $unique->{$word} += $toolScore;
-        #    ++$unique->{$word}; ## original
-        #    print "\$word = '$word'\n";
-        #    print "'$word' has passed all tests, adding to tally\n";
+
         ++$unique->{$word}->{tally};
         $unique->{$word}->{score} += $toolScore;
         push(@{$unique->{$word}->{scores}},$toolScore);
@@ -102,6 +115,8 @@ sub uniqueWords {		##  Tallies and scores each "word"
     return ($unique);
 }
 
+# sub sort_by_value sorts a hash by the "score" attribute 
+# returns an array reference
 sub sort_by_value {
     my $self = shift;
     my $hashref = shift;
@@ -217,28 +232,45 @@ sub ECscore {
 }
 
 sub bestHit { # arguments should be 2 hash references and the computed EC number
+    # bestHit() returns a reference to an array:
+    #  [0] tool score
+    #  [1] tool E-value
+    #  [2] hit description
+    #  [3] ID of hit from it's particular database
+    #  [4] Bio::Seq or Bio::PrimarySeq object containing the hit sequence
+
     my $self = shift;
-    my $factDB = shift;
-    my $data = shift;		## ref to %toolData
+    #my $factDB = shift;     # this is the hash populated by uniqueWords subroutine
+    #my $data = shift;		## ref to %toolData
+    my $factDB = \%factDB;
+    my $data = \%toolData;
     # $toolData{$factID} = [$toolScore, $toolE, $description, $dbRef]
-    my $EC = shift;
-    my $maxScore = shift;
+    #my $EC = shift;
+    #my $maxScore = shift;
+
     my ($bestScore,$bestData,$scoredata_value,$best_scoredata_value,@scores) = (0,[]);
-    my $minScore = int($maxScore - $maxScore * 0.3);
+    #my $minScore = int($maxScore - $maxScore * 0.3);
+    my $minScore = int($self->maxScore - ($self->maxScore * 0.3));
     #  my $stat = Statistics::Descriptive::Full->new();
     
     foreach my $factID (keys %$data) {
         print "\n\nfact # $factID score = ", $data->{$factID}->[0], ", E = ", $data->{$factID}->[1], "\n" if ($self->debug);
+        my $joined_title = $data->{$factID}->[2];
+        my @titles = $self->split_titles();
+        my $first_title = $titles[0];
+        print "will use '$first_title' description" if ($self->debug);
 
         my $score = 0;
         #    if ($data->{$factID}->[0] < $minScore) {
         #      next;
         #    }
 
-        $score = $self->scoreData($data->{$factID}->[2],$factDB,$EC); # + $data->{$factID}->[0];
+        #$score = $self->scoreData($data->{$factID}->[2],$factDB,$EC); # + $data->{$factID}->[0];
+        #$score = $self->scoreData($data->{$factID}->[2],$factDB); # + $data->{$factID}->[0];
+        $score = $self->scoreData($first_title,$factDB); # + $data->{$factID}->[0];
         $score = 1 unless ($score);
         $scoredata_value = $score;
-        print "\$score = '$score'\n" if ($self->debug);
+        #print "\t\$score = '$score'\n" if ($self->debug);
         #    $score = log($score + 2.7183**$data->{$factID}->[0]); # add tool score
         $score = $score + sqrt(2.7183**(0.1 * $data->{$factID}->[0])); # add tool score
         #    $score = $score + sqrt(2.7183**$data->{$factID}->[0]); # add tool score
@@ -253,9 +285,9 @@ sub bestHit { # arguments should be 2 hash references and the computed EC number
 
 
         if ($score > $bestScore) {
-        $bestScore = $score;
-        $bestData = $data->{$factID};
-        $best_scoredata_value = $scoredata_value;
+            $bestScore = $score;
+            $bestData = $data->{$factID};
+            $best_scoredata_value = $scoredata_value;
         }
 
     }				## end of foreach factID
@@ -299,7 +331,7 @@ sub scoreData {
     my $self = shift;
     my $description = shift;	# a text string
     my $factDB = shift;		# a hash ref 
-    my $EC = shift;		# the most frequent EC number
+    #my $EC = shift;		# the most frequent EC number
     my ($uniqueWords,$totalScore) = ();
     
     my @words = $self->getWords($description);
@@ -337,3 +369,121 @@ sub get_title {
 
     return @rtn;
 }
+
+sub joined_title {
+    my $self = shift;
+    my $db = shift;
+    my $subid = shift;
+    my @titles = $self->get_title($db,$subid);
+    #my $titles = join ",", @titles;
+    my $titles = join "!!", @titles;
+
+    $self->_joined_titles($titles);
+    return $titles;
+}
+
+sub split_titles {
+    my $self = shift;
+    my @titles = ();
+
+    @titles = split /!!/, $self->_joined_titles();
+    return @titles;
+}
+
+sub calc_coverage {
+    my $self = shift;
+    my $start = shift; 
+    my $stop = shift;
+    my $totlen = shift;
+
+    my $coverage = (int(abs($start - $stop))) / $totlen;
+
+    print "coverage: '$coverage'\n" if ($self->debug);
+    return $coverage;
+}
+
+sub coverage_pass {
+    my $self = shift;
+    my $relspan = shift;
+    my $rtn = -1;
+
+    if ($relspan >= $self->coverage) {
+        $rtn = 1;
+    }
+
+    return $rtn;
+}
+
+sub check_query_coverage {
+    my $self = shift;
+    my $hr = shift;
+#    my $qstart = shift;
+#    my $qstop = shift;
+#    my $qlength = shift;
+
+    #return $self->coverage_pass($self->calc_coverage($qstart,$qstop,$qlength));
+    return $self->coverage_pass($self->calc_coverage($hr->{qstart},$hr->{qend},$hr->{qlen}));
+}
+
+
+sub read_blast_tabline {
+    my $self = shift;
+    my $line = shift;
+
+    chomp($line);
+    #my @vals = map { s/\s//g; } split /\t/, $line;
+    my @vals = split /\t/, $line;
+    # format of default blast tab line:
+    # $qid,$sid,$pident,$alength,$mismatches,$gapopens,$qstart,$qend,$sstart,$send,$evalue,$bitscore
+
+    return \@vals;
+}
+
+sub readHit {
+    my $self = shift;
+    my $line = shift;
+    my %rslt = ();
+
+    my $tabvals = $self->read_blast_tabline($line);
+    # the last two values require the -outfmt '6 std qlen slen' argument to blast
+    ($rslt{qid},$rslt{sid},$rslt{pident},$rslt{alength},$rslt{mismatches},$rslt{gapopens},$rslt{qstart},$rslt{qend},$rslt{sstart},$rslt{send},$rslt{evalue},$rslt{bitscore},$rslt{qlen},$rslt{slen}) = @$tabvals;
+    $rslt{bitscore} =~ s/\s//g;
+
+    return \%rslt;
+}
+
+sub parse_report {
+    my $self = shift;
+    my $file = shift;
+
+    open(my $IN,'<',$file);
+
+    my $cnt = 0;
+    while (<$IN>) {
+        next if (substr($_,0,1) eq '#');
+        ++$cnt;
+        my $hit = $self->readHit($_);
+        # the last two values require the -outfmt '6 std qlen slen' argument to blast
+        #my ($qid,$sid,$pident,$alength,$mismatches,$gapopens,$qstart,$qend,$sstart,$send,$evalue,$bitscore,$qlen,$slen) = @$tabvals;
+        next if ($self->check_query_coverage($hit) < 0);
+        next if ($hit->{evalue} > $self->evalue);
+        $hit->{title} = $self->joined_title('NR/nr',$hit->{sid});
+        $toolData{++$cnt} = [$hit->{bitscore}, $hit->{evalue}, $hit->{title}, $hit->{sid}];# not sure if I need this - only exists on 2 lines
+
+        my @words = $self->getWords($hit->{title}); # extract all "words" from hit title
+        $self->uniqueWords(\%factDB,\@words,$hit->{bitscore}); # identify and tally unique words
+    }
+    $self->find_maxScore();
+}
+
+sub find_maxScore {
+    my $self = shift;
+    my $maxScore = 0;
+    foreach my $tool_data (values %toolData) {
+        $maxScore = $tool_data->[0] if ($tool_data->[0] > $maxScore);
+    }
+    $self->maxScore($maxScore);
+    say "returning max score = '$maxScore'" if ($self->debug);
+    return $maxScore;
+}
+
