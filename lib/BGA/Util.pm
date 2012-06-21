@@ -48,6 +48,11 @@ has '_joined_titles'    => (
     is          =>  'rw',
     isa         =>  'Str',
 );
+
+has 'query_id'      =>  (
+    is          =>  'rw',
+    isa         =>  'Str',
+);
     
 my $opt_R = 1;
 # I don't think I need to provide any access to these hashes, so define them locally:
@@ -240,18 +245,14 @@ sub bestHit { # arguments should be 2 hash references and the computed EC number
     #  [4] Bio::Seq or Bio::PrimarySeq object containing the hit sequence
 
     my $self = shift;
-    #my $factDB = shift;     # this is the hash populated by uniqueWords subroutine
-    #my $data = shift;		## ref to %toolData
-    my $factDB = \%factDB;
-    my $data = \%toolData;
+    my $factDB = \%factDB; # this is the hash populated by uniqueWords subroutine
+    my $data = \%toolData; # ref to %toolData
     # $toolData{$factID} = [$toolScore, $toolE, $description, $dbRef]
     #my $EC = shift;
     #my $maxScore = shift;
 
     my ($bestScore,$bestData,$scoredata_value,$best_scoredata_value,@scores) = (0,[]);
-    #my $minScore = int($maxScore - $maxScore * 0.3);
     my $minScore = int($self->maxScore - ($self->maxScore * 0.3));
-    #  my $stat = Statistics::Descriptive::Full->new();
     
     foreach my $factID (keys %$data) {
         print "\n\nfact # $factID score = ", $data->{$factID}->[0], ", E = ", $data->{$factID}->[1], "\n" if ($self->debug);
@@ -261,23 +262,11 @@ sub bestHit { # arguments should be 2 hash references and the computed EC number
         print "will use '$first_title' description" if ($self->debug);
 
         my $score = 0;
-        #    if ($data->{$factID}->[0] < $minScore) {
-        #      next;
-        #    }
 
-        #$score = $self->scoreData($data->{$factID}->[2],$factDB,$EC); # + $data->{$factID}->[0];
-        #$score = $self->scoreData($data->{$factID}->[2],$factDB); # + $data->{$factID}->[0];
         $score = $self->scoreData($first_title,$factDB); # + $data->{$factID}->[0];
         $score = 1 unless ($score);
         $scoredata_value = $score;
-        #print "\t\$score = '$score'\n" if ($self->debug);
-        #    $score = log($score + 2.7183**$data->{$factID}->[0]); # add tool score
         $score = $score + sqrt(2.7183**(0.1 * $data->{$factID}->[0])); # add tool score
-        #    $score = $score + sqrt(2.7183**$data->{$factID}->[0]); # add tool score
-        #    $score += log(2.7183**$data->{$factID}->[0]); # add tool score
-        #    $score = log((2.7183**$data->{$factID}->[0]) * $score); # add tool score
-
-        #    $score = log($score);
 
         print "tool score = " . $data->{$factID}->[0] . ", E = " . $data->{$factID}->[1] . ":  $score:'" . $data->{$factID}->[2] . "'\n" if ($self->debug);
         push(@scores,$score);
@@ -461,14 +450,15 @@ sub parse_report {
     my $cnt = 0;
     while (<$IN>) {
         next if (substr($_,0,1) eq '#');
-        ++$cnt;
         my $hit = $self->readHit($_);
         # the last two values require the -outfmt '6 std qlen slen' argument to blast
         #my ($qid,$sid,$pident,$alength,$mismatches,$gapopens,$qstart,$qend,$sstart,$send,$evalue,$bitscore,$qlen,$slen) = @$tabvals;
         next if ($self->check_query_coverage($hit) < 0);
         next if ($hit->{evalue} > $self->evalue);
+        ++$cnt;
         $hit->{title} = $self->joined_title('NR/nr',$hit->{sid});
-        $toolData{++$cnt} = [$hit->{bitscore}, $hit->{evalue}, $hit->{title}, $hit->{sid}];# not sure if I need this - only exists on 2 lines
+        $toolData{++$cnt} = [$hit->{bitscore}, $hit->{evalue}, $hit->{title}, $hit->{sid}, $hit->{qid}];# not sure if I need this - only exists on 2 lines
+        $self->query_id($hit->{qid}) if ($cnt == 1);
 
         my @words = $self->getWords($hit->{title}); # extract all "words" from hit title
         $self->uniqueWords(\%factDB,\@words,$hit->{bitscore}); # identify and tally unique words

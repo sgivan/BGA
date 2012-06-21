@@ -9,7 +9,7 @@ use lib '../lib';
 use BGA::Util;
 
 my ($debug,$verbose,$help);
-my ($infile,$evalue,$hits,$coverage);
+my ($infile,$evalue,$hits,$coverage,$tab);
 
 my $result = GetOptions(
     "debug"     =>  \$debug,
@@ -19,6 +19,7 @@ my $result = GetOptions(
     "evalue=f"  =>  \$evalue,
     "hits=i"    =>  \$hits,
     "coverage=f"    =>  \$coverage,
+    "tab"       => \$tab,
 );
 
 if ($help) {
@@ -36,9 +37,15 @@ $bga->parse_report($infile);
 
 my ($bestHit,$bestscore,$best_scoredata,$scores) = $bga->bestHit();
 
-say "best hit:";
-for my $val (@$bestHit) {
-    say "$val";
+if (!$tab) {
+    say "best hit:";
+    for my $val (@$bestHit) {
+        say "$val";
+    }
+} else {
+    if (exists($bestHit->[0])) {
+        say "$bestHit->[4]\t$bestHit->[3]\t$bestHit->[0]\t$bestHit->[1]\t$bestHit->[2]";
+    }
 }
 
 sub help {

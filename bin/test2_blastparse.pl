@@ -22,7 +22,7 @@ my $result = GetOptions(
 $infile = '../test/test2.blastx';
 my $bga = BGA::Util->new();
 $bga->coverage(0.65);
-$bga->debug(0);
+$bga->debug(1) if ($debug);
 
 if ($help) {
     help();
@@ -53,12 +53,14 @@ my ($bestHit,$bestscore,$best_scoredata,$scores) = $bga->bestHit();
 #  [3] ID of hit from it's particular database
 #  [4] Bio::Seq or Bio::PrimarySeq object containing the hit sequence
 
-#say "best hit";
-#for my $val (@$bestHit) {
-#    say "$val";
-#}
+if ($debug) {
+    say "best hit";
+    for my $val (@$bestHit) {
+        say "$val";
+    }
+}
 
-is($bestHit->[3],'gi|336445404|gb|AEI58770.1|','identified gi|336445404|gb|AEI58770.1|');
+is($bestHit->[3],'gi|336445402|gb|AEI58769.1|','identified gi|336445402|gb|AEI58769.1|');
 
 done_testing();
 
