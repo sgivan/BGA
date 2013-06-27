@@ -434,7 +434,7 @@ sub readHit {
     my %rslt = ();
 
     my $tabvals = $self->read_blast_tabline($line);
-    # the last two values require the -outfmt '6 std qlen slen' argument to blast
+    # the last two values require the -outfmt '6 std qlen slen' or '7 std qlen slen' argument to blast
     ($rslt{qid},$rslt{sid},$rslt{pident},$rslt{alength},$rslt{mismatches},$rslt{gapopens},$rslt{qstart},$rslt{qend},$rslt{sstart},$rslt{send},$rslt{evalue},$rslt{bitscore},$rslt{qlen},$rslt{slen}) = @$tabvals;
     $rslt{bitscore} =~ s/\s//g;
 

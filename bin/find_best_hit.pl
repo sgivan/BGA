@@ -6,6 +6,7 @@ use warnings;   # Emit helpful warnings
 use autodie;
 use Getopt::Long; # use GetOptions function to for CL args
 use lib '../lib';
+use lib '/home/sgivan/projects/BGA/lib';
 use BGA::Util;
 
 my ($debug,$verbose,$help);
@@ -54,9 +55,11 @@ say <<HELP;
 
 Script to identify the "best" BLAST hit
 
---infile
---evalue
---hits
+--infile    name of infile
+--evalue    minimum acceptable evalue (default = 1e-6)
+--hits      number of hits to parse per file (not yet implemented)
+--coverage  minimum proportional coverage of hit to query (default = 0.65)
+--tab       generate tab-delimited output
 --debug
 --verbose
 --help
