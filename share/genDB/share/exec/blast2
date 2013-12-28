@@ -9,7 +9,9 @@ DBROOT=/ircf/dbase/BLASTDB
 #DBROOT=/dbase/NCBI/db
 #export BLASTMAT=/local/cluster/share/ncbi/data
 #export BLASTDB=/dbase/NCBI/db
-export BLASTMAT=/evbio/NCBI/ncbitools/ncbi/data
+#export BLASTMAT=/evbio/NCBI/ncbitools/ncbi/data
+#export BLASTDB=/ircf/dbase/BLASTDB
+export BLASTMAT=/opt/bio/ncbi/data
 export BLASTDB=/ircf/dbase/BLASTDB
 if [ $# -le 0 ]
  then
@@ -46,7 +48,8 @@ shift
 #NCBI=/vol/biotools/share/ncbi
 #export NCBI
 
-exec /evbio/NCBI/ncbitools/ncbi/build/blastall -a 1 -e 0.0001 -p $realtool -d $dbfile -i $queryfile $*
+exec /opt/bio/ncbi/bin/blastall -a 1 -e 0.0001 -p $realtool -d $dbfile -i $queryfile $*
+#exec /evbio/NCBI/ncbitools/ncbi/build/blastall -a 1 -e 0.0001 -p $realtool -d $dbfile -i $queryfile $*
 #exec /local/cluster/bin/blastall -a 1 -e 0.0001 -p $realtool -d $dbfile -i $queryfile $*
 #exec /usr/local/share/ncbi/build/blastall -a 1 -p $realtool -d $dbfile -i $queryfile $*
 #exec rsh chrom40 blastall -a 1 -p $realtool -d $dbfile -i $queryfile $*

@@ -1,1 +1,1 @@
-qstat | grep GENDB | awk '{ print "qdel "$1; }' | tcsh
+bjobs | grep GENDB | awk '{ print "bkill "$1; }' | bash

@@ -110,7 +110,7 @@ while(<COORD_FILE>){
 	$max_RBS_loc=-1;
 	$max_RBS_start=-1;
 	$max_RBS="";
-	if ($start_coord<$end_coord){
+	if ($start_coord<$end_coord) {
 	    $original_start_codon=substr($seq,$start_coord-1,3);
 	    $new_start_upstream=&next_start_coord_upstream($original_start_codon);
 	    ($new_start_coord_up,$RBS_up,$RBS_loc_up,$RBS_score_up)=split(" ",$new_start_upstream);
@@ -119,7 +119,7 @@ while(<COORD_FILE>){
 	    if ($how_far_to_move>300) { $how_far_to_move=300};
 	    $how_far_to_move=$start_coord+$how_far_to_move;
 	    $new_start_coord=$start_coord-1;
-	    while($new_start_coord<$how_far_to_move){
+	    while($new_start_coord<$how_far_to_move) {
 		if ($new_start_coord>$RBS_region_len){ $RBS_region=substr($seq,$new_start_coord-$RBS_region_len,$RBS_region_len);}
 		else{ $RBS_region=substr($seq,0,$new_start_coord);}
 		$tmp_threshold=&calculate_threshold(abs($how_far_to_move-$start_coord),($new_start_coord-$start_coord+1));	

@@ -29,7 +29,8 @@ use strict 'refs';
 @ISA = qw(Exporter);
 
 #$JOBDB_DBSOURCE = "DBI:mysql:gendb_jobs:mysql.cgrb.oregonstate.edu";
-$JOBDB_DBSOURCE = "DBI:mysql:gendb_jobs:lewis2.rnet.missouri.edu;port=53307";
+#$JOBDB_DBSOURCE = "DBI:mysql:gendb_jobs:lewis2.rnet.missouri.edu;port=53307";
+$JOBDB_DBSOURCE = "DBI:mysql:gendb_jobs:ircf-login-0-1.local";
 
 $JOBDB_DBH = DBI->connect($JOBDB_DBSOURCE,'genDB_cluster','microbes')
     || die "can't connect to database: $!\n";

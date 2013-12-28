@@ -59,7 +59,8 @@ $GENDB_GENOMEPLOT="/usr/local/bin/genome_plot.pl";
 
 ## executable pathname for tRNAScan-SE
 #$GENDB_TRNASCANSE="/usr/local/bin/tRNAscan-SE";
-$GENDB_TRNASCANSE = "/share/ircfapps/bin/tRNAscan-SE";
+#$GENDB_TRNASCANSE = "/share/ircfapps/bin/tRNAscan-SE";
+$GENDB_TRNASCANSE = "/ircf/ircfapps/bin/tRNAscan-SE";
 
 
 #### misc tools for sequence analyzes
@@ -82,7 +83,8 @@ $GENDB_TMHMM="/ircf/ircfapps/bin/tmhmm";
 
 
 #### blast 2 setup
-$blast_install = '/evbio/NCBI/ncbitools/ncbi/build/';
+#$blast_install = '/evbio/NCBI/ncbitools/ncbi/build/';
+$blast_install = '/opt/bio/ncbi';
 ### blast 2 binary
 #$GENDB_BLAST_PATH="/usr/local/share/ncbi/build/blastall";
 $GENDB_BLAST_PATH="$blast_install/blastall";

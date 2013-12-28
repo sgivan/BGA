@@ -31,7 +31,8 @@ CUSTOM_SCRIPTS_DIR=$GENDB_INSTALL_DIR/share/sql-scripts/custom_sql_scripts
 
 #DEFAULT_SQL_SERVER=localhost
 #DEFAULT_SQL_SERVER=littlegac.science.oregonstate.local
-DEFAULT_SQL_SERVER=pearson.science.oregonstate.local
+#DEFAULT_SQL_SERVER=pearson.science.oregonstate.local
+DEFAULT_SQL_SERVER=ircf-login-0-1
 
 # end of configuration
 

@@ -51,6 +51,7 @@ NITRO1="nitro1 nitro1 nitro1 nitro1 nitro1 nitro1 nitro1 nitro1"
 GRAPE1="grape1 grape1 grape1 grape1 grape1 grape1 grape1 grape1"
 GRAPE2="grape2 grape2 grape2 grape2 grape2 grape2 grape2 grape2"
 GRAPE3="grape3 grape3 grape3 grape3 grape3 grape3 grape3 grape3"
+COMPUTE-0-1="cmpute01 cmpute01"    
 # export the names of all cluster machines
 #CLUSTER_MACHINES="$RNA01 $RNA02 $CHROM01 $CHROM02 $CHROM03 $CHROM04 $CHROM05 $CHROM06 $CHROM07 $CHROM08"
 #CLUSTER_MACHINES="$CHROM01 $CHROM02 $CHROM03 $CHROM04 $CHROM05 $CHROM06 $CHROM07 $CHROM08 $CHROM09 $CHROM10 $RNA01 $RNA02 $RNA03 $RNA04"

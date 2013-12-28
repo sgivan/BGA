@@ -30,6 +30,7 @@ if ($opt_X) {
   $opt_R = 1;
   $opt_F = 'annotator.out';
   $opt_O = 1;
+  $opt_g = 'T'; # name genes after E. coli names
 }
 
 my ($project,$debug,$verbose,$allOrfs,$filter,$cutoff,$toolCutoff,$annotTool,$overlapLength,@namingStd,@orfs,$addAnnot,$keepEC,$getCogs,$kegg_soap,%ecoli,@annotTool,$exclude,$force);
@@ -275,6 +276,12 @@ foreach my $annotTool (@annotTool) {
   } else {
     $toolDB = undef;
   } # end of setting up $toolDB
+
+
+#---------------------------------------------------------------------------
+#  $opt_I and $opt_i are meant to be used when you just want to
+#  create new indices of a database
+#---------------------------------------------------------------------------
 
   next if ($opt_I || $opt_i);
 
@@ -1373,7 +1380,7 @@ Command line options:
 -C\tFind COG numbers
 -S\tUse SOAP interface to KEGG database (experimental)
 -X\tinvoke typical set of options
-\t\tequivalent to -G -v -D -T -R -F annotator.out -O
+\t\tequivalent to -G -v -D -T -R -F annotator.out -O -g T
 \t\tthese values supercede any options given on command-line
 \t\tstill must provide -p and -a values
 

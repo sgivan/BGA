@@ -25,7 +25,7 @@ use GENDB::GENDB_CONFIG;
 use GENDB::Common qw( create_fasta_file remove_dir create_temp_dir );
 
 #use Bio::Tools::HMMER::Results; # doesn't currently work with HMMER3
-use lib '/home/cgrb/givans/dev/lib/perl5/bioperl-dev';
+#use lib '/home/cgrb/givans/dev/lib/perl5/bioperl-dev';
 use Bio::SearchIO;
 
 #use lib '/local/cluster/lib/perl5/site_perl';

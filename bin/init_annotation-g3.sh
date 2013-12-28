@@ -1,5 +1,5 @@
 #!/bin/tcsh
-setenv PATH /home/cgrb/givans/projects/BGA/bin:$PATH
+#setenv PATH /home/cgrb/givans/projects/BGA/bin:$PATH
 #echo $PATH
 #exit
 #~/dev/glimmer3.02/bin/long-orfs -n -t 1.15 -l concat.nfa concat.coord
