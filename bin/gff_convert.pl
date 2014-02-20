@@ -7,12 +7,13 @@ use Getopt::Long; # use GetOptions function to for CL args
 
 use Bio::Tools::GFF;
 
-my ($debug,$help,$verbose,$infile,$outfile,$in_gff_version,$out_gff_version,$remove_extra_tags);
+my ($debug,$help,$verbose,$infile,$outfile,$in_gff_version,$out_gff_version,$remove_extra_tags,$separate_chroms);
 
 my $result = GetOptions(
     "debug"     =>  \$debug,
     "help"      =>  \$help,
     "verbose"   =>  \$verbose,
+    "sepchroms" =>  \$separate_chroms,
     "infile:s"  =>  \$infile,
     "outfile:s" =>  \$outfile,
     "out-gff:i"     =>  \$out_gff_version,
@@ -28,14 +29,15 @@ created with makeGFF.pl (part of the BGA suite),
 into a GFF3 file to load into a gbrowse SQL database
 using db_seqfeature_load.pl.
 
-    "debug"     =>  \$debug,
-    "help"      =>  \$help,
-    "verbose"   =>  \$verbose,
-    "infile:s"  =>  \$infile,
-    "outfile:s" =>  \$outfile,
-    "out-gff:i"     =>  \$out_gff_version,# use 2 for makeGFF.pl file
-    "in-gff:i"     =>  \$in_gff_version,
-    "remove"    =>  \$remove_extra_tags,# removes extra tags in col 9 - use it
+    "debug"     =>  debugging mode
+    "help"      =>  print this help menu
+    "verbose"   =>  verbose output to stdout
+    "sepchroms" =>  generate separate file for chromosomes
+    "infile:s"  =>  input file name
+    "outfile:s" =>  outfile file name
+    "out-gff:i"     => output GFF version (default = 3)
+    "in-gff:i"     =>  input GFF version (use 2 for makeGFF.pl file)
+    "remove"    =>  removes extra tags in col 9 
 
 END
 
@@ -63,9 +65,16 @@ $outfile ||= 'outfile';
 $out_gff_version ||= 3;
 $in_gff_version ||= 2;# usually the right choice
 $verbose = 1 if ($debug);
+my $chromfilename = $outfile . ".chroms" if ($separate_chroms);
 
 my $dbin = Bio::Tools::GFF->new(-file => $infile, -gff_version => $in_gff_version) or die "can't open '$infile': $!";
 my $dbout = Bio::Tools::GFF->new(-file => ">$outfile", -gff_version => $out_gff_version) or die "can't open '$outfile': $!";
+my $chromfile;
+if ($separate_chroms) {
+    #open(my $chromfile,'>',$chromfilename) if ($separate_chroms);
+    open($chromfile,'>',$chromfilename);
+    say $chromfile "##gff-version 3";
+}
 
 #$dbin->features_attached_to_seqs(1);
 
@@ -82,9 +91,14 @@ while (my $f = $dbin->next_feature()) {
         say "\t\$tag = '$tag'" if ($debug);
         # deal with Chromosome
         if ($tag eq 'Chromosome') {
-            $f->add_tag_value('ID',$f->get_tag_values('Chromosome'));
-            $f->add_tag_value('Name',$f->get_tag_values('Chromosome'));
-            $f->remove_tag('Chromosome');
+            if ($separate_chroms) {
+                say $chromfile "##sequence-region " . $f->seq_id() . "\t1\t" . $f->end();
+
+            } else {
+                $f->add_tag_value('ID',$f->get_tag_values('Chromosome'));
+                $f->add_tag_value('Name',$f->get_tag_values('Chromosome'));
+                $f->remove_tag('Chromosome');
+            }
         }
         # convert Orf to ID
         if ($tag eq 'Orf') {
