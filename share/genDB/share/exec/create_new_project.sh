@@ -60,12 +60,13 @@ fi
 
 # read command line parameters
 
-while getopts "dh:u:p" par; do
+while getopts "dh:u:p:" par; do
     case "$par" in
     d) debug=1 ;;
     h) dbhost=$OPTARG ;;
     u) username=$OPTARG ;;
-    p) use_password=1 ;;
+#    p) use_password=1 ;;
+    p) use_password=$OPTARG ;;
     \?) echo
 	usage
         exit 1 ;;
@@ -102,8 +103,11 @@ fi
 if [ $debug ]; then
     mysql_call="cat";
 else
-    mysql_call="$mysql_bin ${dbhost:+-h $dbhost} ${username:+--user=$username} ${use_password:+-p} $databasename";
+#    mysql_call="$mysql_bin ${dbhost:+-h $dbhost} ${username:+--user=$username} ${use_password:+-p} $databasename";
+    mysql_call="$mysql_bin ${dbhost:+-h $dbhost} ${username:+--user=$username} ${use_password:+--password=$use_password} $databasename";
 fi
+
+echo 'mysql call: ' $mysql_call
 
 echo -n checking for database..
 
