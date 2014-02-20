@@ -19,3 +19,4 @@ for file in `ls contig_*`;
 		cd ..
 		rm $file
 	done
+ln -sf ../orf.00.model ./model
