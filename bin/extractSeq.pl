@@ -2,13 +2,14 @@
 # $Id: extractSeq.pl,v 1.6 2005/03/03 23:49:51 givans Exp $
 #
 use strict;
+use 5.10.0;
 use Carp;
 use Getopt::Std;
-use vars qw/ $opt_S $opt_E $opt_f $opt_F $opt_v $opt_h $opt_o $opt_B $opt_p $opt_t $opt_P $opt_T $opt_O $opt_d /;
+use vars qw/ $opt_S $opt_E $opt_f $opt_F $opt_v $opt_h $opt_o $opt_B $opt_p $opt_t $opt_P $opt_T $opt_O $opt_d $opt_c /;
 use Bio::SeqIO;
 use Bio::Seq::SeqFactory;
 
-getopts('S:E:f:F:vho:B:p:t:PTOd');
+getopts('S:E:f:F:vho:B:p:t:PTOdc:');
 
 my $usage = "extractSeq.pl -f <DNA sequence file> -F <coordinate file name>";
 my $debug = $opt_d;
@@ -35,6 +36,7 @@ Command-line arguments and options
 -P	only output specified upstream sequence for each ORF
 -t	amount of downstream sequence to include
 -T	only output specified downstream sequence for each ORF
+-c  only output specified number of nts downstream of start site
 -v	verbose output to terminal
 -h	print this help menu
 
@@ -44,7 +46,7 @@ exit;
 }
 
 
-my ($coordFile, $seqFile, $start_column, $end_column, $outfile,$seqio,$fiveBuffer,$threeBuffer,$buffer,$factory);
+my ($coordFile, $seqFile, $start_column, $end_column, $outfile,$seqio,$fiveBuffer,$threeBuffer,$buffer,$factory,$codingbases);
 ($fiveBuffer, $threeBuffer, $start_column, $end_column) = (0,0,3,4);
 
 
@@ -59,7 +61,7 @@ $coordFile = $opt_F;
 $outfile = "$seqFile" . ".extractSeq";
 $outfile = $opt_o if ($opt_o);
 
-
+$codingbases = $opt_c;
 
 if ($opt_B) {
   $buffer = $opt_B;
@@ -112,13 +114,25 @@ while (<COORD>) {
   my @line = split /\s+/, $line;
   my $start = $line[$start_column];
   my $end = $line[$end_column];
+  next unless ($start && $end);
+
+  say "\ninput values: start = '$start', end = '$end'" if ($debug);
 
   if ($start > $end) {
+      say "start < end, switching coordinates" if ($debug);
     $revcomp = $end;
     $end = $start;
     $start = $revcomp;
   }
+  say "values: start = '$start', end = '$end'" if ($debug);
+
+  if ($codingbases) {
+      say "adding coding bases to start coordinate" if ($debug);
+      $end = $start + $codingbases;
+  }
+  say "values: start = '$start', end = '$end'" if ($debug);
     
+  say "adding sequence buffers to start/stop coordinates, if requested" if ($debug);
   if (!$revcomp) {
     $start -= $fiveBuffer;
     $end += $threeBuffer;
@@ -126,6 +140,7 @@ while (<COORD>) {
     $end += $fiveBuffer;
     $start -= $threeBuffer;
   }
+  say "1) values: start = '$start', end = '$end'" if ($debug);
 
   if ($opt_P) {
     if (!$revcomp) {
@@ -134,6 +149,7 @@ while (<COORD>) {
       $start = ($end - $fiveBuffer) + 1;
     }
   }
+  say "2) values: start = '$start', end = '$end'" if ($debug);
 
   if ($opt_T) {
     if (!$revcomp) {
@@ -142,16 +158,26 @@ while (<COORD>) {
       $end = ($start + $threeBuffer) - 1;
     }
   }
+  say "3) values: start = '$start', end = '$end'" if ($debug);
 
-  if ($end > $seqLength) {
-    $end = $seqLength;
-  }
+#  if ($codingbases) {
+#      $end = $start + $codingbases;
+#  }
+#
+#  if ($end > $seqLength) {
+#    $end = $seqLength;
+#  }
+#
+# if ($end < $start) {
+#     say "end: '$end' < start: '$start'";
+# }
 
   print "start: '$start', end: '$end'\n" if ($opt_v);
 
   #$start = 10;
   #$end = 100;
   ++$seqnum;
+  last if ($seqnum >= 10 && $debug);
   my $id = $line[0] || $seqnum;
   my $description = "";
   if ($fiveBuffer || $threeBuffer) {
@@ -167,16 +193,16 @@ while (<COORD>) {
 
 
   if ($start < 0 || !$start) {
-    if ($debug) {
-      if (!$start) {
-	print "no start value\n";
-      } else {
-	print "bad start value: '$start'\n";
-      }
-      die();
-    } else {
-      next;
-    }
+        if ($debug) {
+            if (!$start) {
+                print "no start value\n";
+            } else {
+                print "bad start value: '$start'\n";
+            }
+            die();
+        } else {
+            next;
+        }
   }
 
   my $newseq = $seq->subseq($start, $end) or confess();;
