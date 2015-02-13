@@ -6,7 +6,7 @@ use Carp;
 
 
 #use CGRB::CGRBDB;
-use lib '/home/sgivan/projects/COGDB';
+use lib '/home/sgivan/projects/COGDB/lib';
 use CGRBDB;
 use vars qw/ @ISA /;
 
