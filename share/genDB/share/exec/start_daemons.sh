@@ -1,44 +1,24 @@
 #!/bin/sh
-# $Id: start_daemons.sh,v 1.1.1.1 2005/02/22 18:05:36 givans Exp $
-
-# $Log: start_daemons.sh,v $
-# Revision 1.1.1.1  2005/02/22 18:05:36  givans
-#
-#
-# Revision 1.2  2002/01/29 16:05:58  blinke
-# added path to clusterlist
-#
-# Revision 1.1  2002/01/29 15:42:03  blinke
-# Initial revision
-#
-# Revision 1.1  2000/05/19 16:10:39  blinke
-# Initial revision
-#
 
 ### configuration area
 
 GENDB_INSTALL_DIR=$HOME/projects/BGA/share/genDB
+export PERL5LIB=${GENDB_INSTALL_DIR}/share/perl/GENDB:$PERL5LIB
+module load bga
 
 ### end of config
 
-# load list of cluster machines
-
-. $GENDB_INSTALL_DIR/share/exec/clusterlist
-#. /mnt$ENV{HOME}/projects/BGA/share/sge/cgrb/common/settings.sh
-#. $HOME/projects/BGA/share/sge/cgrb/common/settings.sh
-. /local/cluster/sge/cgrb/common/settings.sh
+CLUSTER_MACHINES=$1
 
 # loop
-for i in $CLUSTER_MACHINES
-#for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30
+#for i in $(seq $CLUSTER_MACHINES)# seq command is outdated
+for (( i = 1; i <= ${CLUSTER_MACHINES}; i++ ))
 do
    
-#   rsh $i $GENDB_INSTALL_DIR/bin/GENDB_daemon.pl
-#   qrsh $GENDB_INSTALL_DIR/bin/GENDB_daemon.pl
-#   qsub -p -50 $GENDB_INSTALL_DIR/bin/GENDB_daemon.pl
-#   qsub $GENDB_INSTALL_DIR/bin/GENDB_daemon.pl
-#   qsub -q pseudo $GENDB_INSTALL_DIR/bin/GENDB_daemon.pl
-   qsub -q 'pseudo0.q,pseudo' $GENDB_INSTALL_DIR/bin/GENDB_daemon.pl
-   echo "started GENDB daemon on host $i"
+   echo "started GENDB daemon # $i"
+   bsub -J GENDB${i} -o %J.o -e %J.e ${GENDB_INSTALL_DIR}/bin/GENDB_daemon.pl
 
 done
+
+module unload bga
+
