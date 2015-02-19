@@ -1,1 +1,2 @@
 ../../bin/init_annotation-g3.sh 
+#../../bin/extractSeq.pl -f concat.nfa -F concat.predict -o concat_orf30.nfa -p 30 -v -S 2 -E 3 -P

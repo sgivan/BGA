@@ -58,6 +58,18 @@ closedir($dh);
 #say @testfiles
 
 $CWD = $dirpath;
+say "running pipeline. This will take a few minutes.";
+open(my $CMD,"-|","sh cmd");
+my @cmdout = <$CMD>;
+$CMD->close();
+
+say @cmdout;
 
 $harness->runtests(@testfiles);
+
+say "cleaning up files";
+for my $file (@testfiles) {
+    $file =~ s/\.t//;
+    unlink($file);
+}
 

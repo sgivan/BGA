@@ -15,7 +15,7 @@ CLUSTER_MACHINES=$1
 for (( i = 1; i <= ${CLUSTER_MACHINES}; i++ ))
 do
    
-   echo "started GENDB daemon # $i"
+   echo "starting GENDB daemon # $i"
    bsub -J GENDB${i} -o %J.o -e %J.e ${GENDB_INSTALL_DIR}/bin/GENDB_daemon.pl
 
 done

@@ -164,9 +164,9 @@ while (<COORD>) {
 #      $end = $start + $codingbases;
 #  }
 #
-#  if ($end > $seqLength) {
-#    $end = $seqLength;
-#  }
+  if ($end > $seqLength) {
+    $end = $seqLength;
+  }
 #
 # if ($end < $start) {
 #     say "end: '$end' < start: '$start'";
