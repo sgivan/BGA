@@ -7,7 +7,7 @@ use Carp;
 use Getopt::Std;
 use vars qw/ $opt_d $opt_D $opt_v $opt_h $opt_F $opt_f $opt_b $opt_o $opt_S $opt_l $opt_r $opt_R $opt_M $opt_w $opt_p $opt_U $opt_L $opt_i $opt_X $opt_e /;
 use Bio::SearchIO;
-use lib '/home/sgivan/projects/COGDB';
+use lib '/home/sgivan/projects/COGDB/lib';
 use COGDB;
 #use Statistics::Descriptive;
 use Data::Dumper;
