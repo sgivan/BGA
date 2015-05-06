@@ -12,7 +12,7 @@ use Bio::SeqFeature::Generic;
 use Bio::Annotation::Collection;
 use Bio::Annotation::Comment;
 use lib '/home/sgivan/projects/BGA/share/genDB/share/perl';
-use lib '/home/sgivan/projects/COGDB';
+use lib '/home/sgivan/projects/COGDB/lib';
 use Projects;
 use COGDB;
 use POSIX qw(strftime);
