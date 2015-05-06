@@ -4,7 +4,7 @@ use warnings;
 use strict;
 use Carp;
 use lib '/home/sgivan/projects/BGA/share/genDB/share/perl';
-use lib '/home/sgivan/projects/COGDB';
+use lib '/home/sgivan/projects/COGDB/lib';
 use COGDB;
 use Getopt::Std;
 use vars qw/ $opt_h $opt_v $opt_d $opt_o $opt_O /;

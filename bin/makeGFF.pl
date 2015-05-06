@@ -10,7 +10,7 @@ use Bio::SeqFeature::Generic;
 use Bio::Tools::GFF;
 use vars qw/ $opt_p $opt_v $opt_d $opt_D $opt_h /;
 
-use lib '/home/sgivan/projects/COGDB';
+use lib '/home/sgivan/projects/COGDB/lib';
 use lib '/home/sgivan/projects/BGA/share/genDB/share/perl';
 use COGDB;
 use Projects;
