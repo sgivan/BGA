@@ -1,0 +1,7 @@
+[defaults]
+genetic code=4
+signalp_tool format=summary
+signalp_tool type=gram+
+signalp_tool trunc=80
+gene products=hypothetical protein predicted by Glimmer/Critica,conserved hypothetical protein,putative secreted protein,putative membrane protein
+
