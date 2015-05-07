@@ -214,21 +214,22 @@ foreach my $contig (@contigs) {
 		# Add all the custom fields                                    #
 		#--------------------------------------------------------------#
 		my $tags = {};
-		   $tags->{'Locus_Tag'} = $orf->name();
+		   $tags->{'locus_tag'} = $orf->name();
 		
 		if ($annotation != -1) {
-			$tags->{'Date'}      = [localtime $annotation->date()]         if ($annotation->date());
-			$tags->{'Date'}      = strftime "%b %e %Y", @{$tags->{'Date'}} if ($annotation->date());
-			$tags->{'Product'}   = $annotation->product()                  if ($annotation->product());
-			$tags->{'EC_Number'} = $annotation->ec()                       if ($annotation->ec());
-			$tags->{'Gene'}      = $annotation->name()                     if ($annotation->name());
-			$tags->{'Comment'}   = $annotation->comment()                  if ($annotation->comment());
-			$tags->{'Comment'}   =~ s/\n/\ /g                              if ($annotation->comment());
-			$tags->{'Notice'}    = $bad_trunc_notice                       if ($bad_trunc_notice);
+			$tags->{'date'}      = [localtime $annotation->date()]         if ($annotation->date());
+			$tags->{'date'}      = strftime "%b %e %Y", @{$tags->{'date'}} if ($annotation->date());
+#			$tags->{'product'}   = $annotation->product()                  if ($annotation->product());
+            $tags->{product} = $annotation->product() ? $annotation->product() : $orf->name();
+			$tags->{'ec_number'} = $annotation->ec()                       if ($annotation->ec());
+			$tags->{'gene'}      = $annotation->name()                     if ($annotation->name());
+			$tags->{'comment'}   = $annotation->comment()                  if ($annotation->comment());
+			$tags->{'comment'}   =~ s/\n/\ /g                              if ($annotation->comment());
+			$tags->{'notice'}    = $bad_trunc_notice                       if ($bad_trunc_notice);
 			
 			if (defined($annotation->annotator_id())) {
 				my $annotator = $annotators->{$annotation->annotator_id()};
-				$tags->{'Annotator'} = $annotator->description() if ($annotator->description());
+				$tags->{'annotator'} = $annotator->description() if ($annotator->description());
 			}
 			
 			if (defined($annotation->category())) {
@@ -239,7 +240,7 @@ foreach my $contig (@contigs) {
 					unshift @funcats, $funcat->name();
 					last if (scalar(@funcats) > 50); # Emergency exit
 				}
-				$tags->{'Category'} = join(" => ", @funcats);
+				$tags->{'category'} = join(" => ", @funcats);
 			}
 		}
 		
@@ -260,39 +261,47 @@ foreach my $contig (@contigs) {
 				push @cog_summaries, $cog_summary;
 			}
 			
-			$tags->{'COGs'} = join(", ", @cog_summaries);
+			$tags->{'cogs'} = join(", ", @cog_summaries);
 		}
 		
-		
+		my $primary_tag = 'CDS';
 		#--------------------------------------------------------------#
 		# How should we display the sequences in the 2 locations?      #
 		#--------------------------------------------------------------#
-		if ($orf->name() !~ m/[rt]RNA/i) {
+		if ($orf->name() !~ m/([rt])RNA/i) {
 			if ($disp_P) {
 				$orf_seq = $orf_seq->translate(@t_opts);
 				$orf_seq->alphabet('protein');
 			} else {
-				$tags->{'Translation'} = $orf_seq->translate(@t_opts)->seq();
+				$tags->{'translation'} = $orf_seq->translate(@t_opts)->seq();
 				$orf_seq->alphabet('dna');
+		        $tags->{'protein_id'} = $tags->{locus_tag};
 			}
 		}
 		else {
 			next if ($include_rna == 0);
 			
-			$tags->{'RNA_Transcript'} = $orf_seq->seq();
-			$tags->{'RNA_Transcript'} =~ tr/T/U/;
-			$orf_seq->alphabet('dna');
+            if ($1 eq 'r') {
+                $primary_tag = 'rRNA';
+            } elsif ($1 eq 't') {
+                $primary_tag = 'tRNA';
+            }
+            $tags->{product} = $tags->{gene};
+#			$tags->{'rna_transcript'} = $orf_seq->seq();
+#			$tags->{'rna_transcript'} =~ tr/T/U/;
+#			$orf_seq->alphabet('dna');
 		}
 		
 		#--------------------------------------------------------------#
 		# Create a feature that describes this section of the contig.  #
 		#--------------------------------------------------------------#
-		my $ctg_feat = new Bio::SeqFeature::Generic(-primary => 'CDS',
-							    -start   => $trunc_start,
-							    -end     => $trunc_end,
-							    -strand  => $orf->frame() > 0 ? 1 : -1,
-							    -tag     => $tags);
-		
+		my $ctg_feat = new Bio::SeqFeature::Generic(
+            -primary => $primary_tag,
+            -start   => $trunc_start,
+            -end     => $trunc_end,
+            -strand  => $orf->frame() > 0 ? 1 : -1,
+            -tag     => $tags,
+        );
 		
 		#--------------------------------------------------------------#
 		# If we're dumping the entire contig, this will be a feature   #
@@ -314,7 +323,7 @@ foreach my $contig (@contigs) {
 			}
 			
 			# Create the definition line
-			my $def_line = $tags->{'Product'} ||  $tags->{'Gene'} || "";
+			my $def_line = $tags->{'product'} ||  $tags->{'gene'} || "";
 			   $def_line =~ s/\s*(\[.*?\]|\(.*?\))\s*//g;
 			$seq->description($def_line);
 			
