@@ -1,41 +1,46 @@
 #!/usr/bin/env perl
-# $Id: genDB_orfCoord.pl,v 3.9 2005/03/25 01:16:44 givans Exp $
+
+use v5.10.0;
 use warnings;
 use strict;
 use Carp;
-use vars qw/ $opt_p $opt_o $opt_c $opt_f $opt_d $opt_v $opt_h $opt_F $opt_D $opt_A $opt_u /;
+use vars qw/ $opt_p $opt_o $opt_c $opt_i $opt_d $opt_v $opt_h $opt_I $opt_D $opt_A $opt_u $opt_f $opt_s $opt_e $opt_n $opt_H /;
 use Getopt::Std;
 use lib "$ENV{HOME}/projects/BGA/share/genDB/share/perl";
 use Projects;
 
-getopts('p:o:c:f:dvhFD:Au');
+getopts('p:o:c:i:dvhID:Auf:s:e:n:H:');
 
 my $debug = $opt_d;
 my $verbose = $opt_v;
 $verbose = 1 if ($debug);
-my $usage = "usage:  genDB_orfCoord.pl -p <project> -o <orf> -c <orf coordinates like 'start:end'>\n\t\tor\n\tgenDB_orfCoord.pl -p <project> -f <file name>\n\t\tor\n\tcat file | genDB_orfCoord.pl -F -p <project>\n";
+my $usage = "usage:  genDB_orfCreate.pl -p <project> -f <file name>\n\t\tor\n\tcat file | genDB_orfCreate.pl -F -p <project>\n";
 
 my $helpmssg = <<HELP;
 
-This script is meant to be a lightweight tool to quickly add an
-ORF to a GenDB annotation project.
+This script is meant to be a lightweight tool to quickly add
+ORFs to a GenDB annotation project from a tsv input file.
 
 $usage
 
 Command-line options
 
-Option		Description
--p		GenDB project name
--f		Input file name.  Should have one entry per line and each
-			each entry should be
-			Orf name start position stop position
-			separated by tabs
--F		Takes all input from STDIN.  Should be same format as input file
--d		debugging mode
--v		verbose output to terminal
--h		print this help menu
--A		Don't update GenDB annotations
-
+Option  Description
+-p  GenDB project name
+-i  Input file name.  Should have one entry per line and each
+        each entry should be
+        Orf name<tab>ORF frame<tab>start position<tab>stop position
+        separated by tabs
+-I  Takes all input from STDIN.  Should be same format as input file
+-H      skip this number of lines of input file; ie, for a header [default = 1]
+-n      column with name of ORF [default = 1]
+-f      column with frame of ORF [default = 2]
+-s      column with start coordinate of ORF [default = 3]
+-e      column with end coordinate of ORF [default = 4]
+-d  debugging mode
+-v  verbose output to terminal
+-h  print this help menu
+-A  Don't update GenDB annotations
 
 HELP
 
@@ -45,19 +50,32 @@ if ($opt_h) {
 }
 
 my $project = $opt_p;
-my $infile = $opt_f;
+my $infile = $opt_i;
 my @lines;
-my $name_pos = 0;
-my $frame_pos = 6;
-my $start_pos = 9;
-my $stop_pos = 10;
+#
+# *_pos variable contain array indices, which start with zero
+# which must be converted from column number, which start with 1
+#
+my $name_pos = $opt_n ? $opt_n - 1 : 0;
+my $frame_pos = $opt_f ? $opt_f - 1 : 1;
+my $start_pos = $opt_s ? $opt_s - 1 : 2;
+my $stop_pos = $opt_e ? $opt_e - 1 : 3;
 
-if (!$project && (!$opt_f && !$opt_F)) {
+if ($debug) {
+    say " \
+        name column:\t$name_pos \
+        frame column:\t$frame_pos \
+        start column:\t$start_pos \
+        end column:\t$stop_pos \
+        ";
+}
+
+if (!$project && (!$opt_i && !$opt_I)) {
   print $usage;
   exit;
 }
 
-if (($infile || $opt_F)) {
+if (($infile || $opt_I)) {
     if ($infile && !-e $infile) {
         print "'$infile' doesn't exist\n";
         exit(0);
@@ -68,8 +86,8 @@ if (($infile || $opt_F)) {
         close(IN);
     } else {
         foreach (<STDIN>) {
-        chomp($_);
-        push(@lines,$_) if ($_ =~ /\W/);
+            chomp($_);
+            push(@lines,$_) if ($_ =~ /\W/);
         }
     }
 } else {
@@ -108,6 +126,7 @@ foreach my $line (@lines) {
         $description = "ORF fragment created by genDB_orfCreate.pl. Requires additional annotation.\n";
     }
 
+    # change next line b/c this ORF doesn't yet exist
     my $gorf = GENDB::orf->init_name($iorf);
     my $annotator = GENDB::annotator->init_name('orfCreate');
 
@@ -224,15 +243,16 @@ foreach my $line (@lines) {
 #        $annotate = 1;
 #    }
 
+    $annotate = 1;
     if ($annotate) {
         if (!$opt_A) {
-        print "adding annotation\n" if ($debug);
-        if (!$debug) {
-        my $annotation = GENDB::annotation->create("", $gorf->id());
-        $annotation->annotator_id($annotator->id());
-        $annotation->date(time());
-        $annotation->comment($description);
-        }
+            print "adding annotation\n" if ($debug);
+            if (!$debug) {
+                my $annotation = GENDB::annotation->create("", $gorf->id());
+                $annotation->annotator_id($annotator->id());
+                $annotation->date(time());
+                $annotation->comment($description);
+            }
         }
         print "updating iep\n" if ($debug);
         $gorf->isoelp(GENDB::Common::calc_pI($gorf->aasequence())) unless ($debug);
@@ -246,7 +266,7 @@ foreach my $line (@lines) {
 
  sub setstartposition {## adapted from a GenDB module
     my ($orf, $newposition) = @_;
-    print "setstartposition: newposition = $newposition, \$orf->start = " . $orf->start() . ", \$orf->stop = " . $orf->stop(), "\n" if ($debug);
+    print "setstartposition: \$orf->start = " . $orf->start() . ", \$orf->stop = " . $orf->stop(), "\n" if ($debug);
     if ($orf->frame() > 0) {
         if (($newposition < $orf->stop()) && (($orf->stop() - $newposition) % 3 == 2)) {
             if (!$debug) {
