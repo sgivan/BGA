@@ -51,10 +51,11 @@ if ($opt_h) {
 
 my $project = $opt_p;
 my $infile = $opt_i;
+my $headerlines = $opt_H || 1;
 my @lines;
 #
-# *_pos variable contain array indices, which start with zero
-# which must be converted from column number, which start with 1
+# *_pos variables contain array indices, which start with zero
+# these must be converted from column number, which start with 1
 #
 my $name_pos = $opt_n ? $opt_n - 1 : 0;
 my $frame_pos = $opt_f ? $opt_f - 1 : 1;
@@ -63,10 +64,11 @@ my $stop_pos = $opt_e ? $opt_e - 1 : 3;
 
 if ($debug) {
     say " \
-        name column:\t$name_pos \
-        frame column:\t$frame_pos \
-        start column:\t$start_pos \
-        end column:\t$stop_pos \
+        name index\t$name_pos \
+        frame index\t$frame_pos \
+        start index\t$start_pos \
+        end index\t$stop_pos \
+        header lines\t$headerlines\
         ";
 }
 
@@ -101,6 +103,7 @@ if (($infile || $opt_I)) {
 
 Projects::init_project($project);
 require GENDB::orf;
+require GENDB::contig;
 require GENDB::annotation;
 require GENDB::annotator;
 require GENDB::Common;
@@ -108,31 +111,57 @@ require GENDB::Common;
 
 #
 #
-
+my $cnt = 0;
 foreach my $line (@lines) {
+    next if (++$cnt <= $headerlines);
     chomp($line);
     print "\n\nline: '$line'\n" if ($debug);
-    # incoming lines have 6: frame, 9: start, 10: stop
     my @vals = split /\t/, $line;
     #my ($iorf,$istart,$istop,$description) = ('',$vals[$start_pos], $vals[$stop_pos],'');
     my ($iorf,$istart,$istop,$frame,$description) = ($vals[$name_pos], $vals[$start_pos], $vals[$stop_pos], $vals[$frame_pos]);
     $iorf =~ s/\s//g;
     $istart =~ s/\s//g if ($istart);
     $istop =~ s/\s//g if ($istop);
+
+    if ($istop < $istart) {
+        die "start coordinate must always be less than stop coordinate"
+    }
+
+    my ($gmol,$gstart,$gstop) = ();
+    if ($iorf =~ /(C\d+?)\.(\d+?)\.(\d+)$/) {
+        $gmol = $1;
+        $gstart = $2;
+        $gstop = $3;
+    } else {
+        die("can't parse region name from '$iorf'");
+    }
+
+    my ($molstart,$molstop) = ();
+    $molstart = $istart + $gstart - 1;
+    $molstop = $istop + $gstop - 1;
     
     next unless ($iorf);
     my $annotate = 0;
     if (!$description) {
-        $description = "ORF fragment created by genDB_orfCreate.pl. Requires additional annotation.\n";
+        $description = "ORF fragment created by genDB_orfCreate.pl -- it likely requires additional annotation.\n";
     }
 
-    # change next line b/c this ORF doesn't yet exist
-    my $gorf = GENDB::orf->init_name($iorf);
-    my $annotator = GENDB::annotator->init_name('orfCreate');
-
-    if (!$istart && !$istop) {
-        print $gorf->name(), "\t", $gorf->start(), "\t", $gorf->stop(), "\n";
+    if ($debug) {
+        say "name:\t'$iorf'\nstart:\t'$istart'\nstop:\t'$istop'\n";
+        say "gmol:\t'$gmol'\ngstart:\t'$gstart'\ngstop:\t'$gstop'\n";
+        say "molstart:\t'$molstart'\nmolstop:\t'$molstop'\n";
     }
+
+    unless ($debug) {
+        # change next line b/c this ORF doesn't yet exist
+        my $contig = GENDB::contig->init_name($gmol);
+        my $gorf = GENDB::orf->create($contig->id(),$molstart,$molstop,$iorf . "_i");
+        exit();
+        my $annotator = GENDB::annotator->init_name('orfCreate');
+
+#        if (!$istart && !$istop) {
+#            print $gorf->name(), "\t", $gorf->start(), "\t", $gorf->stop(), "\n";
+#        }
 
 
 #
@@ -243,24 +272,25 @@ foreach my $line (@lines) {
 #        $annotate = 1;
 #    }
 
-    $annotate = 1;
-    if ($annotate) {
-        if (!$opt_A) {
-            print "adding annotation\n" if ($debug);
-            if (!$debug) {
-                my $annotation = GENDB::annotation->create("", $gorf->id());
-                $annotation->annotator_id($annotator->id());
-                $annotation->date(time());
-                $annotation->comment($description);
+        $annotate = 1;
+        if ($annotate) {
+            if (!$opt_A) {
+                print "adding annotation\n" if ($debug);
+                if (!$debug) {
+                    my $annotation = GENDB::annotation->create("", $gorf->id());
+                    $annotation->annotator_id($annotator->id());
+                    $annotation->date(time());
+                    $annotation->comment($description);
+                }
             }
-        }
-        print "updating iep\n" if ($debug);
-        $gorf->isoelp(GENDB::Common::calc_pI($gorf->aasequence())) unless ($debug);
-        print "updating MW\n" if ($debug);
-        GENDB::orf::molweight($gorf, GENDB::Common::molweight($gorf->aasequence)) unless ($debug);
+            print "updating iep\n" if ($debug);
+            $gorf->isoelp(GENDB::Common::calc_pI($gorf->aasequence())) unless ($debug);
+            print "updating MW\n" if ($debug);
+            GENDB::orf::molweight($gorf, GENDB::Common::molweight($gorf->aasequence)) unless ($debug);
 
-        $gorf->status('1') unless ($debug);
-        print $description if ($debug);
+            $gorf->status('1') unless ($debug);
+            print $description if ($debug);
+        }
     }
 }
 

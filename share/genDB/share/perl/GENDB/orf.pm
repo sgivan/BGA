@@ -22,6 +22,7 @@ use GENDB::DBMS;
 # create a new object and insert it into the database
 sub create {
     my ($class, $contig_id, $start, $stop, $name) = @_;
+#    print "hello: class='$class', name='$name'\n";
     # fetch a fresh id
     my $id = newid('orf');
         if ($id < 0) {
@@ -32,7 +33,7 @@ sub create {
             INSERT INTO orf (id) VALUES ($id)
            });
     if ($GENDB_DBH->err) {
-	return(-1);
+    	return(-1);
     }
     # create the perl object
     my $orf = { 'id' => $id,
