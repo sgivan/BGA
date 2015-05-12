@@ -37,6 +37,7 @@ Option  Description
 -f      column with frame of ORF [default = 2]
 -s      column with start coordinate of ORF [default = 3]
 -e      column with end coordinate of ORF [default = 4]
+-D      column with description of ORF [default = 5]
 -d  debugging mode
 -v  verbose output to terminal
 -h  print this help menu
@@ -61,6 +62,7 @@ my $name_pos = $opt_n ? $opt_n - 1 : 0;
 my $frame_pos = $opt_f ? $opt_f - 1 : 1;
 my $start_pos = $opt_s ? $opt_s - 1 : 2;
 my $stop_pos = $opt_e ? $opt_e - 1 : 3;
+my $desc_pos = $opt_D ? $opt_D - 1 : 4;
 
 if ($debug) {
     say " \
@@ -118,10 +120,11 @@ foreach my $line (@lines) {
     print "\n\nline: '$line'\n" if ($debug);
     my @vals = split /\t/, $line;
     #my ($iorf,$istart,$istop,$description) = ('',$vals[$start_pos], $vals[$stop_pos],'');
-    my ($iorf,$istart,$istop,$frame,$description) = ($vals[$name_pos], $vals[$start_pos], $vals[$stop_pos], $vals[$frame_pos]);
+    my ($iorf,$istart,$istop,$iframe,$description) = ($vals[$name_pos], $vals[$start_pos], $vals[$stop_pos], $vals[$frame_pos], $vals[$desc_pos]);
     $iorf =~ s/\s//g;
     $istart =~ s/\s//g if ($istart);
     $istop =~ s/\s//g if ($istop);
+    $iframe =~ s/\s//g if ($iframe);
 
     if ($istop < $istart) {
         die "start coordinate must always be less than stop coordinate"
@@ -156,8 +159,9 @@ foreach my $line (@lines) {
         # change next line b/c this ORF doesn't yet exist
         my $contig = GENDB::contig->init_name($gmol);
         my $gorf = GENDB::orf->create($contig->id(),$molstart,$molstop,$iorf . "_i");
-        exit();
+        $gorf->frame($iframe);
         my $annotator = GENDB::annotator->init_name('orfCreate');
+#        exit();
 
 #        if (!$istart && !$istop) {
 #            print $gorf->name(), "\t", $gorf->start(), "\t", $gorf->stop(), "\n";
@@ -280,7 +284,9 @@ foreach my $line (@lines) {
                     my $annotation = GENDB::annotation->create("", $gorf->id());
                     $annotation->annotator_id($annotator->id());
                     $annotation->date(time());
-                    $annotation->comment($description);
+                    $annotation->comment("potential ORF fragment created by genDB_orfCreate");
+                    $annotation->product("potential ORF fragment containing a $description domain");
+                    $annotation->description("potential ORF fragment containing a $description domain");
                 }
             }
             print "updating iep\n" if ($debug);
