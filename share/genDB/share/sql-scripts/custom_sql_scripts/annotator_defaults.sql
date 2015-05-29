@@ -27,6 +27,7 @@ INSERT INTO annotator VALUES ('orfAdjust','Adjust ORF START site based upon pote
 INSERT INTO annotator VALUES ('orfCoord','Adjust ORF coordinates based upon homologs',3);
 INSERT INTO annotator VALUES ('overlapResolve','Resolve overlaps between adjacent ORFs',4);
 INSERT INTO annotator VALUES ('auto','auto-annotation',5);
+INSERT INTO annotator VALUES ('orfCreate','lightweight ORF Creator',6);
 
 # also the following line is unnessary,
 # it is added as a template for further entries...
