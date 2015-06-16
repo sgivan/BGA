@@ -4,6 +4,7 @@
 # standard version
 #
 
+use 5.10.0;
 use warnings;
 use strict;
 use lib '/home/sgivan/data/projects/BGA/lib';
@@ -20,7 +21,7 @@ use Statistics::Descriptive;
 use lib "$ENV{HOME}/projects/BGA/share/genDB/share/perl";
 use Projects;
 
-getopts('p:o:c:b:Aa:l:g:F:r:RdDvfthOe:EiITzECGSX');
+getopts('p:o:c:b:Aa:l:g:F:r:RdDvfthOe:EiITzEC:GSX');
 
 if ($opt_X) {
   $opt_G = 1;
@@ -33,9 +34,8 @@ if ($opt_X) {
   $opt_g = 'T'; # name genes after E. coli names
 }
 
-my ($project,$debug,$verbose,$allOrfs,$filter,$cutoff,$toolCutoff,$annotTool,$overlapLength,@namingStd,@orfs,$addAnnot,$keepEC,$getCogs,$kegg_soap,%ecoli,@annotTool,$exclude,$force);
+my ($project,$debug,$verbose,$allOrfs,$filter,$cutoff,$toolCutoff,$annotTool,$overlapLength,@namingStd,@orfs,$addAnnot,$keepEC,$kegg_soap,%ecoli,@annotTool,$exclude,$force);
 my $usage = "usage:  annotator.pl -p <project> [-d (debug) -v (verbose) -h (help menu)]\n";
-
 
 #
 #########################################
@@ -71,6 +71,7 @@ require GENDB::annotation;
 require GENDB::annotator;
 require GENDB::fact;
 require GENDB::tool;
+require GENDB::contig;
 #
 # Note that I've had problems using some Bio::* modules because of version diffs
 # betw what's on waterman and what's on the cluster.  Some of the GENDB::* modules
@@ -102,11 +103,18 @@ if ($opt_o) {			# use to annotate a single ORF
   	print "annotating orf '$temp_orf'\n" if ($verbose);
   }
   #exit();
+} elsif ($opt_C) { # annotate all ORFs on a single contig
+    _debug("annotating orfs on contig '$opt_C'") if ($debug);
+    print("annotating orfs on contig '$opt_C'") if ($verbose);
+    my $contig = GENDB::contig->init_name($opt_C);
+    print "contig ID for '$opt_C': " . $contig->id() . "\n";
+    @orfs = @{$contig->fetchorfs_arrayref()};
+    _debug("number of orfs: " . scalar(@orfs)) if ($debug);
 } elsif ($opt_O) {		# annotate all ORFs
-  $allOrfs = 1;
-  @orfs = @{GENDB::orf->fetchall()};
-  print "annotating all orfs\n" if ($verbose);
-  _debug("number of orfs: " . scalar(@orfs)) if ($debug);
+    $allOrfs = 1;
+    @orfs = @{GENDB::orf->fetchall()};
+    print "annotating all orfs\n" if ($verbose);
+    _debug("number of orfs: " . scalar(@orfs)) if ($debug);
 }
 
 $filter = $opt_f || 1;	  ## manually set this to true if not provided
@@ -1377,7 +1385,7 @@ Command line options:
 -E\tIf ORF already has an EC number, don't change the EC number
 -R\tWhen EC number isn't found first round, use a conservative algorithm to find EC (recommended)
 -e\tExclude database hits from this organism (only works with KEGG hits)
--C\tFind COG numbers
+-C\tAnnotate the ORFs on this contig (by name, ie; C4)
 -S\tUse SOAP interface to KEGG database (experimental)
 -X\tinvoke typical set of options
 \t\tequivalent to -G -v -D -T -R -F annotator.out -O -g T

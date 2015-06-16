@@ -138,40 +138,49 @@ sub fetchorfs{
     $contig_id=$self->{'id'};
     
     if ((defined $start) && (defined $stop)) {
-	$sth = $GENDB_DBH->prepare(qq {
-	    SELECT molweight, contig_id, startcodon, name, status, stop, ag, gc, frame, isoelp, id, start FROM orf
-		WHERE contig_id='$contig_id' AND start>='$start' AND stop<='$stop'
-		});
-    }
-    else {
-	$sth = $GENDB_DBH->prepare(qq {
-	    SELECT molweight, contig_id, startcodon, name, status, stop, ag, gc, frame, isoelp, id, start FROM orf
-		WHERE contig_id='$contig_id'		
-		});
-    }
+        $sth = $GENDB_DBH->prepare(qq {
+            SELECT molweight, contig_id, startcodon, name, status, stop, ag, gc, frame, isoelp, id, start FROM orf
+            WHERE contig_id='$contig_id' AND start>='$start' AND stop<='$stop'
+            });
+    } else {
+        $sth = $GENDB_DBH->prepare(qq {
+            SELECT molweight, contig_id, startcodon, name, status, stop, ag, gc, frame, isoelp, id, start FROM orf
+            WHERE contig_id='$contig_id'		
+            });
+        }
     $sth->execute;
     while (($molweight, $contig_id, $startcodon, $name, $status, $stop, $ag, $gc, $frame, $isoelp, $id, $start) = $sth->fetchrow_array) {
-	my $orf = {
-		'molweight' => $molweight, 
-		'contig_id' => $contig_id, 
-		'startcodon' => $startcodon, 
-		'name' => $name, 
-		'status' => $status, 
-		'stop' => $stop, 
-		'ag' => $ag, 
-		'gc' => $gc, 
-		'frame' => $frame, 
-		'isoelp' => $isoelp, 
-		'id' => $id, 
-		'start' => $start
-		};
-	bless($orf, 'GENDB::orf');
-	$orf{$name} = $orf;
+        my $orf = {
+            'molweight' => $molweight, 
+            'contig_id' => $contig_id, 
+            'startcodon' => $startcodon, 
+            'name' => $name, 
+            'status' => $status, 
+            'stop' => $stop, 
+            'ag' => $ag, 
+            'gc' => $gc, 
+            'frame' => $frame, 
+            'isoelp' => $isoelp, 
+            'id' => $id, 
+            'start' => $start
+            };
+        bless($orf, 'GENDB::orf');
+        $orf{$name} = $orf;
     }
     $sth->finish;
 
     return(\%orf);
 };
+
+sub fetchorfs_arrayref {
+    my ($self,$start,$stop) = @_;
+
+    my $hashref = $self->fetchorfs($start,$stop);
+
+    my @array = values(%$hashref);
+
+    return \@array;
+}
 
 
 #################################################

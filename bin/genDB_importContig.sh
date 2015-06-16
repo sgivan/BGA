@@ -1,7 +1,7 @@
 #!/bin/bash
 # $Id: genDB_importContig.sh,v 3.1 2007/07/11 20:51:32 givans Exp $
 export PATH=/home/sgivan/projects/BGA/bin:$PATH
-for i in `/bin/ls -1` 
+for i in `/bin/ls -1v` 
 
 	do
 		#echo $i
