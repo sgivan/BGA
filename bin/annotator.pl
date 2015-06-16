@@ -470,37 +470,41 @@ foreach my $annotTool (@annotTool) {
                 }
 
                 foreach my $namingStd (@namingStd) {
-
-                  if ($seq->species() && $seq->species()->binomial() eq $namingStd) {
-                    if ($tools->{$annotTool}->description() =~ /swiss/i) {
-    #                 print "sequence is from $namingStd\n";
-                      my $ac = $seq->annotation();
-                      my @geneName = $ac->get_Annotations('gene_name');
-                      #print "geneName: '", scalar(@geneName), "'\n";
-                      next if (!@geneName);
-                      my $tmpName = $geneName[0]->as_text();
-                      $tmpName =~ s/Value:\s//;
-    #                 print "adding potential name: '$tmpName'\n";
-                      $geneName{$toolE} = $tmpName;
-    #                 print "\tGene: $tmpName\n" if ($debug);
-                    }
+                    #print "naming std: '$namingStd'\n" if ($debug);
+                    if ($seq->species() && $seq->species()->binomial() eq $namingStd) {
+                        if ($tools->{$annotTool}->description() =~ /swiss/i) {
+                            my $ac = $seq->annotation();
+                            my @geneName = $ac->get_Annotations('gene_name');
+                            print "species geneName: '", scalar(@geneName), "'\n'@geneName'\n" if ($debug);
+                            next if (!@geneName);
+                            if ($geneName[0]->isa('Bio::Annotation::TagTree')) {
+                                print "I'm a TagTree\n" if ($debug);
+                                print "as text: '" . $geneName[0]->as_text() . "'\n";
+                                $geneName{$toolE} = $geneName[0]->find('Name');
+                            } else {
+                                print "I'm not a TagTree\n" if ($debug);
+                                my $tmpName = $geneName[0]->as_text();
+                                $tmpName =~ s/Value:\s//;
+                                $geneName{$toolE} = $tmpName;
+                            }
+                        }
 
 
                   } elsif ($tools->{$annotTool}->description() =~ /kegg/i) {
-                    my $korg;
-                    if ($namingStd eq 'Escherichia coli') {
-                      $korg = 'ec[ojesc]';
-                    } else {
-                      $korg = $namingStd;
-                    }
-
-                    if ($seq->id() =~ /^$korg:/) {
-                      #		    print "\nKEGG method (" . $seq->id() . "; " . $seq->description() . ")\n";
-                      if ($seq->description =~ /^(\w+)[,;]/) {
-                    #		      print "\tpotential homolog in $korg: $1 (E: $toolE)\n\n";
-                    $geneName{$toolE} = $1;
-                      }
-                    }
+                        my $korg;
+                        if ($namingStd eq 'Escherichia coli') {
+                            $korg = 'ec[ojesc]';
+                        } else {
+                            $korg = $namingStd;
+                        }
+                        print "seqid: " . $seq->id() . "\t" . $seq->description() . "\n" if ($debug);
+                        if ($seq->id() =~ /^$korg:/) {
+                            #		    print "\nKEGG method (" . $seq->id() . "; " . $seq->description() . ")\n";
+                            if ($seq->description =~ /^(\w+)[,;]/) {
+                            #		      print "\tpotential homolog in $korg: $1 (E: $toolE)\n\n";
+                                $geneName{$toolE} = $1;
+                            }
+                        }
                   }
                 }
               } elsif ($opt_G) {
@@ -520,6 +524,7 @@ foreach my $annotTool (@annotTool) {
                     #print "opt_G swiss()\n";
                     # $seq isa Bio::Seq::RichSeq
                     if ($tools->{$annotTool}->description() =~ /swiss/i) {
+#                        print "getting swissprot annotations\n" if ($debug);
                         my $ac = $seq->annotation();
 #                        my @geneName = $ac->get_Annotations('gene_name');
 #                            print "Gene Names for '" . $seq->display_name() . "'\n";
@@ -531,7 +536,7 @@ foreach my $annotTool (@annotTool) {
 #                            }
 #                        
                         my @geneName = $ac->get_Annotations('gene_name');# will return an array of Bio::Annotation::TagTree 
-#                        print "\@geneName has '" . scalar(@geneName) . "' elements\n";
+#                        print "\@geneName has '" . scalar(@geneName) . "' elements\n" if ($debug);
 #                        if (scalar(@geneName)) {
 #                        my $tmpName = $geneName[0]->as_text();
                         #  $tmpName =~ s/Value:\s//;
@@ -1357,6 +1362,7 @@ Command line options:
 -h\tPrint this help menu
 -p\tName of GenDB project (required)
 -o\tName of specific ORF to annotate
+-C\tAnnotate the ORFs on this contig (by name, ie; C4)
 -O\tAnnotate all ORFs
 -d\tDebugging output to terminal
 -T\tWhen finished, print number of ORFs annotated
@@ -1368,6 +1374,7 @@ Command line options:
 -D\tUse distribution statistics for final annotation call (recommended)
 -g\tName genes after this organism's gene names, if possible (default [-g t] = E. coli)
 \tYou can provide multiple species; separate with commas, enclose whole list in quotes
+\tYou can specify the KEGG code for the organism; ie, swi for Sphingomonas wittichii
 \tTo use Escherichia coli, use -g t
 \tTo avoid naming genes, don't use -g
 -G\tName genes after best hit, if available
@@ -1385,7 +1392,6 @@ Command line options:
 -E\tIf ORF already has an EC number, don't change the EC number
 -R\tWhen EC number isn't found first round, use a conservative algorithm to find EC (recommended)
 -e\tExclude database hits from this organism (only works with KEGG hits)
--C\tAnnotate the ORFs on this contig (by name, ie; C4)
 -S\tUse SOAP interface to KEGG database (experimental)
 -X\tinvoke typical set of options
 \t\tequivalent to -G -v -D -T -R -F annotator.out -O -g T
