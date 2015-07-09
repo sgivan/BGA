@@ -5,7 +5,7 @@ INSERT INTO `tool` VALUES (
 '/home/sgivan/projects/BGA/share/genDB/bin/blast2p',
 'BLASTP of KEGG',
 'kegg',
-'www.kegg.com/dbget-bin/www_bget?',
+'www.kegg.jp/dbget-bin/www_bget?',
 NULL,
 1,
 '1E-50',

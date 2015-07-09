@@ -4,14 +4,12 @@ export PATH=/home/sgivan/projects/BGA/bin:$PATH
 for i in `/bin/ls -1v` 
 
 	do
-		#echo $i
 		integer=$( /bin/ls -d $i | sed 's/^0//' )
 		if [ -e $i/contig_$integer ]
 		then
 			echo "genDB_importContig.pl -f $i/contig_$integer -m model -p $1"
 			genDB_importContig.pl -f $i/contig_$integer -m model -p $1
-#			mv *.detail $i/contig.detail
-      rm *.detail
+            rm *.detail
 			mv *.predict $i/contig.predict
 		fi
 	done

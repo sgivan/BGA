@@ -152,3 +152,11 @@ INSERT INTO GENDB_counters (object, val) VALUES ('feature', 0);
 INSERT INTO GENDB_counters (object, val) VALUES ('feature_type', 0);
 INSERT INTO GENDB_counters (object, val) VALUES ('tool', 0);
 INSERT INTO GENDB_counters (object, val) VALUES ('fact', 0);
+CREATE TABLE gene_ontology (
+    ID int(10),
+    orf_id int(10),
+    auto_pfamA int(5),
+    go_id tinytext,
+    term longtext,
+    category tinytext
+);
