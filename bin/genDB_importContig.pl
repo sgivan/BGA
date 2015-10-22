@@ -10,10 +10,10 @@ use Getopt::Std;
 use Bio::SeqIO;
 use lib "$ENV{HOME}/projects/BGA/share/genDB/share/perl";
 use Projects;
-use vars qw/ $opt_p $opt_f $opt_v $opt_d $opt_h $opt_m /;
+use vars qw/ $opt_p $opt_f $opt_v $opt_d $opt_h $opt_m $opt_k /;
 use vars qw/ $ORF_STATE_ATTENTION_NEEDED $ORF_STATE_IGNORED $ORF_STATE_ANNOTATED $ORF_STATE_FINISHED /;
 
-getopts('p:f:m:vdh');
+getopts('p:f:m:vdhk');
 
 my $project = $opt_p;
 my $infile = $opt_f;
@@ -21,6 +21,7 @@ my $model_file = $opt_m || 'model';
 my $verbose = $opt_v;
 my $debug = $opt_d;
 my $help = $opt_h;
+my $keep_all = $opt_k;# keep every contig, even if no ORFs are identified
 
 if ($help) {
 	help();
@@ -94,9 +95,11 @@ foreach my $id (@contigs) {
 # 			hashdump($orfs_ref);
 # 		}
 	} else {
-		print "glimmer produced no ORFs.\nDeleting contig '$id'\n";
-		GENDB::contig->init_name($id)->delete();
-		#exit(1);
+        unless ($keep_all) {
+            print "glimmer produced no ORFs.\nDeleting contig '$id'\n";
+            GENDB::contig->init_name($id)->delete();
+            #exit(1);
+        }
 	}
 	
 	# get annotator for glimmer import
