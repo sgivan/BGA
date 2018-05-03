@@ -114,7 +114,7 @@ if ($contig_name) {
 foreach my $contig (@contigs) {
   @orfs = ();
 #  next unless (length($contig->sequence()) > 5000);
-  next unless (length($contig->sequence()) > $minContigLen);
+  next unless (length($contig->sequence()) && length($contig->sequence()) > $minContigLen);
   my $contig_bioseq = $factory->create( -id => $contig->name(), -seq => $contig->sequence());
   print "contig ", $contig->name(), " is ", $contig_bioseq->length(), "nt long\n" if ($debug);
   foreach my $orf (values %{$contig->fetchorfs()}) {
