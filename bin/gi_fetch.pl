@@ -12,15 +12,16 @@
 use warnings;
 use strict;
 use Carp;
-use LWP::Simple;
+#use LWP::Simple;
+use LWP::UserAgent ();
 use Getopt::Std;
-use vars qw/ $opt_d $opt_s $opt_q $opt_o $opt_h $opt_c /;
+use vars qw/ $opt_d $opt_s $opt_q $opt_o $opt_h $opt_c $opt_v /;
 
 my($mol,$term,$file) = ();
 
 # Get command line options or ask for them
 
-getopts('d:s:qo:hc');
+getopts('d:s:qo:hcv');
 
 if ($opt_h) {
     print <<EOF;
@@ -31,6 +32,7 @@ Option\tDescription
 -c\tonly return the number of gi\'s identified
 -q\tQuite mode
 -o\tOutput file name\n\tdefault = STDOUT
+-v\tverbose output to STDOUT
 -h\tPrint command line options\n\n
 EOF
 exit;
@@ -75,37 +77,46 @@ if ($opt_o) {
 #    $file = "STDOUT"
 #}
 
-
-
-
 print STDOUT "Fetching all '$mol' sequences from '$term'\n" unless ($opt_q);
 
 #
 # Begin formatting Entrez query
 #
 #
-
+my $ua = LWP::UserAgent->new();
 my $db = $mol;
-#my $http = "http://www.ncbi.nlm.nih.gov/entrez/eutils";
-my $http = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils";
+my $http = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?email=givans\@missouri.edu&tool=gi_fetch&api_key=6ad2ae5229a12863da697058ef31e477a808&db=$db";
 
 open(GI,">$file") || die "can't open '$file': $!" if ($file);
 
-#my $esearch_count = "$http/esearch.fcgi?email=givans\@cgrb.oregonstate.ed&tool=gi_fetch&db=$db&term=";
-my $esearch_count = "$http/esearch.fcgi?email=givans\@missouri.edu&tool=gi_fetch&db=$db&term=";
-my $esearch_count_result = get($esearch_count . $term);
+my $URL = $http . "&term=$term";
 
-#
+# use LWP::UserAgent
+my $esearch_count_result;
+my $esearch_count_response = $ua->get($URL);
+if ($esearch_count_response->is_success()) {
+    print "success!\n";
+    $esearch_count_result = $esearch_count_response->decoded_content();
+} else {
+    print $esearch_count_response->status_line();
+    die();
+}
+
 # $esearch_count_result will contain how many records
 # match the query.  We will need this number when
 # fetching the GI's from NCBI.
 #
 
+if ($opt_v) {
+    print STDERR "eutils query URL: $URL\n";
+}
+
 my $count = "";
-if ($esearch_count_result =~ /\<Count\>(\d+)\<\/Count\>/) {
+if ($esearch_count_result && $esearch_count_result =~ /\<Count\>(\d+)\<\/Count\>/) {
     $count = $1;
 } else {
-    print STDOUT "can't extract count from result file\n" unless ($opt_q);
+    print STDERR "can't extract count from result file\n" unless ($opt_q);
+    print STDERR "result: '$esearch_count_result'\n" if ($opt_v);
 }
 
 print STDOUT "$count GI's returned\n" unless ($opt_q);
@@ -121,36 +132,44 @@ sleep(5);
 print STDOUT "Fetching $count GI's from NCBI\n";
 my $total = 0;
 for (my ($retstart,$retmax) = (0,0); $retstart < $count; $retmax += 100000, $retstart = $retmax - 100000) {
-#$retmax += 100000 if (!$retmax);
-if (!$retmax) {
-  $retmax += 100000;
-} else {
-#  $retstart = $retmax + 1;
-}
 
-sleep(1);
-print "fetching $retstart to $retmax GI's\n";
-
-#my $esearch2 = "$http/esearch.fcgi?email=givans\@cgrb.oregonstate.ed&tool=gi_fetch&db=$db&retstart=$retstart&retmax=$count&term=";
-my $esearch2 = "$http/esearch.fcgi?email=givans\@missouri.edu&tool=gi_fetch&db=$db&retstart=$retstart&retmax=$count&term=";
-
-my $esearch_result = get($esearch2 . $term);
-
-#    print OUT "\nESEARCH RESULT: $esearch_result\n";
-
-my @esearch = split /\n/, $esearch_result;
-
-foreach my $line (@esearch) {
-
-    if ($line =~ /\<Id\>(\d+)\<\/Id\>/) {
-	++$total;
-	no strict 'refs';
-	print { $file ? "GI" : "STDOUT" } "$1\n";
-	use strict 'refs';
+    if (!$retmax) {
+        $retmax += 100000;
     } else {
-	next;
+        #  $retstart = $retmax + 1;
     }
-}
+
+    sleep(1);
+    print "fetching $retstart to $retmax GI's\n";
+
+    my $esearch2_URL = $http . "&retstart=$retstart&retmax=$retmax&" . "term=$term" ;
+    print STDERR "URL: '$esearch2_URL'\n" if ($opt_v);
+
+    my $esearch_response = $ua->get($esearch2_URL);
+
+    my $esearch_result;
+    if ($esearch_response->is_success()) {
+        print STDERR "fetched up to ID #$retmax\n" if ($opt_v);
+        $esearch_result = $esearch_response->decoded_content();
+    } else {
+        print STDERR "failed to fetch up to ID #$retmax\n";
+        print STDERR "status line: " . $esearch_response->status_line();
+        exit(1);
+    }
+
+    my @esearch = split /\n/, $esearch_result;
+
+    foreach my $line (@esearch) {
+
+        if ($line =~ /\<Id\>(\d+)\<\/Id\>/) {
+            ++$total;
+            no strict 'refs';
+            print { $file ? "GI" : "STDOUT" } "$1\n";
+            use strict 'refs';
+        } else {
+            next;
+        }
+    }
 
 }
 

@@ -237,7 +237,7 @@ foreach my $annotTool (@annotTool) {
 				);
 	if ($opt_I) {
       #$toolDB->build_index('/dbase/scratch/swiss/sprot.dat') if ($opt_I);
-      $toolDB->build_index('/ircf/dbase/swissprot/uniprot_sprot.dat') if ($opt_I);
+      $toolDB->build_index('/share/ircf/dbase/swissprot/uniprot_sprot.dat') if ($opt_I);
       print "new swissprot index complete\n";
 #      exit();
     }
@@ -257,7 +257,7 @@ foreach my $annotTool (@annotTool) {
 				);
     if ($opt_i) {
         #$toolDB->build_index('/dbase/KEGG/genes') if ($opt_i);
-        $toolDB->build_index('/ircf/dbase/KEGG/genes') if ($opt_i);
+        $toolDB->build_index('/share/ircf/dbase/KEGG/genes') if ($opt_i);
         print "new KEGG index complete\n";
     }
     print "using KEGG index\n" if ($debug);
