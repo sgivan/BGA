@@ -131,16 +131,19 @@ sleep(5);
 #
 print STDOUT "Fetching $count GI's from NCBI\n";
 my $total = 0;
-for (my ($retstart,$retmax) = (0,0); $retstart < $count; $retmax += 100000, $retstart = $retmax - 100000) {
+#for (my ($retstart,$retmax) = (0,0); $retstart < $count; $retmax += 100000, $retstart = $retmax - 100000) {
+for (my ($retstart,$retmax) = (0,0); $retstart < $count; $retmax = 100000, $retstart += 100000) {
+    # retmax is how many recoreds to return
+    # restart is where to start returning records within the list of id's
 
     if (!$retmax) {
-        $retmax += 100000;
+        $retmax = 100000;
     } else {
         #  $retstart = $retmax + 1;
     }
 
     sleep(1);
-    print "fetching $retstart to $retmax GI's\n";
+    print "fetching $retstart to ", $retstart + $retmax, " GI's\n";
 
     my $esearch2_URL = $http . "&retstart=$retstart&retmax=$retmax&" . "term=$term" ;
     print STDERR "URL: '$esearch2_URL'\n" if ($opt_v);
@@ -149,7 +152,7 @@ for (my ($retstart,$retmax) = (0,0); $retstart < $count; $retmax += 100000, $ret
 
     my $esearch_result;
     if ($esearch_response->is_success()) {
-        print STDERR "fetched up to ID #$retmax\n" if ($opt_v);
+        print STDERR "fetched up to ID #", $retstart + $retmax, "\n" if ($opt_v);
         $esearch_result = $esearch_response->decoded_content();
     } else {
         print STDERR "failed to fetch up to ID #$retmax\n";
