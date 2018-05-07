@@ -155,7 +155,7 @@ for (my ($retstart,$retmax) = (0,0); $retstart < $count; $retmax = 100000, $rets
         print STDERR "fetched up to ID #", $retstart + $retmax, "\n" if ($opt_v);
         $esearch_result = $esearch_response->decoded_content();
     } else {
-        print STDERR "failed to fetch up to ID #$retmax\n";
+        print STDERR "failed to fetch up to ID #", $retstart + $retmax, "\n";
         print STDERR "status line: " . $esearch_response->status_line();
         exit(1);
     }
