@@ -7,7 +7,7 @@
 ####################################################
 
 use lib "$ENV{HOME}/projects/BGA/share/genDB/share/perl";
-use lib '/ircf/ircfapps/lib/perl5/x86_64-linux';
+#use lib '/ircf/ircfapps/lib/perl5/x86_64-linux';
 use strict 'refs';
 use autodie;
 

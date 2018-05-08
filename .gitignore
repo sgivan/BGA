@@ -1,3 +1,6 @@
 # vim swp files
 *.swp
 .*.swp
+# job queue files
+*.o
+*.e

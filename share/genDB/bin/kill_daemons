@@ -1,1 +1,2 @@
-bjobs | grep GENDB | awk '{ print "bkill "$1; }' | bash
+#bjobs | grep GENDB | awk '{ print "bkill "$1; }' | bash
+squeue | grep GENDB | awk '{ print "scancel "$1; }' | bash

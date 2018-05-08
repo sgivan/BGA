@@ -15,6 +15,7 @@ do
     #bsub -n 1 -J GENDB$n -q $queue "/home/sgivan/projects/BGA/share/genDB/bin/GENDB_daemon.pl" 
     #bsub -n 1 -R "rusage[mem=1000]" -J GENDB$n -q $queue "/home/sgivan/projects/BGA/share/genDB/bin/GENDB_daemon.pl" 
     #bsub -o %J.o -e %J.e  -n 1 -R "rusage[mem=5000]" -J GENDB$n -q $queue "/home/sgivan/projects/BGA/share/genDB/bin/GENDB_daemon.pl" 
-    bsub -o %J.o -e %J.e  -n 1 -J GENDB$n -q $queue "/home/sgivan/projects/BGA/share/genDB/bin/GENDB_daemon.pl" 
+    #bsub -o %J.o -e %J.e  -n 1 -J GENDB$n -q $queue "/home/sgivan/projects/BGA/share/genDB/bin/GENDB_daemon.pl" 
+    sbatch -o %J.o -e %J.e --mem=20G --ntasks=1 --cpus-per-task=1 -J GENDB$n -p $queue --wrap="/home/sgivan/projects/BGA/share/genDB/bin/GENDB_daemon.pl" 
 done
 
