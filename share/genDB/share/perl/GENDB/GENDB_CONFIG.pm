@@ -79,7 +79,8 @@ $GENDB_SIGNALP="/share/ircf/ircfapps/bin/signalp";
 
 ### TMHMM (transmembrane helix)
 #$GENDB_TMHMM="/local/cluster/bin/tmhmm";
-$GENDB_TMHMM="/share/ircf/ircfapps/bin/tmhmm";
+#$GENDB_TMHMM="/share/ircf/ircfapps/bin/tmhmm";
+$GENDB_TMHMM="/share/ircf/ircfapps/share/tmhmm/bin/tmhmm";
 
 
 #### blast 2 setup

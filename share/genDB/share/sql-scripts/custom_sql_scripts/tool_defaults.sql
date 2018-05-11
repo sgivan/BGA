@@ -42,7 +42,7 @@ INSERT INTO `tool` VALUES (
 'Pfam',
 NULL,
 'HMM Search of Pfam',
-'/ircf/dbase/PFAM/Pfam-A',
+'/share/ircf/dbase/PFAM/Pfam-A',
 'pfam.janelia.org/family?entry=',
 NULL,
 3,
