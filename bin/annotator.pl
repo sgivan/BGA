@@ -7,7 +7,9 @@
 use 5.10.0;
 use warnings;
 use strict;
-use lib '/home/sgivan/data/projects/BGA/lib';
+use FindBin qw/ $Bin /;
+#use lib '/home/sgivan/data/projects/BGA/lib';
+use lib "$Bin/../lib";
 use Carp;
 use Getopt::Std;
 use vars qw/ $opt_p $opt_d $opt_D $opt_v $opt_o $opt_O $opt_f $opt_F $opt_c $opt_b $opt_a $opt_A $opt_t $opt_T $opt_h $opt_i $opt_I $opt_l $opt_g $opt_G $opt_r $opt_R $opt_z $opt_E $opt_C $opt_S $opt_e $opt_X /;
@@ -18,7 +20,8 @@ use SOAP::Lite;
 use Statistics::Distributions;
 use Statistics::Descriptive;
 #use lib '/local/cluster/genDB/share/perl';
-use lib "$ENV{HOME}/projects/BGA/share/genDB/share/perl";
+#use lib "$ENV{HOME}/projects/BGA/share/genDB/share/perl";
+use lib "$Bin/../share/genDB/share/perl";
 use Projects;
 
 getopts('p:o:c:b:Aa:l:g:F:r:RdDvfthOe:EiITzEC:GSX');
