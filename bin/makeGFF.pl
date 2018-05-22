@@ -3,24 +3,26 @@
 
 use warnings;
 use strict;
+use FindBin qw/ $Bin /;
 use Carp;
 use Getopt::Std;
 #use COGDB;
 use Bio::SeqFeature::Generic;
 use Bio::Tools::GFF;
-use vars qw/ $opt_p $opt_v $opt_d $opt_D $opt_h /;
+use vars qw/ $opt_p $opt_v $opt_d $opt_D $opt_h $opt_s /;
 
-use lib '/home/sgivan/projects/COGDB/lib';
-use lib '/home/sgivan/projects/BGA/share/genDB/share/perl';
+use lib "$Bin/../../COGDB/lib";
+use lib "$Bin/../share/genDB/share/perl";
 use COGDB;
 use Projects;
 
-my ($project,$verbose,$debug,$desc);
-getopts('p:vdDh');
+my ($project,$verbose,$debug,$desc,$skip_cogdb);
+getopts('p:vdDhs');
 $project = $opt_p;
 $verbose = $opt_v;
 $debug = $opt_d;
 $desc = $opt_D;
+$skip_cogdb = $opt_s;
 
 my $usage = "usage: makeGFF.pl -p <project name>";
 if ($opt_h) {
@@ -51,38 +53,39 @@ print "finished initializing GenDB project\n" if ($debug);
 
 my $GFFfile = "$project.gff";
 my $DESCfile = "$project" . "_D.gff";
-print "initializing COGDB object\n"  if ($debug);
-my $cogdb = COGDB->new();
-print "\$cogdb is a '", ref($cogdb), "'\n" if ($debug);
-print "finished initializing COGDB object; fetching localcogs\n" if ($debug);
-my $localcogs = $cogdb->localcogs();
-print "\$localcogs is a '", ref($localcogs), "'\n" if ($debug);
-print "fetching organism data\n" if ($debug);
-my $organism = $localcogs->organism({ Code => $project });
-print "\$organism is a '", ref($organism), "'\n" if ($debug);
-print "fetching whogs\n" if ($debug);
-my $whog = $localcogs->whog();
-print "\$whog is a '", ref($whog), "'\n" if ($debug);
-print "fetching whogs for organism\n" if ($debug);
-my $whogs = $whog->fetch_by_organism($organism);
-#my $whogs;
-print "organism is ", $organism->name(), "\n";
-#exit();
+
 my %funcat = ();
+unless ($skip_cogdb) {
 
-foreach my $whog (@$whogs) {
-  my $cog = $whog->cog();
-  my $categories = $cog->categories();
-  foreach my $category (@$categories) {
-    $funcat{$whog->name()} = $category->name() . " [" . $category->id() . "]" unless ($funcat{$whog->name()} || $category->id() == 24);
-  }
-}
+    print "initializing COGDB object\n"  if ($debug);
+    my $cogdb = COGDB->new();
+    print "\$cogdb is a '", ref($cogdb), "'\n" if ($debug);
+    print "finished initializing COGDB object; fetching localcogs\n" if ($debug);
+    my $localcogs = $cogdb->localcogs();
+    print "\$localcogs is a '", ref($localcogs), "'\n" if ($debug);
+    print "fetching organism data\n" if ($debug);
+    my $organism = $localcogs->organism({ Code => $project });
+    print "\$organism is a '", ref($organism), "'\n" if ($debug);
+    print "fetching whogs\n" if ($debug);
+    my $whog = $localcogs->whog();
+    print "\$whog is a '", ref($whog), "'\n" if ($debug);
+    print "fetching whogs for organism\n" if ($debug);
+    my $whogs = $whog->fetch_by_organism($organism);
+
+    print "organism is ", $organism->name(), "\n";
+
+#    my %funcat = ();
+
+    foreach my $whog (@$whogs) {
+        my $cog = $whog->cog();
+        my $categories = $cog->categories();
+        foreach my $category (@$categories) {
+            #print "category for '", $whog->name(), "': '", $category->name(), "'\n" if ($debug);
+            $funcat{$whog->name()} = $category->name() . " [" . $category->id() . "]" unless ($funcat{$whog->name()} || $category->id() == 24);
+        }
+    }
   
-#foreach my $orfname (keys %funcat) {
-#  print "$orfname\t$funcat{$orfname}\n";
-#}
-
-#exit(0);
+}
 
 open(GFF, ">$GFFfile") or die "can't open '$GFFfile': $!";
 open(DESC, ">$DESCfile") or die "can't open '$DESCfile': $!" if ($desc);
@@ -269,6 +272,7 @@ Command-line options
 -h\tPrint this help menu
 -p\tGenDB project name (Required)
 -D\tGenerate GFF file of ORF functional classifications
+-s\tSkip COGDB funcat assignment
 -v\tVerbose output to terminal
 -d\tDebugging mode
 
