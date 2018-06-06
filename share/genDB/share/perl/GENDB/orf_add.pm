@@ -604,10 +604,10 @@ sub fetchby_dbref {
 sub get_new_coords {
   my ($self,$orf_id) = @_;
 
-  my $sth = $GENDB_DBH->prepare("use SAR112_gendb");
-  if (!$sth->execute()) {
-    die "can't switch database to SAR112_gendb";
-  }
+#  my $sth = $GENDB_DBH->prepare("use SAR112_gendb");
+#  if (!$sth->execute()) {
+#    die "can't switch database to SAR112_gendb";
+#  }
 
   $sth = $GENDB_DBH->prepare("select start, stop from orf where id = ?");
   $sth->bind_param(1,$orf_id);
@@ -618,10 +618,10 @@ sub get_new_coords {
 
   my ($start,$stop) = $sth->fetchrow_array();
 
-   $sth = $GENDB_DBH->prepare("use SAR11_gendb");
-   if (!$sth->execute()) {
-     die "can't switch database to SAR11_gendb";
-   }
+#   $sth = $GENDB_DBH->prepare("use SAR11_gendb");
+#   if (!$sth->execute()) {
+#     die "can't switch database to SAR11_gendb";
+#   }
 
   return [$start, $stop];
 }

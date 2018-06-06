@@ -27,15 +27,17 @@ use Projects;
 getopts('p:o:c:b:Aa:l:g:F:r:RdDvfthOe:EiITzEC:GSX');
 
 if ($opt_X) {
-  $opt_G = 1;
+  $opt_G = 1 unless ($opt_G);
   $opt_v = 1;
   $opt_D = 1;
   $opt_T = 1;
   $opt_R = 1;
   $opt_F = 'annotator.out';
   $opt_O = 1;
-  $opt_g = 'T'; # name genes after E. coli names
+  $opt_g = 'T' unless ($opt_g); # name genes after E. coli names
 }
+# Not sure why I set both opt_G and opt_g when I use opt_X. opt_g precedes opt_G in naming rubric, so setting opt_G does nothing.
+# Change to use the unless clause.
 
 my ($project,$debug,$verbose,$allOrfs,$filter,$cutoff,$toolCutoff,$annotTool,$overlapLength,@namingStd,@orfs,$addAnnot,$keepEC,$kegg_soap,%ecoli,@annotTool,$exclude,$force);
 my $usage = "usage:  annotator.pl -p <project> [-d (debug) -v (verbose) -h (help menu)]\n";
@@ -614,7 +616,8 @@ foreach my $annotTool (@annotTool) {
       # Determine Gene Name   #
       #########################
       #
-      if ($opt_g) {
+      # shouldn't I do this when opt_G flag is used?
+      if ($opt_g || $opt_G) {
         my @minE = keys %geneName;
         if (@minE) {
             if (scalar(@minE) > 1) {
