@@ -133,7 +133,11 @@ open(OUT, ">$outfile") or die "can't open '$outfile': $!";
 print OUT "ORF\tStart\tStop\tCodon\tDescription\n";
 
 if ($opt_O) {
-  open(CLEAN,">orfStartRefine.out") or die "can't open 'orfStartRefine.out': $!";
+    if ($opt_F) {
+      open(CLEAN,">orfStartRefine.out") or die "can't open 'orfStartRefine.out': $!";
+  } elsif ($opt_f) {
+      open(CLEAN,">${opt_f}_orfStartRefine.out") or die "can't open '${opt_f}_orfStartRefine.out': $!";
+  }
 }
 
 #
