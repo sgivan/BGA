@@ -60,7 +60,8 @@ $GENDB_GENOMEPLOT="/usr/local/bin/genome_plot.pl";
 ## executable pathname for tRNAScan-SE
 #$GENDB_TRNASCANSE="/usr/local/bin/tRNAscan-SE";
 #$GENDB_TRNASCANSE = "/share/ircfapps/bin/tRNAscan-SE";
-$GENDB_TRNASCANSE = "/share/ircf/ircfapps/bin/tRNAscan-SE";
+#$GENDB_TRNASCANSE = "/share/ircf/ircfapps/bin/tRNAscan-SE";
+$GENDB_TRNASCANSE = "tRNAscan-SE";
 
 
 #### misc tools for sequence analyzes
